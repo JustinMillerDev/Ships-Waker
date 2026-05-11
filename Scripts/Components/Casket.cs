@@ -27,6 +27,12 @@ public partial class Casket : Node2D, ISlottable, IOrientation
 
 		if (Facing == CardinalDirection.Left)
 			Position = new Vector2(Position.X - 8, Position.Y);
+
+		if (GetNodeOrNull("ReadyLabel") is Label readyLabel)
+		{
+			if (Facing == CardinalDirection.Left)
+				readyLabel.Position = new Vector2(readyLabel.Position.X + 42, readyLabel.Position.Y);
+		}
 	}
 
 	// ISlottable ----------------------------------------------------------------
@@ -70,6 +76,9 @@ public partial class Casket : Node2D, ISlottable, IOrientation
 			OccupiedBy.CurrentSlot = null;
 
 		OccupiedBy = null;
+
+		if (GetNodeOrNull("ReadyLabel") is Label readyLabel)
+			readyLabel.Text = "--";
 	}
 
 	public bool ContainsPoint(Vector2 point)

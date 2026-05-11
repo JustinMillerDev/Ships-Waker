@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://bp56c0b10tv3w"]
+
+[ext_resource type="Script" uid="uid://iv3mgeu1bexn" path="res://Scripts/Singletons/CargoManager.cs" id="1_qwlk4"]
+
+[node name="CargoManager" type="Node"]
+script = ExtResource("1_qwlk4")

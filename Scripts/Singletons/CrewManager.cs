@@ -33,6 +33,10 @@ public partial class CrewManager : Node
 		_crewScene = GD.Load<PackedScene>("res://Scenes/Crew.tscn");
 		_hyperSleepTexture = GD.Load<CompressedTexture2D>("res://Assets/Characters/CrewFrontView.png");
 		SpawnCaskets();
+
+		Node playspace = GetTree().Root.GetNodeOrNull("PlaySpace");
+		if (playspace is PlaySpace ps)
+			ps.TurnEnded += OnTurnEnded;
 	}
 
 	// ---------------------------------------------------------------------------
@@ -55,11 +59,13 @@ public partial class CrewManager : Node
 			return;
 		}
 
-		Node column1 = playspace.GetNodeOrNull("PlayerShip/Caskets/Column1");
-		Node column2 = playspace.GetNodeOrNull("PlayerShip/Caskets/Column2");
+		Node column1 = playspace.GetNodeOrNull("PlayerShip/Pivot/Caskets/Column1");
+		Node column2 = playspace.GetNodeOrNull("PlayerShip/Pivot/Caskets/Column2");
 
 		SpawnCasketColumn(column1, CardinalDirection.Right, new Vector2(8, 8));
 		SpawnCasketColumn(column2, CardinalDirection.Left, new Vector2(16, 8));
+
+		AssignReadyTimers();
 	}
 
 	private void SpawnCasketColumn(Node column, CardinalDirection facing, Vector2 crewOffset)
@@ -125,6 +131,58 @@ public partial class CrewManager : Node
 	public void Unregister(Crew crew)
 	{
 		_allCrew.Remove(crew);
+	}
+
+	private void OnTurnEnded(int turn)
+	{
+		foreach (Crew crew in _allCrew)
+		{
+			crew.TurnsUntilReady = Mathf.Max(0, crew.TurnsUntilReady - 1);
+			crew.IsReady = crew.TurnsUntilReady == 0;
+
+			if (crew.CurrentSlot is Casket casket &&
+				casket.GetNodeOrNull("ReadyLabel") is Label label)
+			{
+				label.Text = crew.TurnsUntilReady.ToString("D2");
+			}
+		}
+	}
+
+	/// <summary>
+	/// Assigns each crew member a unique TurnsUntilReady value drawn from a
+	/// shuffled range of [0, crewCount). Updates the ReadyLabel on their casket.
+	/// </summary>
+	private const int CrewReadyAtStart = 3;
+
+	private void AssignReadyTimers()
+	{
+		int count = _allCrew.Count;
+
+		// Three crew start at 0; the remaining crew get unique values 1..(count - CrewReadyAtStart).
+		// This keeps the maximum counter lower to reflect the extra ready crew.
+		List<int> values = new(count);
+		for (int i = 0; i < CrewReadyAtStart; i++) values.Add(0);
+		for (int i = 1; i <= count - CrewReadyAtStart; i++) values.Add(i);
+
+		// Fisher-Yates shuffle.
+		for (int i = count - 1; i > 0; i--)
+		{
+			int j = GD.RandRange(0, i);
+			(values[i], values[j]) = (values[j], values[i]);
+		}
+
+		for (int i = 0; i < count; i++)
+		{
+			Crew crew = _allCrew[i];
+			crew.TurnsUntilReady = values[i];
+			crew.IsReady = values[i] == 0;
+
+			if (crew.CurrentSlot is Casket casket &&
+				casket.GetNodeOrNull("ReadyLabel") is Label label)
+			{
+				label.Text = values[i].ToString("D2");
+			}
+		}
 	}
 
 	// ---------------------------------------------------------------------------

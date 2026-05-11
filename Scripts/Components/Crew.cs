@@ -16,6 +16,12 @@ public partial class Crew : Node2D, IDraggable, IOrientation
 	/// <summary>Local position offset applied whenever this crew is slotted into a casket.</summary>
 	public Vector2 SlotOffset { get; set; } = Vector2.Zero;
 
+	/// <summary>How many turns remain before this crew member is ready to act.</summary>
+	public int TurnsUntilReady { get; set; } = 0;
+
+	/// <summary>Whether this crew member is ready to act.</summary>
+	public bool IsReady { get; set; } = false;
+
 	// IOrientation --------------------------------------------------------------
 
 	/// <summary>The direction this crew member is facing.</summary>
@@ -52,7 +58,8 @@ public partial class Crew : Node2D, IDraggable, IOrientation
 
 	public void _on_focus_pressed()
 	{
-		OnDragStart();
+		if (IsReady)
+			OnDragStart();
 	}
 
 	public void _on_focus_mouse_entered()
@@ -75,7 +82,7 @@ public partial class Crew : Node2D, IDraggable, IOrientation
 		{
 			if (mouseButton.ButtonIndex == MouseButton.Left)
 			{
-				if (mouseButton.Pressed && IsHovered)
+				if (mouseButton.Pressed && IsHovered && IsReady)
 				{
 					OnDragStart();
 				}
@@ -97,6 +104,7 @@ public partial class Crew : Node2D, IDraggable, IOrientation
 	}
 
 	private static CompressedTexture2D _frontViewTexture;
+	private static CompressedTexture2D _topDownTexture;
 
 	public void OnDragStart()
 	{
@@ -134,6 +142,15 @@ public partial class Crew : Node2D, IDraggable, IOrientation
 	{
 		IsDragging = false;
 
+		// Deploying into a CrewSlot costs a crew deploy for this turn.
+		bool isCrewSlotDeploy = targetSlot is CrewSlot;
+		if (isCrewSlotDeploy)
+		{
+			PlaySpace ps = GetTree().Root.GetNodeOrNull("PlaySpace") as PlaySpace;
+			if (ps == null || !ps.TryUseCrewDeploy())
+				targetSlot = null; // treat as a failed drop
+		}
+
 		if (targetSlot != null && targetSlot.CanAccept(this))
 		{
 			// Reparent into the slot's node
@@ -145,7 +162,15 @@ public partial class Crew : Node2D, IDraggable, IOrientation
 			targetSlot.Accept(this);
 			Position = targetSlot is CrewSlot ? new Vector2(8, 8) : SlotOffset;
 
-			// CrewSlot.Accept already sets the correct rotation; only restore for other slot types
+			// CrewSlot.Accept already sets the correct rotation; restore top-down texture too
+			if (targetSlot is CrewSlot)
+			{
+				if (GetNodeOrNull("Sprites/Sprite2D") is Sprite2D crewSlotSprite)
+				{
+					_topDownTexture ??= GD.Load<CompressedTexture2D>("res://Assets/Characters/CrewTopDown.png");
+					crewSlotSprite.Texture = _topDownTexture;
+				}
+			}
 			if (targetSlot is not CrewSlot)
 			{
 				if (GetNodeOrNull("Sprites/Sprite2D") is Sprite2D sprite)
@@ -154,9 +179,28 @@ public partial class Crew : Node2D, IDraggable, IOrientation
 		}
 		else
 		{
-			// Restore orientation rotation
-			if (GetNodeOrNull("Sprites/Sprite2D") is Sprite2D sprite)
-				sprite.RotationDegrees = Facing == CardinalDirection.Left ? 90f : -90f;
+			// If returning to a CrewSlot, restore top-down texture and correct rotation
+			if (_originalParent is CrewSlot)
+			{
+				if (GetNodeOrNull("Sprites/Sprite2D") is Sprite2D sprite)
+				{
+					_topDownTexture ??= GD.Load<CompressedTexture2D>("res://Assets/Characters/CrewTopDown.png");
+					sprite.Texture = _topDownTexture;
+					sprite.RotationDegrees = Facing switch
+					{
+						CardinalDirection.Left  => -90f,
+						CardinalDirection.Right => 90f,
+						CardinalDirection.Up    => 0f,
+						_                       => 180f,
+					};
+				}
+			}
+			else
+			{
+				// Restore orientation rotation for casket return
+				if (GetNodeOrNull("Sprites/Sprite2D") is Sprite2D sprite)
+					sprite.RotationDegrees = Facing == CardinalDirection.Left ? 90f : -90f;
+			}
 
 			// Tween back to the original parent and position over 0.25 seconds
 			if (_originalParent != null)

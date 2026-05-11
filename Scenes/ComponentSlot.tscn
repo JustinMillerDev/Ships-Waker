@@ -1,0 +1,37 @@
+[gd_scene load_steps=4 format=3 uid="uid://dukpaqw2qvycf"]
+
+[ext_resource type="Texture2D" uid="uid://iqtclqvrslfq" path="res://Assets/Characters/ComponentSlot.png" id="1_bcq2f"]
+[ext_resource type="Script" uid="uid://dho1102cety0a" path="res://Scripts/Components/ShipComponentSlot.cs" id="1_qloh7"]
+[ext_resource type="FontFile" uid="uid://bx73bfi2nt2l6" path="res://Assets/Fonts/PressStart2P.ttf" id="2_qloh7"]
+
+[node name="ComponentSlot" type="Node2D"]
+script = ExtResource("1_qloh7")
+
+[node name="Pivot" type="Node2D" parent="."]
+position = Vector2(14, 14)
+
+[node name="Sprites" type="Node2D" parent="Pivot"]
+position = Vector2(-14, -14)
+
+[node name="Sprite2D" type="Sprite2D" parent="Pivot/Sprites"]
+texture = ExtResource("1_bcq2f")
+centered = false
+
+[node name="Label" type="Label" parent="Pivot"]
+offset_left = -7.0
+offset_top = -7.0
+offset_right = 33.0
+offset_bottom = 16.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("2_qloh7")
+theme_override_font_sizes/font_size = 16
+text = "P"
+
+[node name="Anchors" type="Node2D" parent="Pivot"]
+position = Vector2(-14, -14)
+
+[node name="RightExternal" type="Node2D" parent="Pivot/Anchors"]
+position = Vector2(12, 12)
+
+[node name="LeftExternal" type="Node2D" parent="Pivot/Anchors"]
+position = Vector2(17, 12)

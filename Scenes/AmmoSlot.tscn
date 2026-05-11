@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=3 uid="uid://bxwj66011wuni"]
+
+[ext_resource type="Texture2D" uid="uid://vfmxcuskud3j" path="res://Assets/Characters/AmmoSlot.png" id="1_a8ylg"]
+[ext_resource type="Script" uid="uid://bq6gd21ae6ep3" path="res://Scripts/Components/AmmoSlot.cs" id="1_vn4um"]
+
+[node name="AmmoSlot" type="Node2D"]
+script = ExtResource("1_vn4um")
+
+[node name="Sprites" type="Node2D" parent="."]
+
+[node name="Sprite2D" type="Sprite2D" parent="Sprites"]
+texture = ExtResource("1_a8ylg")
+centered = false
