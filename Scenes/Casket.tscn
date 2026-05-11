@@ -1,0 +1,11 @@
+[gd_scene load_steps=2 format=3 uid="uid://p4ct3cahskhp"]
+
+[ext_resource type="Texture2D" uid="uid://cbv5wrlwrrw7p" path="res://Assets/Characters/Cascket.png" id="1_3pmfp"]
+
+[node name="Casket" type="Node2D"]
+
+[node name="Sprites" type="Node2D" parent="."]
+
+[node name="Sprite2D" type="Sprite2D" parent="Sprites"]
+texture = ExtResource("1_3pmfp")
+centered = false

@@ -1,0 +1,19 @@
+[gd_scene load_steps=3 format=3 uid="uid://dwn6w7t2pvk3b"]
+
+[ext_resource type="Script" path="res://Scripts/PlaySpace.cs" id="1_bvtvd"]
+[ext_resource type="Texture2D" uid="uid://beo0bt8cue4px" path="res://Assets/Backgrounds/SpaceShipGame_UI.png" id="1_vggmg"]
+
+[node name="PlaySpace" type="Node2D"]
+script = ExtResource("1_bvtvd")
+
+[node name="SpaceShip" type="Sprite2D" parent="."]
+texture = ExtResource("1_vggmg")
+centered = false
+
+[node name="Caskets" type="Node2D" parent="."]
+
+[node name="Column1" type="Node2D" parent="Caskets"]
+position = Vector2(114, 205)
+
+[node name="Column2" type="Node2D" parent="Caskets"]
+position = Vector2(207, 205)
