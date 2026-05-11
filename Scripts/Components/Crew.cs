@@ -7,7 +7,14 @@ public partial class Crew : Node2D, IDraggable, IOrientation
 {
 	public Vector2 OriginalPosition { get; set; }
 	public bool IsDragging { get; set; }
+	public bool IsHovered { get; private set; }
 	public ISlottable CurrentSlot { get; set; }
+
+	private Node _originalParent;
+	private Vector2 _originalLocalPosition;
+
+	/// <summary>Local position offset applied whenever this crew is slotted into a casket.</summary>
+	public Vector2 SlotOffset { get; set; } = Vector2.Zero;
 
 	// IOrientation --------------------------------------------------------------
 
@@ -50,12 +57,14 @@ public partial class Crew : Node2D, IDraggable, IOrientation
 
 	public void _on_focus_mouse_entered()
 	{
+		IsHovered = true;
 		if (_tooltip is CanvasItem tooltipItem)
 			tooltipItem.Visible = true;
 	}
 
 	public void _on_focus_mouse_exited()
 	{
+		IsHovered = false;
 		if (_tooltip is CanvasItem tooltipItem)
 			tooltipItem.Visible = false;
 	}
@@ -66,7 +75,7 @@ public partial class Crew : Node2D, IDraggable, IOrientation
 		{
 			if (mouseButton.ButtonIndex == MouseButton.Left)
 			{
-				if (mouseButton.Pressed && IsMouseOver())
+				if (mouseButton.Pressed && IsHovered)
 				{
 					OnDragStart();
 				}
@@ -87,6 +96,8 @@ public partial class Crew : Node2D, IDraggable, IOrientation
 		}
 	}
 
+	private static CompressedTexture2D _frontViewTexture;
+
 	public void OnDragStart()
 	{
 		// Vacate the current slot before lifting the piece
@@ -94,6 +105,26 @@ public partial class Crew : Node2D, IDraggable, IOrientation
 		{
 			CurrentSlot.Vacate();
 			CurrentSlot = null;
+		}
+
+		// Reparent to the scene root so position is not relative to the casket
+		Node root = GetTree().Root;
+		if (GetParent() != root)
+		{
+			_originalParent = GetParent();
+			_originalLocalPosition = Position;
+			Vector2 globalPos = GlobalPosition;
+			GetParent().RemoveChild(this);
+			root.AddChild(this);
+			GlobalPosition = globalPos;
+		}
+
+		// Switch to front-view texture and reset rotation while dragging
+		if (GetNodeOrNull("Sprites/Sprite2D") is Sprite2D sprite)
+		{
+			_frontViewTexture ??= GD.Load<CompressedTexture2D>("res://Assets/Characters/CrewFrontView.png");
+			sprite.Texture = _frontViewTexture;
+			sprite.RotationDegrees = 0f;
 		}
 
 		IsDragging = true;
@@ -105,12 +136,53 @@ public partial class Crew : Node2D, IDraggable, IOrientation
 
 		if (targetSlot != null && targetSlot.CanAccept(this))
 		{
+			// Reparent into the slot's node
+			if (targetSlot is Node slotNode && GetParent() != slotNode)
+			{
+				GetParent().RemoveChild(this);
+				slotNode.AddChild(this);
+			}
 			targetSlot.Accept(this);
+			Position = targetSlot is CrewSlot ? new Vector2(8, 8) : SlotOffset;
+
+			// CrewSlot.Accept already sets the correct rotation; only restore for other slot types
+			if (targetSlot is not CrewSlot)
+			{
+				if (GetNodeOrNull("Sprites/Sprite2D") is Sprite2D sprite)
+					sprite.RotationDegrees = Facing == CardinalDirection.Left ? 90f : -90f;
+			}
 		}
 		else
 		{
-			// Return to original position if no valid slot
-			GlobalPosition = OriginalPosition;
+			// Restore orientation rotation
+			if (GetNodeOrNull("Sprites/Sprite2D") is Sprite2D sprite)
+				sprite.RotationDegrees = Facing == CardinalDirection.Left ? 90f : -90f;
+
+			// Tween back to the original parent and position over 0.25 seconds
+			if (_originalParent != null)
+			{
+				Node originalParent = _originalParent;
+				Vector2 originalLocalPos = _originalLocalPosition;
+				Vector2 currentGlobal = GlobalPosition;
+
+				GetParent().RemoveChild(this);
+				originalParent.AddChild(this);
+				// Start at the global position we were at before reparenting
+				GlobalPosition = currentGlobal;
+
+				Tween tween = CreateTween();
+				tween.TweenProperty(this, "position", originalLocalPos, 0.125)
+					 .SetTrans(Tween.TransitionType.Sine)
+					 .SetEase(Tween.EaseType.Out);
+			}
+			else
+			{
+				Vector2 from = GlobalPosition;
+				Tween tween = CreateTween();
+				tween.TweenProperty(this, "global_position", OriginalPosition, 0.125)
+					 .SetTrans(Tween.TransitionType.Sine)
+					 .SetEase(Tween.EaseType.Out);
+			}
 		}
 	}
 
@@ -138,23 +210,28 @@ public partial class Crew : Node2D, IDraggable, IOrientation
 	private ISlottable FindSlotUnderMouse()
 	{
 		Vector2 mouse = GetGlobalMousePosition();
-		// Walk siblings/cousins in the tree looking for an ISlottable whose
-		// bounds contain the mouse cursor.
-		return FindSlotIn(GetTree().Root, mouse);
+		ISlottable best = null;
+		float bestDist = float.MaxValue;
+
+		CollectClosestSlot(GetTree().Root, mouse, ref best, ref bestDist);
+		return best;
 	}
 
-	private static ISlottable FindSlotIn(Node root, Vector2 point)
+	private void CollectClosestSlot(Node root, Vector2 point, ref ISlottable best, ref float bestDist)
 	{
 		foreach (Node child in root.GetChildren())
 		{
-			if (child is ISlottable slottable && slottable.ContainsPoint(point))
-				return slottable;
+			if (child is ISlottable slottable && child != this && slottable.ContainsPoint(point))
+			{
+				float dist = child is Node2D n2d ? n2d.GlobalPosition.DistanceTo(point) : 0f;
+				if (dist < bestDist)
+				{
+					bestDist = dist;
+					best = slottable;
+				}
+			}
 
-			ISlottable found = FindSlotIn(child, point);
-			if (found != null)
-				return found;
+			CollectClosestSlot(child, point, ref best, ref bestDist);
 		}
-
-		return null;
 	}
 }

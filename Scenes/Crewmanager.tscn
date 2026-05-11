@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://235wt6ab4mfn"]
+
+[ext_resource type="Script" uid="uid://db7o7r5ibhprx" path="res://Scripts/Singletons/CrewManager.cs" id="1_gaqke"]
+
+[node name="CrewManager" type="Node"]
+script = ExtResource("1_gaqke")

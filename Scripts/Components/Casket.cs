@@ -15,6 +15,20 @@ public partial class Casket : Node2D, ISlottable, IOrientation
 	/// <summary>The direction this casket faces.</summary>
 	[Export] public CardinalDirection Facing { get; set; } = CardinalDirection.Left;
 
+	public override void _Ready()
+	{
+		UpdateSprite();
+	}
+
+	private void UpdateSprite()
+	{
+		if (GetNodeOrNull("Sprites/Sprite2D") is Sprite2D sprite)
+			sprite.FlipH = Facing == CardinalDirection.Left;
+
+		if (Facing == CardinalDirection.Left)
+			Position = new Vector2(Position.X - 8, Position.Y);
+	}
+
 	// ISlottable ----------------------------------------------------------------
 
 	public Vector2 SlotPosition => GlobalPosition;

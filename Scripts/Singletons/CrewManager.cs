@@ -19,14 +19,19 @@ public partial class CrewManager : Node
 	/// <summary>Read-only view of every spawned casket.</summary>
 	public IReadOnlyList<Casket> AllCaskets => _allCaskets;
 
-	[Export] public PackedScene CasketScene { get; set; }
-
 	private const int CasketCount = 7;
-	private const float CasketSpacing = 18f;
+	private const float CasketSpacing = 17f;
+
+	private PackedScene _casketScene;
+	private PackedScene _crewScene;
+	private CompressedTexture2D _hyperSleepTexture;
 
 	public override void _Ready()
 	{
 		Instance = this;
+		_casketScene = GD.Load<PackedScene>("res://Scenes/Casket.tscn");
+		_crewScene = GD.Load<PackedScene>("res://Scenes/Crew.tscn");
+		_hyperSleepTexture = GD.Load<CompressedTexture2D>("res://Assets/Characters/CrewFrontView.png");
 		SpawnCaskets();
 	}
 
@@ -36,9 +41,9 @@ public partial class CrewManager : Node
 
 	private void SpawnCaskets()
 	{
-		if (CasketScene == null)
+		if (_casketScene == null)
 		{
-			GD.PushWarning("CrewManager: CasketScene is not set. Assign Casket.tscn in the Inspector.");
+			GD.PushWarning("CrewManager: Could not load Casket.tscn.");
 			return;
 		}
 
@@ -50,14 +55,14 @@ public partial class CrewManager : Node
 			return;
 		}
 
-		Node column1 = playspace.GetNodeOrNull("Caskets/Column1");
-		Node column2 = playspace.GetNodeOrNull("Caskets/Column2");
+		Node column1 = playspace.GetNodeOrNull("PlayerShip/Caskets/Column1");
+		Node column2 = playspace.GetNodeOrNull("PlayerShip/Caskets/Column2");
 
-		SpawnCasketColumn(column1, CardinalDirection.Left);
-		SpawnCasketColumn(column2, CardinalDirection.Right);
+		SpawnCasketColumn(column1, CardinalDirection.Right, new Vector2(8, 8));
+		SpawnCasketColumn(column2, CardinalDirection.Left, new Vector2(16, 8));
 	}
 
-	private void SpawnCasketColumn(Node column, CardinalDirection facing)
+	private void SpawnCasketColumn(Node column, CardinalDirection facing, Vector2 crewOffset)
 	{
 		if (column == null)
 		{
@@ -67,12 +72,41 @@ public partial class CrewManager : Node
 
 		for (int i = 0; i < CasketCount; i++)
 		{
-			Casket casket = CasketScene.Instantiate<Casket>();
+			Casket casket = _casketScene.Instantiate<Casket>();
 			column.AddChild(casket);
 			casket.Position = new Vector2(0, i * CasketSpacing);
 			casket.Facing = facing;
 			_allCaskets.Add(casket);
+
+			SpawnCrewInCasket(casket, crewOffset);
 		}
+	}
+
+	private void SpawnCrewInCasket(Casket casket, Vector2 crewOffset)
+	{
+		if (_crewScene == null)
+		{
+			GD.PushWarning("CrewManager: Could not load Crew.tscn.");
+			return;
+		}
+
+		Crew crew = _crewScene.Instantiate<Crew>();
+		casket.AddChild(crew);
+		crew.Facing = casket.Facing;
+		crew.SlotOffset = crewOffset;
+
+		// Set HyperSleep texture and rotation on the Sprite2D
+		if (crew.GetNodeOrNull("Sprites/Sprite2D") is Sprite2D sprite)
+		{
+			sprite.Texture = _hyperSleepTexture;
+			// LEFT = 90° counter-clockwise (-90°), RIGHT = 90° clockwise (+90°)
+			sprite.RotationDegrees = casket.Facing == CardinalDirection.Left ? 90f : -90f;
+		}
+
+		// Slot the crew into the casket
+		casket.Accept(crew);
+		crew.Position = crewOffset;
+		Register(crew);
 	}
 
 	// ---------------------------------------------------------------------------

@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3 uid="uid://c0h1ux6vbh7b8"]
 
-[ext_resource type="Script" path="res://Scripts/Components/Crew.cs" id="1_261k5"]
+[ext_resource type="Script" uid="uid://bb6djnx7yssel" path="res://Scripts/Components/Crew.cs" id="1_261k5"]
 [ext_resource type="Texture2D" uid="uid://dp6jp4skpxpi1" path="res://Assets/Characters/CrewTopDown.png" id="1_ta4m7"]
 [ext_resource type="FontFile" uid="uid://bx73bfi2nt2l6" path="res://Assets/Fonts/PressStart2P.ttf" id="3_lw7qp"]
 
@@ -11,11 +11,12 @@ script = ExtResource("1_261k5")
 
 [node name="Sprite2D" type="Sprite2D" parent="Sprites"]
 texture = ExtResource("1_ta4m7")
-centered = false
 
 [node name="Focus" type="TextureButton" parent="."]
-offset_right = 16.0
-offset_bottom = 16.0
+offset_left = -8.0
+offset_top = -8.0
+offset_right = 8.0
+offset_bottom = 8.0
 
 [node name="Tooltip" type="Node2D" parent="."]
 visible = false

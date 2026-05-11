@@ -1,19 +1,158 @@
-[gd_scene load_steps=3 format=3 uid="uid://dwn6w7t2pvk3b"]
+[gd_scene load_steps=5 format=3 uid="uid://dwn6w7t2pvk3b"]
 
-[ext_resource type="Script" path="res://Scripts/PlaySpace.cs" id="1_bvtvd"]
-[ext_resource type="Texture2D" uid="uid://beo0bt8cue4px" path="res://Assets/Backgrounds/SpaceShipGame_UI.png" id="1_vggmg"]
+[ext_resource type="Script" uid="uid://dhktcp2cgrjok" path="res://Scripts/Singletons/PlaySpace.cs" id="1_bvtvd"]
+[ext_resource type="Texture2D" uid="uid://ckfsl2gy0drw2" path="res://Assets/Backgrounds/SpaceShipGame_UI_Ship.png" id="2_n8iyk"]
+[ext_resource type="Texture2D" uid="uid://b82vkakfu3j4o" path="res://Assets/Backgrounds/SpaceShipGame_UI_Slots.png" id="3_ll70r"]
+[ext_resource type="PackedScene" uid="uid://d3lpj432rh8ox" path="res://Scenes/CrewSlot.tscn" id="3_snlng"]
 
 [node name="PlaySpace" type="Node2D"]
 script = ExtResource("1_bvtvd")
 
-[node name="SpaceShip" type="Sprite2D" parent="."]
-texture = ExtResource("1_vggmg")
+[node name="PlayerShip" type="Node2D" parent="."]
+
+[node name="Sprites" type="Node2D" parent="PlayerShip"]
+
+[node name="SpaceShip" type="Sprite2D" parent="PlayerShip/Sprites"]
+texture = ExtResource("2_n8iyk")
 centered = false
 
-[node name="Caskets" type="Node2D" parent="."]
+[node name="Slots" type="Sprite2D" parent="PlayerShip/Sprites"]
+visible = false
+texture = ExtResource("3_ll70r")
+centered = false
 
-[node name="Column1" type="Node2D" parent="Caskets"]
+[node name="Caskets" type="Node2D" parent="PlayerShip"]
+
+[node name="Column1" type="Node2D" parent="PlayerShip/Caskets"]
 position = Vector2(114, 205)
 
-[node name="Column2" type="Node2D" parent="Caskets"]
+[node name="Column2" type="Node2D" parent="PlayerShip/Caskets"]
 position = Vector2(207, 205)
+
+[node name="CrewSlots" type="Node2D" parent="PlayerShip"]
+
+[node name="CrewSlot" parent="PlayerShip/CrewSlots" instance=ExtResource("3_snlng")]
+position = Vector2(303, 44)
+Facing = 0
+
+[node name="CrewSlot2" parent="PlayerShip/CrewSlots" instance=ExtResource("3_snlng")]
+position = Vector2(321, 44)
+Facing = 0
+
+[node name="CrewSlot3" parent="PlayerShip/CrewSlots" instance=ExtResource("3_snlng")]
+position = Vector2(230, 72)
+Facing = 2
+
+[node name="CrewSlot4" parent="PlayerShip/CrewSlots" instance=ExtResource("3_snlng")]
+position = Vector2(230, 90)
+Facing = 2
+
+[node name="CrewSlot5" parent="PlayerShip/CrewSlots" instance=ExtResource("3_snlng")]
+position = Vector2(394, 71)
+Facing = 3
+
+[node name="CrewSlot6" parent="PlayerShip/CrewSlots" instance=ExtResource("3_snlng")]
+position = Vector2(394, 89)
+Facing = 3
+
+[node name="CrewSlot7" parent="PlayerShip/CrewSlots" instance=ExtResource("3_snlng")]
+position = Vector2(287, 103)
+Facing = 3
+
+[node name="CrewSlot8" parent="PlayerShip/CrewSlots" instance=ExtResource("3_snlng")]
+position = Vector2(336, 103)
+Facing = 2
+
+[node name="CrewSlot9" parent="PlayerShip/CrewSlots" instance=ExtResource("3_snlng")]
+position = Vector2(198, 127)
+Facing = 2
+
+[node name="CrewSlot10" parent="PlayerShip/CrewSlots" instance=ExtResource("3_snlng")]
+position = Vector2(198, 145)
+Facing = 2
+
+[node name="CrewSlot11" parent="PlayerShip/CrewSlots" instance=ExtResource("3_snlng")]
+position = Vector2(302, 126)
+Facing = 0
+
+[node name="CrewSlot12" parent="PlayerShip/CrewSlots" instance=ExtResource("3_snlng")]
+position = Vector2(320, 126)
+Facing = 0
+
+[node name="CrewSlot13" parent="PlayerShip/CrewSlots" instance=ExtResource("3_snlng")]
+position = Vector2(425, 127)
+Facing = 3
+
+[node name="CrewSlot14" parent="PlayerShip/CrewSlots" instance=ExtResource("3_snlng")]
+position = Vector2(425, 145)
+Facing = 3
+
+[node name="CrewSlot15" parent="PlayerShip/CrewSlots" instance=ExtResource("3_snlng")]
+position = Vector2(284, 157)
+Facing = 3
+
+[node name="CrewSlot16" parent="PlayerShip/CrewSlots" instance=ExtResource("3_snlng")]
+position = Vector2(284, 175)
+Facing = 3
+
+[node name="CrewSlot17" parent="PlayerShip/CrewSlots" instance=ExtResource("3_snlng")]
+position = Vector2(284, 193)
+Facing = 3
+
+[node name="CrewSlot18" parent="PlayerShip/CrewSlots" instance=ExtResource("3_snlng")]
+position = Vector2(284, 211)
+Facing = 3
+
+[node name="CrewSlot19" parent="PlayerShip/CrewSlots" instance=ExtResource("3_snlng")]
+position = Vector2(284, 229)
+Facing = 3
+
+[node name="CrewSlot20" parent="PlayerShip/CrewSlots" instance=ExtResource("3_snlng")]
+position = Vector2(284, 247)
+Facing = 3
+
+[node name="CrewSlot21" parent="PlayerShip/CrewSlots" instance=ExtResource("3_snlng")]
+position = Vector2(339, 157)
+Facing = 2
+
+[node name="CrewSlot22" parent="PlayerShip/CrewSlots" instance=ExtResource("3_snlng")]
+position = Vector2(339, 175)
+Facing = 2
+
+[node name="CrewSlot23" parent="PlayerShip/CrewSlots" instance=ExtResource("3_snlng")]
+position = Vector2(339, 193)
+Facing = 2
+
+[node name="CrewSlot24" parent="PlayerShip/CrewSlots" instance=ExtResource("3_snlng")]
+position = Vector2(339, 211)
+Facing = 2
+
+[node name="CrewSlot25" parent="PlayerShip/CrewSlots" instance=ExtResource("3_snlng")]
+position = Vector2(339, 229)
+Facing = 2
+
+[node name="CrewSlot26" parent="PlayerShip/CrewSlots" instance=ExtResource("3_snlng")]
+position = Vector2(339, 247)
+Facing = 2
+
+[node name="CrewSlot27" parent="PlayerShip/CrewSlots" instance=ExtResource("3_snlng")]
+position = Vector2(454, 185)
+Facing = 0
+
+[node name="CrewSlot28" parent="PlayerShip/CrewSlots" instance=ExtResource("3_snlng")]
+position = Vector2(472, 185)
+Facing = 0
+
+[node name="CrewSlot29" parent="PlayerShip/CrewSlots" instance=ExtResource("3_snlng")]
+position = Vector2(303, 284)
+
+[node name="CrewSlot30" parent="PlayerShip/CrewSlots" instance=ExtResource("3_snlng")]
+position = Vector2(321, 284)
+
+[node name="CrewSlot31" parent="PlayerShip/CrewSlots" instance=ExtResource("3_snlng")]
+position = Vector2(149, 186)
+Facing = 0
+
+[node name="CrewSlot32" parent="PlayerShip/CrewSlots" instance=ExtResource("3_snlng")]
+position = Vector2(167, 186)
+Facing = 0
