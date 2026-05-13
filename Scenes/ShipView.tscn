@@ -1,0 +1,53 @@
+[gd_scene load_steps=6 format=3 uid="uid://3ujs2n5ibnsd"]
+
+[ext_resource type="Script" uid="uid://bblhpod4bnr20" path="res://Scripts/Components/ShipPreview.cs" id="1_0b5bo"]
+[ext_resource type="Texture2D" uid="uid://bbg2be8wd0wpe" path="res://Assets/GUI/EndTurn.png" id="2_w2m75"]
+[ext_resource type="Texture2D" uid="uid://dm4idhds6mgut" path="res://Assets/GUI/EndTurnDown.png" id="3_8qyxs"]
+[ext_resource type="Texture2D" uid="uid://bj40rspdoox21" path="res://Assets/GUI/ShipPreviewBox.png" id="3_j7bvy"]
+[ext_resource type="Texture2D" uid="uid://btuvxri6u8d8m" path="res://Assets/GUI/EndTurnOver.png" id="4_x5yg0"]
+
+[node name="ShipView" type="Node2D"]
+script = ExtResource("1_0b5bo")
+
+[node name="Sprites" type="Node2D" parent="."]
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="Sprites"]
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_right = 640.0
+offset_bottom = 360.0
+grow_horizontal = 0
+scale = Vector2(0.5, 0.5)
+
+[node name="SubViewport" type="SubViewport" parent="Sprites/SubViewportContainer"]
+handle_input_locally = false
+size = Vector2i(640, 360)
+render_target_update_mode = 4
+
+[node name="Camera2D" type="Camera2D" parent="Sprites/SubViewportContainer/SubViewport"]
+position = Vector2(320, -1220)
+anchor_mode = 0
+
+[node name="EndTurnButton2" type="TextureButton" parent="Sprites/SubViewportContainer/SubViewport"]
+offset_left = 310.0
+offset_top = 168.0
+offset_right = 350.0
+offset_bottom = 184.0
+texture_normal = ExtResource("2_w2m75")
+texture_pressed = ExtResource("3_8qyxs")
+texture_hover = ExtResource("4_x5yg0")
+
+[node name="Focus" type="TextureButton" parent="Sprites"]
+visible = false
+offset_right = 640.0
+offset_bottom = 360.0
+
+[node name="ShipPreviewBox" type="Sprite2D" parent="Sprites"]
+visible = false
+texture = ExtResource("3_j7bvy")
+centered = false
+
+[connection signal="mouse_entered" from="Sprites/Focus" to="." method="_on_focus_mouse_entered"]
+[connection signal="mouse_exited" from="Sprites/Focus" to="." method="_on_focus_mouse_exited"]
+[connection signal="pressed" from="Sprites/Focus" to="." method="_on_focus_pressed"]

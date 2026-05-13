@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://bywa80gfe8nx7"]
+
+[ext_resource type="Script" uid="uid://bjqvg5mndgfko" path="res://Scripts/Singletons/ComponentManager.cs" id="1_gl507"]
+
+[node name="ComponentManager" type="Node"]
+script = ExtResource("1_gl507")

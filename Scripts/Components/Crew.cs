@@ -3,12 +3,16 @@ using Godot;
 /// <summary>
 /// A draggable crew member node. Can only be slotted into a CrewSlot.
 /// </summary>
-public partial class Crew : Node2D, IDraggable, IOrientation
+public partial class Crew : Node2D, IDraggable, IOrientation, IHealth
 {
 	public Vector2 OriginalPosition { get; set; }
 	public bool IsDragging { get; set; }
 	public bool IsHovered { get; private set; }
 	public ISlottable CurrentSlot { get; set; }
+
+	// IHealth ------------------------------------------------------------------
+	public int MaxHealth { get; private set; } = 10;
+	public int CurrentHealth { get; set; } = 10;
 
 	private Node _originalParent;
 	private Vector2 _originalLocalPosition;
@@ -21,6 +25,9 @@ public partial class Crew : Node2D, IDraggable, IOrientation
 
 	/// <summary>Whether this crew member is ready to act.</summary>
 	public bool IsReady { get; set; } = false;
+
+	/// <summary>True once this crew has been deployed via a deploy charge. Further moves are free.</summary>
+	public bool IsDeployed { get; private set; } = false;
 
 	// IOrientation --------------------------------------------------------------
 
@@ -42,6 +49,22 @@ public partial class Crew : Node2D, IDraggable, IOrientation
 
 	[Signal] public delegate void StateChangedEventHandler(int newState);
 
+	/// <summary>The data record assigned to this crew member on spawn.</summary>
+	private CrewData _data;
+	public CrewData Data
+	{
+		get => _data;
+		set
+		{
+			_data = value;
+			if (_data != null)
+			{
+				MaxHealth = _data.Health;
+				CurrentHealth = _data.Health;
+			}
+		}
+	}
+
 	private Node _tooltip;
 
 	public override void _Ready()
@@ -58,15 +81,31 @@ public partial class Crew : Node2D, IDraggable, IOrientation
 
 	public void _on_focus_pressed()
 	{
-		if (IsReady)
-			OnDragStart();
+		if (!IsReady)
+		{
+			PlayWiggle();
+			return;
+		}
+		if (!IsDeployed && !HasCrewDeploysRemaining())
+		{
+			PlayWiggle();
+			return;
+		}
+		OnDragStart();
 	}
 
 	public void _on_focus_mouse_entered()
 	{
 		IsHovered = true;
 		if (_tooltip is CanvasItem tooltipItem)
+		{
 			tooltipItem.Visible = true;
+			if (Data != null && _tooltip.GetNodeOrNull("PanelContainer/Label") is Label label)
+				label.Text = $"{Data.Name}\n{Data.Role.ToDisplayString()}";
+		}
+
+		if (Data != null)
+			ShowFocusStats(Data);
 	}
 
 	public void _on_focus_mouse_exited()
@@ -74,6 +113,37 @@ public partial class Crew : Node2D, IDraggable, IOrientation
 		IsHovered = false;
 		if (_tooltip is CanvasItem tooltipItem)
 			tooltipItem.Visible = false;
+
+		HideFocusStats();
+	}
+
+	private bool HasCrewDeploysRemaining()
+	{
+		PlaySpace ps = GetTree().Root.GetNodeOrNull("PlaySpace") as PlaySpace;
+		return ps == null || ps.CrewDeploysRemaining > 0;
+	}
+
+	private Tween _wiggleTween;
+
+	/// <summary>The local position the crew should rest at inside its current parent.</summary>
+	private Vector2 RestingLocalPosition =>
+		CurrentSlot is CrewSlot ? new Vector2(8, 8) :
+		CurrentSlot != null     ? SlotOffset :
+								  Position;
+
+	private void PlayWiggle()
+	{
+		_wiggleTween?.Kill();
+		Position = RestingLocalPosition;
+		Vector2 origin = Position;
+		const float dist = 4f;
+		const float step = 0.05f;
+		_wiggleTween = CreateTween();
+		_wiggleTween.TweenProperty(this, "position", origin + new Vector2(0, -dist), step);
+		_wiggleTween.TweenProperty(this, "position", origin + new Vector2(0, dist), step);
+		_wiggleTween.TweenProperty(this, "position", origin + new Vector2(0, -dist), step);
+		_wiggleTween.TweenProperty(this, "position", origin + new Vector2(0, dist), step);
+		_wiggleTween.TweenProperty(this, "position", origin, step);
 	}
 
 	public override void _Input(InputEvent @event)
@@ -82,8 +152,18 @@ public partial class Crew : Node2D, IDraggable, IOrientation
 		{
 			if (mouseButton.ButtonIndex == MouseButton.Left)
 			{
-				if (mouseButton.Pressed && IsHovered && IsReady)
+				if (mouseButton.Pressed && IsHovered)
 				{
+					if (!IsReady)
+					{
+						PlayWiggle();
+						return;
+					}
+					if (!IsDeployed && !HasCrewDeploysRemaining())
+					{
+						PlayWiggle();
+						return;
+					}
 					OnDragStart();
 				}
 				else if (!mouseButton.Pressed && IsDragging)
@@ -136,23 +216,31 @@ public partial class Crew : Node2D, IDraggable, IOrientation
 		}
 
 		IsDragging = true;
+		CrewSlot.HighlightAll();
 	}
 
 	public void OnDragEnd(ISlottable targetSlot)
 	{
 		IsDragging = false;
+		CrewSlot.ResetAll();
 
-		// Deploying into a CrewSlot costs a crew deploy for this turn.
-		bool isCrewSlotDeploy = targetSlot is CrewSlot;
+		// Deploying into a CrewSlot costs a crew deploy, unless already deployed this turn.
+		bool isCrewSlotDeploy = targetSlot is CrewSlot && !IsDeployed;
 		if (isCrewSlotDeploy)
 		{
 			PlaySpace ps = GetTree().Root.GetNodeOrNull("PlaySpace") as PlaySpace;
 			if (ps == null || !ps.TryUseCrewDeploy())
 				targetSlot = null; // treat as a failed drop
+			else
+				IsDeployed = true;
 		}
 
 		if (targetSlot != null && targetSlot.CanAccept(this))
 		{
+			// If moving out of a casket into a CrewSlot, mark casket label as empty
+			if (targetSlot is CrewSlot && _originalParent is Casket sourceCasket)
+				sourceCasket.SetReadyLabel("--");
+
 			// Reparent into the slot's node
 			if (targetSlot is Node slotNode && GetParent() != slotNode)
 			{
@@ -202,6 +290,10 @@ public partial class Crew : Node2D, IDraggable, IOrientation
 					sprite.RotationDegrees = Facing == CardinalDirection.Left ? 90f : -90f;
 			}
 
+			// If returning to the original casket, restore its label
+			if (_originalParent is Casket originalCasket)
+				originalCasket.SetReadyLabel("00");
+
 			// Tween back to the original parent and position over 0.25 seconds
 			if (_originalParent != null)
 			{
@@ -221,7 +313,6 @@ public partial class Crew : Node2D, IDraggable, IOrientation
 			}
 			else
 			{
-				Vector2 from = GlobalPosition;
 				Tween tween = CreateTween();
 				tween.TweenProperty(this, "global_position", OriginalPosition, 0.125)
 					 .SetTrans(Tween.TransitionType.Sine)
@@ -238,6 +329,39 @@ public partial class Crew : Node2D, IDraggable, IOrientation
 	// ---------------------------------------------------------------------------
 	// Helpers
 	// ---------------------------------------------------------------------------
+
+	private static string Stars(int value) => new string('*', Mathf.Max(value, 0));
+
+	private void ShowFocusStats(CrewData data)
+	{
+		Node root = GetTree().Root;
+		if (root.GetNodeOrNull("PlaySpace/CanvasLayer/GUI/Gameplay/Stats/CurrentFocusStats") is not CanvasItem panel)
+			return;
+
+		panel.Visible = true;
+
+		if (panel.GetNodeOrNull("Tooltip/Label") is Label label)
+		{
+			label.Text =
+				$"{data.Name}\n" +
+				$"{data.Role.ToDisplayString()}\n" +
+				$"HP:       {CurrentHealth}/{MaxHealth}\n" +
+				$"Melee:    {Stars(data.Melee)}\n" +
+				$"Repair:   {Stars(data.Repair)}\n" +
+				$"Medical:  {Stars(data.Medical)}\n" +
+				$"Weapons:  {Stars(data.Weapons)}\n" +
+				$"Piloting: {Stars(data.Piloting)}\n" +
+				$"Science:  {Stars(data.Science)}\n" +
+				$"Arcane:   {Stars(data.Arcane)}";
+		}
+	}
+
+	private void HideFocusStats()
+	{
+		Node root = GetTree().Root;
+		if (root.GetNodeOrNull("PlaySpace/CanvasLayer/GUI/Gameplay/Stats/CurrentFocusStats") is CanvasItem panel)
+			panel.Visible = false;
+	}
 
 	private bool IsMouseOver()
 	{

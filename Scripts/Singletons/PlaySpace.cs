@@ -25,7 +25,10 @@ public partial class PlaySpace : Node
 	private Vector2 _playerShipPos;
 	private Vector2 _enemyShipPos;
 	private bool _viewingEnemy = false;
-	private const float CameraPanDuration = 0.4f;
+	private const float CameraPanDuration = 0.2f;
+
+	private static readonly float[] ZoomLevels = { 0.75f, 0.5f, 0.25f };
+	private int _zoomIndex = 0;
 
 	public override void _Ready()
 	{
@@ -39,6 +42,11 @@ public partial class PlaySpace : Node
 
 		if (_camera != null) _camera.GlobalPosition = _playerShipPos;
 
+		// Share the main World2D with the sub-camera viewport so it renders scene content.
+		var subVp = GetNodeOrNull<SubViewport>("CanvasLayer/GUI/Gameplay/ShipPreviews/SubViewportContainer/SubViewport");
+		if (subVp != null)
+			subVp.World2D = GetViewport().World2D;
+
 		EnterCombat();
 		StartTurn();
 	}
@@ -51,19 +59,32 @@ public partial class PlaySpace : Node
 			return;
 		}
 
-		// Scroll wheel up  OR  W / Up arrow  → pan to enemy ship
-		bool panUp = @event.IsActionPressed("ui_up") ||
-		             (@event is InputEventKey key && !key.IsEcho() && key.Pressed &&
-		              (key.Keycode == Key.W)) ||
-		             (@event is InputEventMouseButton mb &&
-		              mb.ButtonIndex == MouseButton.WheelUp && mb.Pressed);
+		// Scroll → cycle zoom
+		if (@event is InputEventMouseButton mbZoom && mbZoom.Pressed)
+		{
+			if (mbZoom.ButtonIndex == MouseButton.WheelUp)
+			{
+				_zoomIndex = Mathf.Max(_zoomIndex - 1, 0);
+				ApplyZoom();
+				return;
+			}
+			else if (mbZoom.ButtonIndex == MouseButton.WheelDown)
+			{
+				_zoomIndex = Mathf.Min(_zoomIndex + 1, ZoomLevels.Length - 1);
+				ApplyZoom();
+				return;
+			}
+		}
 
-		// Scroll wheel down  OR  S / Down arrow → pan back to player ship
+		// W / Up arrow  → pan to enemy ship
+		bool panUp = @event.IsActionPressed("ui_up") ||
+					 (@event is InputEventKey key && !key.IsEcho() && key.Pressed &&
+					  (key.Keycode == Key.W));
+
+		// S / Down arrow → pan back to player ship
 		bool panDown = @event.IsActionPressed("ui_down") ||
-		               (@event is InputEventKey key2 && !key2.IsEcho() && key2.Pressed &&
-		                (key2.Keycode == Key.S)) ||
-		               (@event is InputEventMouseButton mb2 &&
-		                mb2.ButtonIndex == MouseButton.WheelDown && mb2.Pressed);
+					   (@event is InputEventKey key2 && !key2.IsEcho() && key2.Pressed &&
+						(key2.Keycode == Key.S));
 
 		if (panUp && !_viewingEnemy)
 			PanCameraTo(_enemyShipPos, enemy: true);
@@ -78,8 +99,15 @@ public partial class PlaySpace : Node
 
 		Tween tween = CreateTween();
 		tween.TweenProperty(_camera, "global_position", target, CameraPanDuration)
-		     .SetTrans(Tween.TransitionType.Sine)
-		     .SetEase(Tween.EaseType.InOut);
+			 .SetTrans(Tween.TransitionType.Sine)
+			 .SetEase(Tween.EaseType.InOut);
+	}
+
+	private void ApplyZoom()
+	{
+		if (_camera == null) return;
+		float z = ZoomLevels[_zoomIndex];
+		_camera.Zoom = new Vector2(z, z);
 	}
 
 	/// <summary>Connected to the End Turn button's pressed signal.</summary>
@@ -130,9 +158,9 @@ public partial class PlaySpace : Node
 	private void UpdateDeployLabels()
 	{
 		if (GetNodeOrNull("CanvasLayer/GUI/Gameplay/Stats/CrewDeploys") is Label crewLabel)
-			crewLabel.Text = $"CrDp:{CrewDeploysRemaining}";
+			crewLabel.Text = $"Crew Deploys:{CrewDeploysRemaining}";
 
 		if (GetNodeOrNull("CanvasLayer/GUI/Gameplay/Stats/CargoDeploys") is Label cargoLabel)
-			cargoLabel.Text = $"CaDp:{CargoDeploysRemaining}";
+			cargoLabel.Text = $"Cargo Deploys:{CargoDeploysRemaining}";
 	}
 }

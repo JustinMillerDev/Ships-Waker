@@ -9,14 +9,9 @@ public partial class CargoManager : Node
 {
 	public static CargoManager Instance { get; private set; }
 
-	private static readonly CargoType[] AllCargoTypes =
-	{
-		CargoType.Goods, CargoType.FirstAid, CargoType.Droid, CargoType.Ammo, CargoType.Fuel,
-	};
-
 	// Deep storage: 5 columns × 4 rows, spaced 19 px apart.
 	private const int DeepStorageCols    = 5;
-	private const int DeepStorageRows    = 4;
+	private const int DeepStorageRows    = 5;
 	private const float DeepStorageSpacing = 19f;
 
 	// Readied slots: 4 across, spaced 21 px apart.
@@ -68,7 +63,9 @@ public partial class CargoManager : Node
 				CargoSlot slot = InstantiateSlot(parent);
 				if (slot == null) continue;
 
-				slot.Position = new Vector2(col * DeepStorageSpacing, row * DeepStorageSpacing);
+				// Odd rows run right-to-left so the slots snake back and forth.
+				float x = (row % 2 == 0) ? col : (DeepStorageCols - 1 - col);
+				slot.Position = new Vector2(x * DeepStorageSpacing, row * DeepStorageSpacing);
 				slot.IsReadied = false;
 				_deepStorageSlots.Add(slot);
 
@@ -104,7 +101,26 @@ public partial class CargoManager : Node
 		Cargo cargo = _cargoScene.Instantiate<Cargo>();
 		Node container = _cargoContainer ?? (Node)slot;
 		container.AddChild(cargo);
-		cargo.CargoType = AllCargoTypes[GD.RandRange(0, AllCargoTypes.Length - 1)];
+
+		var allCargo = DataManager.Cargo?.All;
+		if (allCargo != null && allCargo.Count > 0)
+		{
+			CargoData data = allCargo[GD.RandRange(0, allCargo.Count - 1)];
+			cargo.Data = data;
+			cargo.CargoType = data.Ability switch
+			{
+				CargoAbility.Ammo     => CargoType.Ammo,
+				CargoAbility.Fuel     => CargoType.Fuel,
+				CargoAbility.Crew     => CargoType.Droid,
+				CargoAbility.FirstAid => CargoType.FirstAid,
+				_                     => CargoType.Goods,
+			};
+		}
+		else
+		{
+			cargo.CargoType = CargoType.Goods;
+		}
+
 		slot.Accept(cargo);
 		cargo.GlobalPosition = slot.GlobalPosition + new Vector2(8, 8);
 	}
@@ -119,24 +135,64 @@ public partial class CargoManager : Node
 	}
 
 	/// <summary>
-	/// Each turn every piece of cargo advances one position forward like a conveyor belt.
-	/// Slot 0 → first empty readied slot; slot N → slot N-1.
-	/// Ownership is transferred front-to-back so each freed slot is immediately
-	/// available for the cargo behind it. Tweens are staggered for a wave effect.
+	/// Each turn:
+	/// 1. Readied cargo shifts right into any open readied slot to its right.
+	/// 2. Deep-storage cargo advances forward to fill any gaps left behind.
+	/// Tweens are staggered for a wave effect; deep-storage tweens start after
+	/// the readied shift tweens finish.
 	/// </summary>
 	private void AdvanceCargoToReadiedSlot()
 	{
-		// Find the first empty readied slot once up front.
+		const float stepDelay    = 0.04f;
+		const float moveDuration = 0.2f;
+
+		float tweenDelay = 0f;
+
+		// ------------------------------------------------------------------
+		// Phase 1 – shift readied cargo right into open readied slots.
+		// Iterate right-to-left so each cargo only moves once per turn.
+		// ------------------------------------------------------------------
+		for (int i = _readiedSlots.Count - 1; i >= 0; i--)
+		{
+			CargoSlot current = _readiedSlots[i];
+			if (!current.IsOccupied) continue;
+
+			// Find the next open slot immediately to the right (one step only).
+			if (i + 1 >= _readiedSlots.Count) continue;
+			CargoSlot destination = _readiedSlots[i + 1].IsOccupied ? null : _readiedSlots[i + 1];
+
+			if (destination == null) continue;
+
+			Cargo cargo = current.OccupiedBy as Cargo;
+			if (cargo == null) continue;
+
+			current.Vacate();
+			destination.OccupiedBy = cargo;
+			cargo.CurrentSlot = destination;
+
+			Vector2 targetGlobal = destination.GlobalPosition + new Vector2(8, 8);
+			Tween tween = cargo.CreateTween();
+			tween.TweenInterval(tweenDelay);
+			tween.TweenProperty(cargo, "global_position", targetGlobal, moveDuration)
+				 .SetTrans(Tween.TransitionType.Sine)
+				 .SetEase(Tween.EaseType.Out);
+
+			tweenDelay += stepDelay;
+		}
+
+		// ------------------------------------------------------------------
+		// Phase 2 – advance deep-storage cargo into any open readied slots.
+		// Deep-storage tweens are delayed so they start after phase 1 finishes.
+		// ------------------------------------------------------------------
+		float deepStorageBaseDelay = tweenDelay + moveDuration;
+		float deepTweenDelay = deepStorageBaseDelay;
+
+		// Find the first empty readied slot.
 		CargoSlot targetReadiedSlot = null;
 		foreach (CargoSlot slot in _readiedSlots)
 		{
 			if (!slot.IsOccupied) { targetReadiedSlot = slot; break; }
 		}
-
-		// Process front-to-back. Vacating a slot immediately makes it available
-		// as the destination for the cargo one index behind it.
-		float tweenDelay = 0f;
-		const float stepDelay = 0.04f;
 
 		for (int i = 0; i < _deepStorageSlots.Count; i++)
 		{
@@ -150,23 +206,20 @@ public partial class CargoManager : Node
 				? targetReadiedSlot
 				: _deepStorageSlots[i - 1];
 
-			// Destination still occupied (e.g. readied row full) — chain breaks here.
 			if (destination == null || destination.IsOccupied) continue;
 
-			// Transfer ownership immediately so the slot behind can move into this one.
 			current.Vacate();
 			destination.OccupiedBy = cargo;
 			cargo.CurrentSlot = destination;
 
-			// Cargo stays parented under PlayerShip/Cargo — just tween its global position.
 			Vector2 targetGlobal = destination.GlobalPosition + new Vector2(8, 8);
 			Tween tween = cargo.CreateTween();
-			tween.TweenInterval(tweenDelay);
-			tween.TweenProperty(cargo, "global_position", targetGlobal, 0.2)
+			tween.TweenInterval(deepTweenDelay);
+			tween.TweenProperty(cargo, "global_position", targetGlobal, moveDuration)
 				 .SetTrans(Tween.TransitionType.Sine)
 				 .SetEase(Tween.EaseType.Out);
 
-			tweenDelay += stepDelay;
+			deepTweenDelay += stepDelay;
 		}
 	}
 

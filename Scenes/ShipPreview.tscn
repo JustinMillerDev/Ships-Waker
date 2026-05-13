@@ -1,0 +1,101 @@
+[gd_scene load_steps=9 format=3 uid="uid://cgaclau1hdxbv"]
+
+[ext_resource type="Texture2D" uid="uid://ckfsl2gy0drw2" path="res://Assets/Backgrounds/SpaceShipGame_UI_Ship.png" id="1_g6glk"]
+[ext_resource type="Script" uid="uid://bblhpod4bnr20" path="res://Scripts/Components/ShipPreview.cs" id="1_o6ret"]
+[ext_resource type="Texture2D" uid="uid://bj40rspdoox21" path="res://Assets/GUI/ShipPreviewBox.png" id="2_6menj"]
+[ext_resource type="Texture2D" uid="uid://13amtoiju662" path="res://Assets/GUI/EnemyShipPreviewBarsUnder.png" id="4_b12l8"]
+[ext_resource type="Texture2D" uid="uid://c3lcjikecgxcv" path="res://Assets/GUI/EnemyShipPreviewBarsOver.png" id="5_0q4tg"]
+[ext_resource type="Texture2D" uid="uid://bv2ms8pvnytcs" path="res://Assets/GUI/EnemyShipPreviewBarsProgressEnemy.png" id="6_ewt01"]
+[ext_resource type="FontFile" uid="uid://bx73bfi2nt2l6" path="res://Assets/Fonts/PressStart2P.ttf" id="7_ghnt6"]
+[ext_resource type="Texture2D" uid="uid://dxh5yw5v3sx4p" path="res://Assets/GUI/EnemyShipPreviewBarsProgressShields.png" id="8_d0vu3"]
+
+[node name="ShipPreview" type="Node2D"]
+script = ExtResource("1_o6ret")
+
+[node name="Sprites" type="Node2D" parent="."]
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="Sprites"]
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_right = 320.0
+offset_bottom = 180.0
+grow_horizontal = 0
+scale = Vector2(0.25, 0.25)
+
+[node name="SubViewport" type="SubViewport" parent="Sprites/SubViewportContainer"]
+handle_input_locally = false
+size = Vector2i(320, 180)
+render_target_update_mode = 4
+
+[node name="Camera2D" type="Camera2D" parent="Sprites/SubViewportContainer/SubViewport"]
+position = Vector2(320, -1220)
+anchor_mode = 0
+zoom = Vector2(0.5, 0.5)
+
+[node name="Focus" type="TextureButton" parent="Sprites"]
+offset_right = 640.0
+offset_bottom = 360.0
+
+[node name="Sprite2D" type="Sprite2D" parent="Sprites"]
+visible = false
+scale = Vector2(0.125, 0.125)
+texture = ExtResource("1_g6glk")
+centered = false
+
+[node name="ColorRect" type="ColorRect" parent="Sprites/Sprite2D"]
+z_index = -5
+offset_right = 640.0
+offset_bottom = 360.0
+mouse_filter = 2
+color = Color(0.259294, 0.259294, 0.259294, 1)
+
+[node name="ShipPreviewBox" type="Sprite2D" parent="Sprites"]
+texture = ExtResource("2_6menj")
+centered = false
+
+[node name="Bars" type="Node2D" parent="Sprites"]
+
+[node name="EnemyShipHealth" type="TextureProgressBar" parent="Sprites/Bars"]
+offset_top = 43.0
+offset_right = 80.0
+offset_bottom = 83.0
+max_value = 50.0
+value = 50.0
+texture_under = ExtResource("4_b12l8")
+texture_over = ExtResource("5_0q4tg")
+texture_progress = ExtResource("6_ewt01")
+
+[node name="Label" type="Label" parent="Sprites/Bars/EnemyShipHealth"]
+offset_right = 160.0
+offset_bottom = 16.0
+scale = Vector2(0.5, 0.5)
+theme_override_fonts/font = ExtResource("7_ghnt6")
+theme_override_font_sizes/font_size = 8
+text = "50/50"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="EnemyShipShields" type="TextureProgressBar" parent="Sprites/Bars"]
+offset_top = 50.0
+offset_right = 80.0
+offset_bottom = 90.0
+max_value = 50.0
+value = 50.0
+texture_under = ExtResource("4_b12l8")
+texture_over = ExtResource("5_0q4tg")
+texture_progress = ExtResource("8_d0vu3")
+
+[node name="Label" type="Label" parent="Sprites/Bars/EnemyShipShields"]
+offset_right = 160.0
+offset_bottom = 16.0
+scale = Vector2(0.5, 0.5)
+theme_override_fonts/font = ExtResource("7_ghnt6")
+theme_override_font_sizes/font_size = 8
+text = "50/50"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[connection signal="mouse_entered" from="Sprites/Focus" to="." method="_on_focus_mouse_entered"]
+[connection signal="mouse_exited" from="Sprites/Focus" to="." method="_on_focus_mouse_exited"]
+[connection signal="pressed" from="Sprites/Focus" to="." method="_on_focus_pressed"]

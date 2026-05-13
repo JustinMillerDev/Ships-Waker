@@ -20,6 +20,7 @@ offset_bottom = 8.0
 
 [node name="Tooltip" type="Node2D" parent="."]
 visible = false
+z_index = 5
 position = Vector2(16, 12)
 
 [node name="PanelContainer" type="PanelContainer" parent="Tooltip"]

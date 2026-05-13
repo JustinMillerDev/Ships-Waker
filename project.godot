@@ -15,9 +15,10 @@ config/features=PackedStringArray("4.4", "C#", "Forward Plus")
 
 [autoload]
 
+DataManager="*res://Scripts/Singletons/DataManager.cs"
 Crewmanager="*res://Scenes/Crewmanager.tscn"
 CargoManager="*res://Scenes/CargoManager.tscn"
-ComponentMangaer="*res://Scenes/ComponentMangaer.tscn"
+ComponentManager="*res://Scenes/ComponentManager.tscn"
 
 [display]
 

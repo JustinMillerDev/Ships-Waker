@@ -1,0 +1,56 @@
+[
+  {
+	"DataName": "Ammo",
+	"Name": "Ammo",
+	"CurrentlyWorks": true,
+	"Price": 10,
+	"Ability": "Ammo",
+	"AbilityText": "Supplys ammunition to weaons",
+	"Image": "CargoAmmo"
+  },
+  {
+	"DataName": "Jerry Can",
+	"Name": "Jerry Can",
+	"CurrentlyWorks": true,
+	"Price": 10,
+	"Ability": "Fuel",
+	"AbilityText": "Supplys fuel to components",
+	"Image": "CargoFuel"
+  },
+  {
+	"DataName": "Droid",
+	"Name": "Droid",
+	"CurrentlyWorks": true,
+	"Price": 25,
+	"Ability": "Crew",
+	"AbilityText": "Crews stations",
+	"Image": "CargoDroid",
+	"ImageTopDown": "CargoDroidTopDown",
+	"Health": 10,
+	"Melee": 1,
+	"Repair": 1,
+	"Medical": 0,
+	"Weapons": 1,
+	"Piloting": 1,
+	"Science": 1,
+	"Arcane": 0
+  },
+  {
+	"DataName": "First Aid",
+	"Name": "First Aid",
+	"CurrentlyWorks": true,
+	"Price": 10,
+	"Ability": "FirstAid",
+	"AbilityText": "Instantly heal a crew to full health",
+	"Image": "CargoFirstAid"
+  },
+  {
+	"DataName": "Goods",
+	"Name": "Goods",
+	"CurrentlyWorks": true,
+	"Price": 25,
+	"Ability": "Goods",
+	"AbilityText": "For trading at stores",
+	"Image": "CargoGoods"
+  }
+]

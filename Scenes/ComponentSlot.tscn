@@ -1,4 +1,4 @@
-[gd_scene load_steps=4 format=3 uid="uid://dukpaqw2qvycf"]
+[gd_scene load_steps=4 format=3 uid="uid://c6twj2p5ntq0u"]
 
 [ext_resource type="Texture2D" uid="uid://iqtclqvrslfq" path="res://Assets/Characters/ComponentSlot.png" id="1_bcq2f"]
 [ext_resource type="Script" uid="uid://dho1102cety0a" path="res://Scripts/Components/ShipComponentSlot.cs" id="1_qloh7"]
@@ -16,6 +16,19 @@ position = Vector2(-14, -14)
 [node name="Sprite2D" type="Sprite2D" parent="Pivot/Sprites"]
 texture = ExtResource("1_bcq2f")
 centered = false
+
+[node name="Focus" type="TextureButton" parent="Pivot"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -14.0
+offset_top = -14.0
+offset_right = 15.0
+offset_bottom = 15.0
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="Label" type="Label" parent="Pivot"]
 offset_left = -7.0
@@ -35,3 +48,7 @@ position = Vector2(12, 12)
 
 [node name="LeftExternal" type="Node2D" parent="Pivot/Anchors"]
 position = Vector2(17, 12)
+
+[connection signal="mouse_entered" from="Pivot/Focus" to="." method="_on_focus_mouse_entered"]
+[connection signal="mouse_exited" from="Pivot/Focus" to="." method="_on_focus_mouse_exited"]
+[connection signal="pressed" from="Pivot/Focus" to="." method="_on_focus_pressed"]

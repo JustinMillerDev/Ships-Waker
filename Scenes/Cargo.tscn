@@ -1,4 +1,4 @@
-[gd_scene load_steps=4 format=3 uid="uid://cktkogd2ruu8m"]
+[gd_scene load_steps=4 format=3 uid="uid://i67gpc63dgyg"]
 
 [ext_resource type="Script" uid="uid://rg5r2f5qkgyr" path="res://Scripts/Components/Cargo.cs" id="1_8nmoj"]
 [ext_resource type="Texture2D" uid="uid://bmveot12kcxrs" path="res://Assets/Characters/CargoGoods.png" id="1_far7e"]
@@ -20,6 +20,7 @@ offset_bottom = 8.0
 
 [node name="Tooltip" type="Node2D" parent="."]
 visible = false
+z_index = 5
 position = Vector2(16, 12)
 
 [node name="PanelContainer" type="PanelContainer" parent="Tooltip"]

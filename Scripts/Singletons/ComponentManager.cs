@@ -52,6 +52,7 @@ public partial class ComponentManager : Node
 
 			_slots.Add(slot);
 			UpdateSlotLabel(slot);
+			AssignSlotData(slot);
 		}
 	}
 
@@ -84,6 +85,15 @@ public partial class ComponentManager : Node
 			component.ComponentType = ShipComponentType.External;
 			component.Facing = slot.Facing;
 
+			// Assign Cannon data.
+			if (DataManager.Components != null &&
+				DataManager.Components.ByDataName.TryGetValue("Cannon", out ComponentData cannonData))
+				component.Data = cannonData;
+
+			// Hide this slot's background sprite now that it's occupied by a cannon.
+			if (slot.GetNodeOrNull("Pivot/Sprites/Sprite2D") is Sprite2D slotSprite)
+				slotSprite.Visible = false;
+
 			// Flip sprite horizontally for RIGHT-facing components.
 			if (component.GetNodeOrNull("Sprites/Sprite2D") is Sprite2D sprite)
 				sprite.FlipH = slot.Facing == CardinalDirection.Right;
@@ -100,6 +110,24 @@ public partial class ComponentManager : Node
 
 			spawned++;
 		}
+	}
+
+	private static void AssignSlotData(ShipComponentSlot slot)
+	{
+		if (DataManager.Components == null) return;
+
+		string dataName = slot.SlotType switch
+		{
+			ShipComponentType.Piloting => "Piloting",
+			ShipComponentType.Engines  => "Engines",
+			ShipComponentType.Shields  => "Shields",
+			ShipComponentType.Caskets  => "Caskets",
+			ShipComponentType.Hold     => "Hold",
+			_                          => null,
+		};
+
+		if (dataName != null && DataManager.Components.ByDataName.TryGetValue(dataName, out ComponentData data))
+			slot.Data = data;
 	}
 
 	private static void UpdateSlotLabel(ShipComponentSlot slot)

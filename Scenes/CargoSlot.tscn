@@ -1,7 +1,7 @@
-[gd_scene load_steps=3 format=3 uid="uid://dkbeyq12s7j3w"]
+[gd_scene load_steps=3 format=3 uid="uid://b4pqacwau7r01"]
 
-[ext_resource type="Texture2D" uid="uid://n7uknyw05adh" path="res://Assets/Characters/CargoSlot.png" id="1_1gya6"]
 [ext_resource type="Script" uid="uid://rleih2lghgdc" path="res://Scripts/Components/CargoSlot.cs" id="1_fspsw"]
+[ext_resource type="Texture2D" uid="uid://b2dx155op10du" path="res://Assets/Characters/CargoSlotSheet.png" id="2_fspsw"]
 
 [node name="CargoSlot" type="Node2D"]
 script = ExtResource("1_fspsw")
@@ -9,5 +9,6 @@ script = ExtResource("1_fspsw")
 [node name="Sprites" type="Node2D" parent="."]
 
 [node name="Sprite2D" type="Sprite2D" parent="Sprites"]
-texture = ExtResource("1_1gya6")
+texture = ExtResource("2_fspsw")
 centered = false
+hframes = 3

@@ -7,7 +7,7 @@ using Godot;
 /// - Fuel cargo can also slot into a FuelSlot.
 /// - Cargo can only be picked up by the player when it is sitting in a readied CargoSlot.
 /// </summary>
-public partial class Cargo : Node2D, IDraggable
+public partial class Cargo : Node2D, IDraggable, IHealth
 {
 	private CargoType _cargoType = CargoType.Goods;
 
@@ -35,8 +35,32 @@ public partial class Cargo : Node2D, IDraggable
 
 	private Node _originalParent;
 	private Vector2 _originalLocalPosition;
+	private ISlottable _originalSlot;
 
 	public bool IsHovered { get; private set; }
+
+	/// <summary>True once this cargo has been deployed via a deploy charge. Further moves are free.</summary>
+	public bool IsDeployed { get; private set; } = false;
+
+	// IHealth ------------------------------------------------------------------
+	public int MaxHealth { get; private set; } = 0;
+	public int CurrentHealth { get; set; } = 0;
+
+	/// <summary>The data record assigned to this cargo item on spawn.</summary>
+	private CargoData _data;
+	public CargoData Data
+	{
+		get => _data;
+		set
+		{
+			_data = value;
+			if (_data?.Ability == CargoAbility.Crew && _data.Health.HasValue)
+			{
+				MaxHealth = _data.Health.Value;
+				CurrentHealth = _data.Health.Value;
+			}
+		}
+	}
 
 	private Node _tooltip;
 
@@ -68,14 +92,23 @@ public partial class Cargo : Node2D, IDraggable
 
 	public void _on_focus_pressed()
 	{
-		OnDragStart();
+		// Intentionally empty: drag is initiated exclusively via _Input so that
+		// the TextureButton's "pressed" signal (which fires on mouse-UP) cannot
+		// re-trigger OnDragStart after OnDragEnd has already run.
 	}
 
 	public void _on_focus_mouse_entered()
 	{
 		IsHovered = true;
 		if (_tooltip is CanvasItem tooltipItem)
+		{
 			tooltipItem.Visible = true;
+			if (_tooltip.GetNodeOrNull("PanelContainer/Label") is Label label)
+				label.Text = Data?.Name ?? _cargoType.ToString();
+		}
+
+		if (Data != null)
+			ShowFocusStats(Data);
 	}
 
 	public void _on_focus_mouse_exited()
@@ -83,30 +116,71 @@ public partial class Cargo : Node2D, IDraggable
 		IsHovered = false;
 		if (_tooltip is CanvasItem tooltipItem)
 			tooltipItem.Visible = false;
+
+		HideFocusStats();
 	}
 
 	/// <summary>
 	/// Returns true when this cargo is allowed to be dragged.
 	/// Cargo may only be lifted from a readied CargoSlot (or when it has no slot at all).
 	/// </summary>
-	private bool IsDraggable =>
+	private bool IsSlotDraggable =>
 		CurrentSlot is null ||
+		CurrentSlot is FuelSlot ||
+		CurrentSlot is AmmoSlot ||
 		(CurrentSlot is CargoSlot cargoSlot && cargoSlot.IsReadied);
+
+	private bool HasCargoDeploysRemaining()
+	{
+		PlaySpace ps = GetTree().Root.GetNodeOrNull("PlaySpace") as PlaySpace;
+		return ps == null || ps.CargoDeploysRemaining > 0;
+	}
+
+	private Tween _wiggleTween;
+
+	private void PlayWiggle()
+	{
+		_wiggleTween?.Kill();
+		Position = _originalLocalPosition;
+		Vector2 origin = Position;
+		const float dist = 4f;
+		const float step = 0.05f;
+		_wiggleTween = CreateTween();
+		_wiggleTween.TweenProperty(this, "position", origin + new Vector2(dist, 0), step);
+		_wiggleTween.TweenProperty(this, "position", origin + new Vector2(-dist, 0), step);
+		_wiggleTween.TweenProperty(this, "position", origin + new Vector2(dist, 0), step);
+		_wiggleTween.TweenProperty(this, "position", origin + new Vector2(-dist, 0), step);
+		_wiggleTween.TweenProperty(this, "position", origin, step);
+	}
 
 	public override void _Input(InputEvent @event)
 	{
 		if (@event is InputEventMouseButton mouseButton &&
 			mouseButton.ButtonIndex == MouseButton.Left)
 		{
-			if (mouseButton.Pressed && (IsHovered || IsMouseOver()) && IsDraggable)
+			if (mouseButton.Pressed && IsHovered && IsSlotDraggable)
 			{
-				OnDragStart();
+				if (!IsDeployed && !HasCargoDeploysRemaining())
+				{
+					PlayWiggle();
+					GetViewport().SetInputAsHandled();
+				}
+				else
+				{
+					OnDragStart();
+					GetViewport().SetInputAsHandled();
+				}
 			}
 			else if (!mouseButton.Pressed && IsDragging)
 			{
 				OnDragEnd(FindSlotUnderMouse());
+				GetViewport().SetInputAsHandled();
 			}
 		}
+	}
+
+	public override void _UnhandledInput(InputEvent @event)
+	{
 	}
 
 	public override void _Process(double delta)
@@ -119,10 +193,17 @@ public partial class Cargo : Node2D, IDraggable
 
 	public void OnDragStart()
 	{
+		if (IsDragging) return;
+
 		if (CurrentSlot != null)
 		{
+			_originalSlot = CurrentSlot;
 			CurrentSlot.Vacate();
 			CurrentSlot = null;
+		}
+		else
+		{
+			_originalSlot = null;
 		}
 
 		// Reparent to the scene root so the position is not relative to a slot node.
@@ -138,18 +219,32 @@ public partial class Cargo : Node2D, IDraggable
 		}
 
 		IsDragging = true;
+		switch (_cargoType)
+		{
+			case CargoType.Droid:    CrewSlot.HighlightAll();     break;
+			case CargoType.Ammo:     AmmoSlot.HighlightAll();     break;
+			case CargoType.Fuel:     FuelSlot.HighlightAll();     break;
+			case CargoType.FirstAid: CrewSlot.HighlightOccupied(); break;
+		}
 	}
 
 	public void OnDragEnd(ISlottable targetSlot)
 	{
 		IsDragging = false;
+		CrewSlot.ResetAll();
+		AmmoSlot.ResetAll();
+		FuelSlot.ResetAll();
 
-		// Deploying cargo into any slot costs a cargo deploy for this turn.
-		if (targetSlot != null)
+		// Deploying cargo costs a deploy only when placing into a valid, different, non-readied slot
+		// and the cargo has not already been deployed this turn.
+		bool targetIsReadied = targetSlot is CargoSlot targetCs && targetCs.IsReadied;
+		if (targetSlot != null && targetSlot != _originalSlot && !targetIsReadied && !IsDeployed && targetSlot.CanAccept(this))
 		{
 			PlaySpace ps = GetTree().Root.GetNodeOrNull("PlaySpace") as PlaySpace;
 			if (ps == null || !ps.TryUseCargoDeloy())
 				targetSlot = null; // treat as a failed drop
+			else
+				IsDeployed = true;
 		}
 
 		if (targetSlot != null && targetSlot.CanAccept(this))
@@ -166,6 +261,15 @@ public partial class Cargo : Node2D, IDraggable
 		}
 		else
 		{
+			// Re-register with the original slot immediately so it is treated as occupied.
+			// We set the fields directly rather than calling Accept() to avoid teleporting
+			// the cargo before the snap-back tween has a chance to run.
+			if (_originalSlot != null)
+			{
+				_originalSlot.OccupiedBy = this;
+				CurrentSlot = _originalSlot;
+			}
+
 			// Tween back to original parent and local position.
 			if (_originalParent != null)
 			{
@@ -201,6 +305,45 @@ public partial class Cargo : Node2D, IDraggable
 
 	private Node GetCargoContainer() =>
 		GetTree().Root.GetNodeOrNull("PlaySpace/PlayerShip/Pivot/Cargo");
+
+	private void ShowFocusStats(CargoData data)
+	{
+		Node root = GetTree().Root;
+		if (root.GetNodeOrNull("PlaySpace/CanvasLayer/GUI/Gameplay/Stats/CurrentFocusStats") is not CanvasItem panel)
+			return;
+
+		panel.Visible = true;
+
+		if (panel.GetNodeOrNull("Tooltip/Label") is Label label)
+		{
+			string text = $"{data.Name}\nPrice: {data.Price}\nAbility: {data.Ability}";
+			if (!string.IsNullOrEmpty(data.AbilityText))
+				text += $"\n{data.AbilityText}";
+
+			if (MaxHealth > 0)
+			{
+				text += $"\nHP:       {CurrentHealth}/{MaxHealth}";
+				if (data.Melee.HasValue)   text += $"\nMelee:    {Stars(data.Melee.Value)}";
+				if (data.Repair.HasValue)  text += $"\nRepair:   {Stars(data.Repair.Value)}";
+				if (data.Medical.HasValue) text += $"\nMedical:  {Stars(data.Medical.Value)}";
+				if (data.Weapons.HasValue) text += $"\nWeapons:  {Stars(data.Weapons.Value)}";
+				if (data.Piloting.HasValue) text += $"\nPiloting: {Stars(data.Piloting.Value)}";
+				if (data.Science.HasValue) text += $"\nScience:  {Stars(data.Science.Value)}";
+				if (data.Arcane.HasValue)  text += $"\nArcane:   {Stars(data.Arcane.Value)}";
+			}
+
+			label.Text = text;
+		}
+	}
+
+	private void HideFocusStats()
+	{
+		Node root = GetTree().Root;
+		if (root.GetNodeOrNull("PlaySpace/CanvasLayer/GUI/Gameplay/Stats/CurrentFocusStats") is CanvasItem panel)
+			panel.Visible = false;
+	}
+
+	private static string Stars(int value) => new string('*', Mathf.Max(value, 0));
 
 	private bool IsMouseOver()
 	{

@@ -41,12 +41,12 @@ public partial class CargoSlot : Node2D, ISlottable
 
 		if (_isReadied)
 		{
-			_readyTexture ??= GD.Load<CompressedTexture2D>("res://Assets/Characters/ReadyCargoSlotSlot.png");
+			_readyTexture ??= GD.Load<CompressedTexture2D>("res://Assets/Characters/ReadyCargoSlotSheet.png");
 			sprite.Texture = _readyTexture;
 		}
 		else
 		{
-			_defaultTexture ??= GD.Load<CompressedTexture2D>("res://Assets/Characters/CargoSlot.png");
+			_defaultTexture ??= GD.Load<CompressedTexture2D>("res://Assets/Characters/CargoSlotSheet.png");
 			sprite.Texture = _defaultTexture;
 		}
 	}
@@ -64,7 +64,7 @@ public partial class CargoSlot : Node2D, ISlottable
 	/// </summary>
 	public bool CanAccept(IDraggable draggable)
 	{
-		return !IsOccupied && draggable is Cargo;
+		return draggable is Cargo && (!IsOccupied || OccupiedBy == draggable);
 	}
 
 	public void Accept(IDraggable draggable)

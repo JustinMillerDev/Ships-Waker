@@ -4,7 +4,7 @@ using Godot;
 /// A draggable ship component. Can only be slotted into a ShipComponentSlot
 /// whose SlotType matches this component's ComponentType.
 /// </summary>
-public partial class ShipComponent : Node2D, IDraggable
+public partial class ShipComponent : Node2D, IDraggable, IHealth
 {
 	/// <summary>The type of this component. Must match the target slot's SlotType.</summary>
 	[Export] public ShipComponentType ComponentType { get; set; } = ShipComponentType.Internal;
@@ -15,6 +15,10 @@ public partial class ShipComponent : Node2D, IDraggable
 	/// <summary>Half-extents of the clickable area. Adjust in the Inspector.</summary>
 	[Export] public Vector2 HalfSize { get; set; } = new Vector2(32, 32);
 
+	// IHealth ------------------------------------------------------------------
+	public int MaxHealth { get; private set; } = 10;
+	public int CurrentHealth { get; set; } = 10;
+
 	// IDraggable ----------------------------------------------------------------
 
 	public Vector2 OriginalPosition { get; set; }
@@ -22,6 +26,22 @@ public partial class ShipComponent : Node2D, IDraggable
 	public ISlottable CurrentSlot { get; set; }
 
 	public bool IsHovered { get; private set; }
+
+	/// <summary>The data record assigned to this component.</summary>
+	private ComponentData _data;
+	public ComponentData Data
+	{
+		get => _data;
+		set
+		{
+			_data = value;
+			if (_data != null)
+			{
+				MaxHealth = _data.Health;
+				CurrentHealth = _data.Health;
+			}
+		}
+	}
 
 	private Node _originalParent;
 	private Vector2 _originalLocalPosition;
@@ -57,6 +77,8 @@ public partial class ShipComponent : Node2D, IDraggable
 		IsHovered = true;
 		if (_tooltip is CanvasItem tooltipItem)
 			tooltipItem.Visible = true;
+		if (Data != null)
+			ShowFocusStats();
 	}
 
 	public void _on_focus_mouse_exited()
@@ -64,6 +86,7 @@ public partial class ShipComponent : Node2D, IDraggable
 		IsHovered = false;
 		if (_tooltip is CanvasItem tooltipItem)
 			tooltipItem.Visible = false;
+		HideFocusStats();
 	}
 
 	public override void _Input(InputEvent @event)
@@ -159,6 +182,25 @@ public partial class ShipComponent : Node2D, IDraggable
 	}
 
 	// Helpers -------------------------------------------------------------------
+
+	private void ShowFocusStats()
+	{
+		Node root = GetTree().Root;
+		if (root.GetNodeOrNull("PlaySpace/CanvasLayer/GUI/Gameplay/Stats/CurrentFocusStats") is not CanvasItem panel)
+			return;
+
+		panel.Visible = true;
+
+		if (panel.GetNodeOrNull("Tooltip/Label") is Label label)
+			label.Text = $"{Data.Name}\nHP: {CurrentHealth}/{MaxHealth}";
+	}
+
+	private void HideFocusStats()
+	{
+		Node root = GetTree().Root;
+		if (root.GetNodeOrNull("PlaySpace/CanvasLayer/GUI/Gameplay/Stats/CurrentFocusStats") is CanvasItem panel)
+			panel.Visible = false;
+	}
 
 	private bool IsMouseOver()
 	{

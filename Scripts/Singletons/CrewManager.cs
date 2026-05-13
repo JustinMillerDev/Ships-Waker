@@ -19,8 +19,10 @@ public partial class CrewManager : Node
 	/// <summary>Read-only view of every spawned casket.</summary>
 	public IReadOnlyList<Casket> AllCaskets => _allCaskets;
 
-	private const int CasketCount = 7;
+	private const int CasketCount = 8;
 	private const float CasketSpacing = 17f;
+
+	private Queue<CrewData> _unassignedCrewData;
 
 	private PackedScene _casketScene;
 	private PackedScene _crewScene;
@@ -32,6 +34,11 @@ public partial class CrewManager : Node
 		_casketScene = GD.Load<PackedScene>("res://Scenes/Casket.tscn");
 		_crewScene = GD.Load<PackedScene>("res://Scenes/Crew.tscn");
 		_hyperSleepTexture = GD.Load<CompressedTexture2D>("res://Assets/Characters/CrewFrontView.png");
+
+		_unassignedCrewData = DataManager.Crew != null
+			? new Queue<CrewData>(DataManager.Crew.All)
+			: new Queue<CrewData>();
+
 		SpawnCaskets();
 
 		Node playspace = GetTree().Root.GetNodeOrNull("PlaySpace");
@@ -101,6 +108,9 @@ public partial class CrewManager : Node
 		crew.Facing = casket.Facing;
 		crew.SlotOffset = crewOffset;
 
+		if (_unassignedCrewData != null && _unassignedCrewData.Count > 0)
+			crew.Data = _unassignedCrewData.Dequeue();
+
 		// Set HyperSleep texture and rotation on the Sprite2D
 		if (crew.GetNodeOrNull("Sprites/Sprite2D") is Sprite2D sprite)
 		{
@@ -143,7 +153,10 @@ public partial class CrewManager : Node
 			if (crew.CurrentSlot is Casket casket &&
 				casket.GetNodeOrNull("ReadyLabel") is Label label)
 			{
-				label.Text = crew.TurnsUntilReady.ToString("D2");
+				if (crew.TurnsUntilReady == 0)
+					casket.StartReadyFlicker();
+				else
+					label.Text = crew.TurnsUntilReady.ToString("D2");
 			}
 		}
 	}
@@ -180,7 +193,10 @@ public partial class CrewManager : Node
 			if (crew.CurrentSlot is Casket casket &&
 				casket.GetNodeOrNull("ReadyLabel") is Label label)
 			{
-				label.Text = values[i].ToString("D2");
+				if (values[i] == 0)
+					casket.StartReadyFlicker();
+				else
+					label.Text = values[i].ToString("D2");
 			}
 		}
 	}

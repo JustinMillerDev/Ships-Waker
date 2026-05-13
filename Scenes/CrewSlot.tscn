@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://d3lpj432rh8ox"]
 
 [ext_resource type="Script" uid="uid://xicbk70300ur" path="res://Scripts/Components/CrewSlot.cs" id="1_kryo2"]
-[ext_resource type="Texture2D" uid="uid://cucsb1dakyop6" path="res://Assets/Characters/CrewSlot.png" id="1_qv4s3"]
+[ext_resource type="Texture2D" uid="uid://drhim7u0cnedc" path="res://Assets/Characters/CrewSlotSheet.png" id="2_kryo2"]
 
 [node name="CrewSlot" type="Node2D"]
 script = ExtResource("1_kryo2")
@@ -9,5 +9,6 @@ script = ExtResource("1_kryo2")
 [node name="Sprites" type="Node2D" parent="."]
 
 [node name="Sprite2D" type="Sprite2D" parent="Sprites"]
-texture = ExtResource("1_qv4s3")
+texture = ExtResource("2_kryo2")
 centered = false
+hframes = 3
