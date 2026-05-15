@@ -1,4 +1,4 @@
-[gd_scene load_steps=4 format=3 uid="uid://dkpk5bpaeh0we"]
+[gd_scene load_steps=4 format=3 uid="uid://cqu0qnl8jshxf"]
 
 [ext_resource type="Texture2D" uid="uid://br7yqjh5taonp" path="res://Assets/Characters/Cannon.png" id="1_3eyk0"]
 [ext_resource type="Script" uid="uid://dupqd6unrqy5w" path="res://Scripts/Components/ShipComponent.cs" id="1_6fddk"]

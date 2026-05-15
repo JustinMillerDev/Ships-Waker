@@ -15,10 +15,12 @@ config/features=PackedStringArray("4.4", "C#", "Forward Plus")
 
 [autoload]
 
+CustomSignals="*res://Scripts/Singletons/CustomSignals.cs"
 DataManager="*res://Scripts/Singletons/DataManager.cs"
 Crewmanager="*res://Scenes/Crewmanager.tscn"
 CargoManager="*res://Scenes/CargoManager.tscn"
 ComponentManager="*res://Scenes/ComponentManager.tscn"
+ProjectileManager="*res://Scripts/Singletons/ProjectileManager.cs"
 
 [display]
 

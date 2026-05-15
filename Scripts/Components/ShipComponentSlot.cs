@@ -1,4 +1,5 @@
 using Godot;
+using Godot.Collections;
 
 /// <summary>
 /// A slot that accepts ShipComponent draggables whose type matches this slot's type.
@@ -13,6 +14,15 @@ public partial class ShipComponentSlot : Node2D, ISlottable
 
 	/// <summary>The orientation this component slot faces.</summary>
 	[Export] public CardinalDirection Facing { get; set; } = CardinalDirection.Down;
+
+	/// <summary>Which faction owns this slot.</summary>
+	[Export] public SlotOwner Owner { get; set; } = SlotOwner.Player;
+
+	/// <summary>Crew slots associated with this component slot.</summary>
+	[Export] public Array<CrewSlot> CrewSlots { get; set; } = new();
+
+	/// <summary>Cargo slots associated with this component.</summary>
+	[Export] public Array<CargoSlot> CargoSlots { get; set; } = new();
 
 	public override void _Ready()
 	{
@@ -42,7 +52,9 @@ public partial class ShipComponentSlot : Node2D, ISlottable
 	public void _on_focus_mouse_entered()
 	{
 		IsHovered = true;
-		if (!IsOccupied)
+		if (OccupiedBy is ShipComponent occupant)
+			occupant.ShowFocusStats();
+		else
 			ShowFocusStats();
 	}
 
@@ -112,6 +124,9 @@ public partial class ShipComponentSlot : Node2D, ISlottable
 
 		OccupiedBy = draggable;
 		draggable.CurrentSlot = this;
+
+		if (draggable is ShipComponent shipComponent)
+			shipComponent.CargoSlots = CargoSlots;
 
 		if (draggable is Node2D node2D)
 			node2D.GlobalPosition = SlotPosition;

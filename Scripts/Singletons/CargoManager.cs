@@ -102,7 +102,7 @@ public partial class CargoManager : Node
 		Node container = _cargoContainer ?? (Node)slot;
 		container.AddChild(cargo);
 
-		var allCargo = DataManager.Cargo?.All;
+		var allCargo = DataManager.Cargo?.All;		
 		if (allCargo != null && allCargo.Count > 0)
 		{
 			CargoData data = allCargo[GD.RandRange(0, allCargo.Count - 1)];
@@ -121,7 +121,8 @@ public partial class CargoManager : Node
 			cargo.CargoType = CargoType.Goods;
 		}
 
-		slot.Accept(cargo);
+		slot.OccupiedBy = cargo;
+		cargo.CurrentSlot = slot;
 		cargo.GlobalPosition = slot.GlobalPosition + new Vector2(8, 8);
 	}
 

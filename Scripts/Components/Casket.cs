@@ -15,11 +15,25 @@ public partial class Casket : Node2D, ISlottable, IOrientation
 /// <summary>The direction this casket faces.</summary>
 [Export] public CardinalDirection Facing { get; set; } = CardinalDirection.Left;
 
-private Tween _flickerTween;
+private bool _isFlickering;
+
+// Flicker period in seconds (full cycle: bright → dim → bright)
+private const double FlickerPeriod = 0.8;
 
 public override void _Ready()
 {
 UpdateSprite();
+}
+
+public override void _Process(double delta)
+{
+if (!_isFlickering) return;
+if (GetNodeOrNull("ReadyLabel") is not Label readyLabel) return;
+
+// Compute a triangle-wave alpha from the global clock so every casket is in phase.
+double phase = (Time.GetTicksMsec() / 1000.0 % FlickerPeriod) / FlickerPeriod; // 0..1
+float alpha = (float)(phase < 0.5 ? phase * 2.0 : (1.0 - phase) * 2.0);
+readyLabel.Modulate = new Color(readyLabel.Modulate, alpha);
 }
 
 private void UpdateSprite()
@@ -100,19 +114,13 @@ return;
 
 readyLabel.Text = "00";
 readyLabel.AddThemeColorOverride("font_color", new Color(0f, 1f, 0f));
-
-_flickerTween?.Kill();
-_flickerTween = CreateTween().SetLoops();
-const float halfPeriod = 0.4f;
-_flickerTween.TweenProperty(readyLabel, "modulate:a", 0f, halfPeriod);
-_flickerTween.TweenProperty(readyLabel, "modulate:a", 1f, halfPeriod);
+_isFlickering = true;
 }
 
 /// <summary>Stops the flicker, restores full opacity and default label colour.</summary>
 private void StopFlicker()
 {
-_flickerTween?.Kill();
-_flickerTween = null;
+_isFlickering = false;
 if (GetNodeOrNull("ReadyLabel") is Label readyLabel)
 {
 readyLabel.Modulate = new Color(readyLabel.Modulate, 1f);

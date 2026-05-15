@@ -1,4 +1,4 @@
-[gd_scene load_steps=3 format=3 uid="uid://b4pqacwau7r01"]
+[gd_scene load_steps=3 format=3 uid="uid://dkbeyq12s7j3w"]
 
 [ext_resource type="Script" uid="uid://rleih2lghgdc" path="res://Scripts/Components/CargoSlot.cs" id="1_fspsw"]
 [ext_resource type="Texture2D" uid="uid://b2dx155op10du" path="res://Assets/Characters/CargoSlotSheet.png" id="2_fspsw"]

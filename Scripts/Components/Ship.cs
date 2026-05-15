@@ -20,6 +20,25 @@ public partial class Ship : Node2D, IHealth
 	public int MaxHealth { get; private set; } = 50;
 	public int CurrentHealth { get; set; } = 50;
 
+	// Shields ------------------------------------------------------------------
+
+	public int MaxShields { get; private set; } = 20;
+	public int CurrentShields { get; set; } = 20;
+
+	/// <summary>
+	/// Absorbs damage from shields first, then spills into health.
+	/// Emits <see cref="CustomSignals.ShipHealthChanged"/> after applying damage.
+	/// </summary>
+	public void TakeDamage(int amount)
+	{
+		int shieldAbsorb = Mathf.Min(CurrentShields, amount);
+		CurrentShields -= shieldAbsorb;
+		int remainder = amount - shieldAbsorb;
+		if (remainder > 0)
+			CurrentHealth = Mathf.Max(0, CurrentHealth - remainder);
+		CustomSignals.Instance.EmitSignal(CustomSignals.SignalName.ShipHealthChanged, this);
+	}
+
 	// Faction ------------------------------------------------------------------
 
 	private ShipFaction _faction = ShipFaction.Player;

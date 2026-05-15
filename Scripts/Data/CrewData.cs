@@ -87,6 +87,18 @@ public class CrewData
 	[JsonPropertyName("CrewAbility")]
 	public string CrewAbility { get; set; }
 
+	public int GetStat(CrewStat stat) => stat switch
+	{
+		CrewStat.Melee    => Melee,
+		CrewStat.Repair   => Repair,
+		CrewStat.Weapons  => Weapons,
+		CrewStat.Piloting => Piloting,
+		CrewStat.Science  => Science,
+		CrewStat.Arcane   => Arcane,
+		CrewStat.Medical  => Medical,
+		_                 => 0,
+	};
+
 	[JsonPropertyName("ImageFrontView")]
 	public string ImageFrontView { get; set; }
 

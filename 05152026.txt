@@ -1,0 +1,309 @@
+Components
+	Ability tiers
+	Detect current operating crew
+		determine current operating level
+		determine current ability tier
+	Cannon
+		External
+		CrewSkill: weapons
+		type: Cannon
+		tier 0 : 0 pips
+			Inactive
+		tier 1 : 1 pip
+			6 turn cooldown
+		tier 2 : 3 pips
+			3 turn cooldown
+		tier 3 : 6 pips
+			1 turn cooldown
+		damage: 10
+		ammo: 1
+		evadable: true
+		projectiles: 1
+	Gatling
+		External
+		CrewSkill: weapons
+		type: Cannon
+		tier 0
+			Inactive
+		tier 1
+			6 turn cooldown
+		tier 2
+			3 turn cooldown
+		tier 3
+			1 turn cooldown
+		damage: 1
+		ammo: 1
+		evadable: false
+		projectiles: 8
+	Laser
+		External
+		CrewSkill: weapons
+		type: Energy
+		tier 0
+			Inactive
+		tier 1
+			6 turn cooldown
+		tier 2
+			3 turn cooldown
+		tier 3
+			1 turn cooldown
+		damage: 5
+		ammo: 0
+		evadable: false
+		projectiles: 1
+	Double Plasma
+		External
+		CrewSkill: weapons
+		type: Energy
+		tier 0
+			Inactive
+		tier 1
+			6 turn cooldown
+		tier 2
+			3 turn cooldown
+		tier 3
+			1 turn cooldown
+		damage: 5
+		ammo: 1
+		evadable: true
+		projectiles: 2
+	railgun
+		External
+		CrewSkill: weapons
+		Type: railgun
+		tier 0
+			Inactive
+		tier 1
+			12 turn cooldown
+		tier 2
+			8 turn cooldown
+		tier 3
+			4 turn cooldown
+		damage: 75
+		ammo: special - slugs
+		evadable: true
+		projectiles: 1
+	micro missiles
+		External
+		CrewSkill: weapons
+		Type: missile
+		tier 0
+			Inactive
+		tier 1
+			4 turn cooldown
+		tier 2
+			2 turn cooldown
+		tier 3
+			1 turn cooldown
+		damage: 2
+		ammo: special - missile 1
+		evadable: false
+		projectiles: 5
+	Torpedo
+		External
+		CrewSkill: weapons
+		Type: missile
+		tier 0
+			Inactive
+		tier 1
+			4 turn cooldown
+		tier 2
+			2 turn cooldown
+		tier 3
+			1 turn cooldown
+		damage: 15
+		ammo: special - missile 1
+		evadable: true
+		projectiles: 1
+
+	Shields
+		CrewSkill: science
+		tier 0
+			does not refresh
+		tier 1
+			refresh in 6 turns
+		tier 2
+			refresh in 3 turns
+		tier 3
+			refresh in 1 turn
+		tier 4
+			1.5x strength shields
+		refresh = current shields = max shields
+		max shields = base 20, increased by crew abilities and components
+	Piloting
+		CrewSkill: piloting
+		tier 0
+			no evasion
+		tier 1
+			1 tick of evasion
+		tier 2
+			2 ticks of evasion
+		tier 3
+			4 ticks of evasion
+		evasion = evade X incoming projectiles this turn
+	Engines
+		CrewSkill: arcane
+		tier 0
+			no escape velocity
+		tier 1
+			10% escape velocity per turn
+		tier 2
+			20% escape velocity per turn
+		tier 3
+			50% escape velocity per turn
+		escape = open star map, plot your next course, leave the current encounter
+			if you ESCAPE from an encounter, deep storage cargo is randomized
+	Caskets
+		CrewSkill: medical
+		tier 0
+			1 crew deploy per turn
+		tier 1
+			2 crew deploys per turn
+		tier 2
+			crew turns to ready ticks by 2 per turn
+	hold
+		CrewSkill: science (rename science to engineering?)
+		tier 0
+			1 cargo deploy per turn
+		tier 1
+			2 cargo deploys per turn
+		 	draw 2 cargo per turn
+		tier 2
+			rearrange deep storage
+	Rail gun Support Component
+		CrewSkill: science
+		Internal
+		tier 0
+			inactive
+		tier 1
+			Can use any cargo item as a rail gun slug
+		tier 2
+			Railguns cannot be evaded
+	Missile Support Component
+		CrewSkill: science
+		Internal
+		tier 0
+			inactive
+		tier 1
+			Each missile does +1 damage
+		tier 2
+			+1 missiles launched
+	Cannon Support Component
+		CrewSkill: science
+
+		Internal
+		tier 0
+			inactive
+		tier 1
+			Cannons use 50% less ammo
+		tier 2
+			Cannons ignore shields
+	Laser Support Component
+		CrewSkill: science
+		Internal
+		tier 0
+			inactive
+		tier 1
+			Lasers deal +3 damage
+		tier 2
+			Lasers deal double damage to components
+	shield science component
+		CrewSkill: science
+		Internal
+		tier 0
+			inactive
+		tier 1
+			Max shields +5
+		tier 2
+			Max shields +5
+		tier 2
+			Max shields +10
+	shield arcane component
+		CrewSkill: arcane
+		Internal
+		fuel: 5 per turn
+		tier 0
+			inactive
+		tier 1
+			Max shields +10
+		tier 2
+			Max shields +10
+		tier 2
+			Max shields +20
+	Med bay
+		CrewSkill: medical
+		Internal
+		Has two slots for injured crew
+		tier 0
+			inactive
+		tier 1
+			heal 2 per turn
+		tier 2
+			heal 5 per turn
+	Scanners
+		CrewSkill: science
+		Internal
+		tier 0
+			Inactive
+				Can target enemy ship but not components
+				can see enemy health and shields
+				can always see these even if you have no scanner component	
+		tier 1
+			can target enemy ship components
+			can see enemy ship component health
+		tier 2
+			can see enemy crew positions and health
+			can see cooldown on enemy components
+	Demonic Ritual
+		CrewSkill: arcane
+		Internal
+		tier 0
+			Inactive	
+		tier 1
+			stationed crew lose 1 health per turn
+			weapons deal 25% more damage
+		tier 2
+			stationed crew lose 2 health per turn
+			weapons deal 50% more damage
+	Oil Ritual
+		CrewSkill: arcane
+		Internal
+		Fuel: 10 per turn
+		tier 0
+			Inactive	
+		tier 1
+			gain 10% escape velocity per turn
+		tier 2
+			reduce all cooldowns by 1 per turn
+	Boarding Shuttle
+		CrewSkill: none
+		External
+		Fuel: 25 per launch
+		has 4 crew slots for boarding party (crew and droids)
+			2 cargo slots for bombs or first aid
+		when launched, attaches to enemy ship
+		cannot be evaded
+		crew can then be deployed to enemy ship stations
+			crew battles follow
+		crew deployed to the shuttle heal for 1 per turn
+		if you blow up the enemy ship, you lose all crew attached to that ship
+		can recall the boarding shuttle to your ship
+			takes 1 turn to arrive
+		what if you could place a bomb on their ship??
+		what if enemies could board and bomb your ship??
+			defuse skill - repair or science?
+			if you dont defuse the bomb, you take BEEG damage
+				anyone in that room gets blown up as well
+cargo
+	Ammo
+		has 20 rounds
+	fuel
+		has 100 oil
+	railgun slug
+		takes an entire cargo slot
+swapping
+	Cannot deploy a crew to an occupied slot
+	CAN swap 2 crew or droids deployed to crew slots
+	Cargo cannot be dropped back into a readied slot
+	Cargo CAN be dropped back into deep storage
+	Cargo CANNOT be dropped onto an occupied cargo slot

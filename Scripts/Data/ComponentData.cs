@@ -28,6 +28,16 @@ public class ComponentData
 	[JsonPropertyName("Health")]
 	public int Health { get; set; }
 
+	[JsonPropertyName("Cooldown")]
+	public int? Cooldown { get; set; }
+
+	[JsonPropertyName("Strength")]
+	public int? Strength { get; set; }
+
+	[JsonPropertyName("RequiredSkill")]
+	[JsonConverter(typeof(JsonStringEnumConverter))]
+	public CrewStat RequiredSkill { get; set; }
+
 	[JsonPropertyName("Tier0Ability")]
 	[JsonConverter(typeof(JsonStringEnumConverter))]
 	public ComponentAbility? Tier0Ability { get; set; }
@@ -42,12 +52,18 @@ public class ComponentData
 	[JsonPropertyName("Tier1Req")]
 	public int Tier1Req { get; set; }
 
+	[JsonPropertyName("Tier1Text")]
+	public string Tier1Text { get; set; }
+
 	[JsonPropertyName("Tier2Ability")]
 	[JsonConverter(typeof(JsonStringEnumConverter))]
 	public ComponentAbility? Tier2Ability { get; set; }
 
 	[JsonPropertyName("Tier2Req")]
 	public int Tier2Req { get; set; }
+
+	[JsonPropertyName("Tier2Text")]
+	public string Tier2Text { get; set; }
 
 	[JsonPropertyName("Tier3Ability")]
 	[JsonConverter(typeof(JsonStringEnumConverter))]
@@ -56,10 +72,16 @@ public class ComponentData
 	[JsonPropertyName("Tier3Req")]
 	public int Tier3Req { get; set; }
 
+	[JsonPropertyName("Tier3Text")]
+	public string Tier3Text { get; set; }
+
 	[JsonPropertyName("Tier4Ability")]
 	[JsonConverter(typeof(JsonStringEnumConverter))]
 	public ComponentAbility? Tier4Ability { get; set; }
 
 	[JsonPropertyName("Tier4Req")]
 	public int? Tier4Req { get; set; }
+
+	[JsonPropertyName("Tier4Text")]
+	public string Tier4Text { get; set; }
 }

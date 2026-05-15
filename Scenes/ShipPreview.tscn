@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://cgaclau1hdxbv"]
+[gd_scene load_steps=9 format=3 uid="uid://c4muevi83ajfg"]
 
 [ext_resource type="Texture2D" uid="uid://ckfsl2gy0drw2" path="res://Assets/Backgrounds/SpaceShipGame_UI_Ship.png" id="1_g6glk"]
 [ext_resource type="Script" uid="uid://bblhpod4bnr20" path="res://Scripts/Components/ShipPreview.cs" id="1_o6ret"]
@@ -34,8 +34,8 @@ anchor_mode = 0
 zoom = Vector2(0.5, 0.5)
 
 [node name="Focus" type="TextureButton" parent="Sprites"]
-offset_right = 640.0
-offset_bottom = 360.0
+offset_right = 80.0
+offset_bottom = 45.0
 
 [node name="Sprite2D" type="Sprite2D" parent="Sprites"]
 visible = false
@@ -67,6 +67,7 @@ texture_over = ExtResource("5_0q4tg")
 texture_progress = ExtResource("6_ewt01")
 
 [node name="Label" type="Label" parent="Sprites/Bars/EnemyShipHealth"]
+layout_mode = 0
 offset_right = 160.0
 offset_bottom = 16.0
 scale = Vector2(0.5, 0.5)
@@ -87,6 +88,7 @@ texture_over = ExtResource("5_0q4tg")
 texture_progress = ExtResource("8_d0vu3")
 
 [node name="Label" type="Label" parent="Sprites/Bars/EnemyShipShields"]
+layout_mode = 0
 offset_right = 160.0
 offset_bottom = 16.0
 scale = Vector2(0.5, 0.5)

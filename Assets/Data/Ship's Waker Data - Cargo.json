@@ -5,7 +5,8 @@
 	"CurrentlyWorks": true,
 	"Price": 10,
 	"Ability": "Ammo",
-	"AbilityText": "Supplys ammunition to weaons",
+	"AbilityValue": 10,
+	"AbilityText": "Supplys ammunition to weapons",
 	"Image": "CargoAmmo"
   },
   {
@@ -14,6 +15,7 @@
 	"CurrentlyWorks": true,
 	"Price": 10,
 	"Ability": "Fuel",
+	"AbilityValue": 100,
 	"AbilityText": "Supplys fuel to components",
 	"Image": "CargoFuel"
   },
@@ -41,6 +43,7 @@
 	"CurrentlyWorks": true,
 	"Price": 10,
 	"Ability": "FirstAid",
+	"AbilityValue": 100,
 	"AbilityText": "Instantly heal a crew to full health",
 	"Image": "CargoFirstAid"
   },
@@ -50,6 +53,7 @@
 	"CurrentlyWorks": true,
 	"Price": 25,
 	"Ability": "Goods",
+	"AbilityValue": 25,
 	"AbilityText": "For trading at stores",
 	"Image": "CargoGoods"
   }

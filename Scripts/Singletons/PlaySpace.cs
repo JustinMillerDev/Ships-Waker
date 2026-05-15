@@ -8,6 +8,7 @@ public partial class PlaySpace : Node
 
 	public event Action<int> TurnStarted;
 	public event Action<int> TurnEnded;
+	public event Action<Vector2> ZoomChanged;
 
 	// Deploy budgets (reset to 1 at the start of every turn).
 	public int CrewDeploysRemaining  { get; private set; } = 1;
@@ -29,6 +30,8 @@ public partial class PlaySpace : Node
 
 	private static readonly float[] ZoomLevels = { 0.75f, 0.5f, 0.25f };
 	private int _zoomIndex = 0;
+
+	public Vector2 CurrentZoom => new Vector2(ZoomLevels[_zoomIndex], ZoomLevels[_zoomIndex]);
 
 	public override void _Ready()
 	{
@@ -108,6 +111,7 @@ public partial class PlaySpace : Node
 		if (_camera == null) return;
 		float z = ZoomLevels[_zoomIndex];
 		_camera.Zoom = new Vector2(z, z);
+		ZoomChanged?.Invoke(_camera.Zoom);
 	}
 
 	/// <summary>Connected to the End Turn button's pressed signal.</summary>

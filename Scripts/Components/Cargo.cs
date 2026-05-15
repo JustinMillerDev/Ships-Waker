@@ -128,7 +128,8 @@ public partial class Cargo : Node2D, IDraggable, IHealth
 		CurrentSlot is null ||
 		CurrentSlot is FuelSlot ||
 		CurrentSlot is AmmoSlot ||
-		(CurrentSlot is CargoSlot cargoSlot && cargoSlot.IsReadied);
+		(CurrentSlot is CargoSlot cargoSlot && cargoSlot.IsReadied) ||
+		(CurrentSlot is CrewSlot && _cargoType == CargoType.Droid);
 
 	private bool HasCargoDeploysRemaining()
 	{
@@ -160,7 +161,8 @@ public partial class Cargo : Node2D, IDraggable, IHealth
 		{
 			if (mouseButton.Pressed && IsHovered && IsSlotDraggable)
 			{
-				if (!IsDeployed && !HasCargoDeploysRemaining())
+				bool isCrewSlotSwap = _cargoType == CargoType.Droid && CurrentSlot is CrewSlot;
+				if (!IsDeployed && !isCrewSlotSwap && !HasCargoDeploysRemaining())
 				{
 					PlayWiggle();
 					GetViewport().SetInputAsHandled();
@@ -221,9 +223,7 @@ public partial class Cargo : Node2D, IDraggable, IHealth
 		IsDragging = true;
 		switch (_cargoType)
 		{
-			case CargoType.Droid:    CrewSlot.HighlightAll();     break;
-			case CargoType.Ammo:     AmmoSlot.HighlightAll();     break;
-			case CargoType.Fuel:     FuelSlot.HighlightAll();     break;
+			case CargoType.Droid:    CrewSlot.HighlightAll();      break;
 			case CargoType.FirstAid: CrewSlot.HighlightOccupied(); break;
 		}
 	}
@@ -237,8 +237,10 @@ public partial class Cargo : Node2D, IDraggable, IHealth
 
 		// Deploying cargo costs a deploy only when placing into a valid, different, non-readied slot
 		// and the cargo has not already been deployed this turn.
+		// Droids moving between crew slots are always free (swap).
 		bool targetIsReadied = targetSlot is CargoSlot targetCs && targetCs.IsReadied;
-		if (targetSlot != null && targetSlot != _originalSlot && !targetIsReadied && !IsDeployed && targetSlot.CanAccept(this))
+		bool originIsCrewSlot = _originalSlot is CrewSlot;
+		if (targetSlot != null && targetSlot != _originalSlot && !targetIsReadied && !IsDeployed && !originIsCrewSlot && targetSlot.CanAccept(this))
 		{
 			PlaySpace ps = GetTree().Root.GetNodeOrNull("PlaySpace") as PlaySpace;
 			if (ps == null || !ps.TryUseCargoDeloy())
@@ -258,6 +260,10 @@ public partial class Cargo : Node2D, IDraggable, IHealth
 			}
 			targetSlot.Accept(this);
 			GlobalPosition = targetSlot.SlotPosition + new Vector2(8, 8);
+			if (targetSlot is CargoSlot)
+			{
+				CustomSignals.Instance.EmitSignal(CustomSignals.SignalName.CargoSlotted, this);
+			}
 		}
 		else
 		{

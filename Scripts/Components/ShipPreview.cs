@@ -13,6 +13,7 @@ public partial class ShipPreview : Node2D
 	public bool IsHovered  { get; private set; } = false;
 
 	private Node _tooltip;
+	private Ship _enemyShip;
 
 	public override void _Ready()
 	{
@@ -27,9 +28,46 @@ public partial class ShipPreview : Node2D
 
 		// Position the sub-camera on the EnemyShip in PlaySpace.
 		var camera = GetNodeOrNull<Camera2D>("Sprites/SubViewportContainer/SubViewport/Camera2D");
-		var enemyShip = GetTree().Root.GetNodeOrNull<Node2D>("PlaySpace/EnemyShip");
-		if (camera != null && enemyShip != null)
-			camera.GlobalPosition = enemyShip.GlobalPosition;
+		_enemyShip = GetTree().Root.GetNodeOrNull<Ship>("PlaySpace/EnemyShip");
+		if (camera != null && _enemyShip != null)
+			camera.GlobalPosition = _enemyShip.GlobalPosition;
+
+		CustomSignals.Instance.ShipHealthChanged += OnShipHealthChanged;
+		UpdateBars();
+	}
+
+	public override void _ExitTree()
+	{
+		CustomSignals.Instance.ShipHealthChanged -= OnShipHealthChanged;
+	}
+
+	private void OnShipHealthChanged(Ship ship)
+	{
+		if (ship == _enemyShip)
+			UpdateBars();
+	}
+
+	private void UpdateBars()
+	{
+		if (_enemyShip == null) return;
+
+		if (GetNodeOrNull<Range>("Sprites/Bars/EnemyShipHealth") is Range healthBar)
+		{
+			healthBar.MinValue = 0;
+			healthBar.MaxValue = _enemyShip.MaxHealth;
+			healthBar.Value    = _enemyShip.CurrentHealth;
+		}
+		if (GetNodeOrNull<Label>("Sprites/Bars/EnemyShipHealth/Label") is Label healthLabel)
+			healthLabel.Text = $"{_enemyShip.CurrentHealth}/{_enemyShip.MaxHealth}";
+
+		if (GetNodeOrNull<Range>("Sprites/Bars/EnemyShipShields") is Range shieldsBar)
+		{
+			shieldsBar.MinValue = 0;
+			shieldsBar.MaxValue = _enemyShip.MaxShields;
+			shieldsBar.Value    = _enemyShip.CurrentShields;
+		}
+		if (GetNodeOrNull<Label>("Sprites/Bars/EnemyShipShields/Label") is Label shieldsLabel)
+			shieldsLabel.Text = $"{_enemyShip.CurrentShields}/{_enemyShip.MaxShields}";
 	}
 
 	public void _on_focus_pressed()
@@ -65,8 +103,7 @@ public partial class ShipPreview : Node2D
 		}
 
 		// Fallback: legacy EnemyShip visibility toggle.
-		Node2D enemyShip = GetTree().Root.GetNodeOrNull<Node2D>("PlaySpace/EnemyShip");
-		if (enemyShip != null)
-			enemyShip.Visible = IsSelected;
+		if (_enemyShip != null)
+			_enemyShip.Visible = IsSelected;
 	}
 }

@@ -55,4 +55,7 @@ public class CargoData
 
 	[JsonPropertyName("AbilityText")]
 	public string AbilityText { get; set; }
+
+	[JsonPropertyName("AbilityValue")]
+	public int? AbilityValue { get; set; }
 }

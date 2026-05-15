@@ -1,4 +1,5 @@
 using Godot;
+using Godot.Collections;
 
 /// <summary>
 /// A draggable ship component. Can only be slotted into a ShipComponentSlot
@@ -15,6 +16,27 @@ public partial class ShipComponent : Node2D, IDraggable, IHealth
 	/// <summary>Half-extents of the clickable area. Adjust in the Inspector.</summary>
 	[Export] public Vector2 HalfSize { get; set; } = new Vector2(32, 32);
 
+	/// <summary>Cargo slots belonging to this component's slot, used for ammo tracking.</summary>
+	private Array<CargoSlot> _cargoSlots = new();
+	[Export]
+	public Array<CargoSlot> CargoSlots
+	{
+		get => _cargoSlots;
+		set
+		{
+			_cargoSlots = value;
+			foreach (CargoSlot slot in _cargoSlots)
+				slot.SlotChanged += OnCargoSlotChanged;
+		}
+	}
+
+	[Signal] public delegate void AmmoChangedEventHandler();
+
+	private void OnCargoSlotChanged() => EmitSignal(SignalName.AmmoChanged);
+
+	/// <summary>Turns remaining before this component can act again.</summary>
+	public int CurrentCooldown { get; set; } = 6;
+
 	// IHealth ------------------------------------------------------------------
 	public int MaxHealth { get; private set; } = 10;
 	public int CurrentHealth { get; set; } = 10;
@@ -26,6 +48,61 @@ public partial class ShipComponent : Node2D, IDraggable, IHealth
 	public ISlottable CurrentSlot { get; set; }
 
 	public bool IsHovered { get; private set; }
+
+	/// <summary>
+	/// The active ability tier determined by the current CrewSkill vs the tier
+	/// requirements defined in Data. Returns null when Data is unset.
+	/// </summary>
+	public ComponentAbility? ActiveAbility
+	{
+		get
+		{
+			if (Data == null) return null;
+			int skill = CrewSkill;
+			if (skill <= Data.Tier0Req) return Data.Tier0Ability;
+			if (skill <= Data.Tier1Req) return Data.Tier1Ability;
+			if (skill <= Data.Tier2Req) return Data.Tier2Ability;
+			if (!Data.Tier4Req.HasValue || skill <= Data.Tier3Req) return Data.Tier3Ability;
+			return Data.Tier4Ability;
+		}
+	}
+
+	/// <summary>
+	/// Sum of the relevant stat across all crew stationed in this component's slot.
+	/// </summary>
+	public int CrewSkill
+	{
+		get
+		{
+			if (Data == null || CurrentSlot is not ShipComponentSlot componentSlot)
+				return 0;
+
+			int total = 0;
+			foreach (CrewSlot crewSlot in componentSlot.CrewSlots)
+			{
+				if (crewSlot.OccupiedBy is Crew crew && crew.Data != null)
+					total += crew.Data.GetStat(Data.RequiredSkill);
+			}
+			return total;
+		}
+	}
+
+	/// <summary>
+	/// Total ammo from all Ammo-ability cargo slotted in this component's CargoSlots.
+	/// </summary>
+	public int Ammo
+	{
+		get
+		{
+			int total = 0;
+			foreach (CargoSlot cargoSlot in _cargoSlots)
+			{
+				if (cargoSlot.OccupiedBy is Cargo cargo && cargo.Data?.Ability == CargoAbility.Ammo)
+					total += cargo.Data.AbilityValue ?? 0;
+			}
+			return total;
+		}
+	}
 
 	/// <summary>The data record assigned to this component.</summary>
 	private ComponentData _data;
@@ -53,6 +130,22 @@ public partial class ShipComponent : Node2D, IDraggable, IHealth
 		_tooltip = GetNodeOrNull("Tooltip");
 		if (_tooltip is CanvasItem tooltipItem)
 			tooltipItem.Visible = false;
+
+		if (GetTree().Root.GetNodeOrNull("PlaySpace") is PlaySpace ps)
+			ps.TurnEnded += OnEndOfTurn;
+	}
+
+	public override void _ExitTree()
+	{
+		if (GetTree().Root.GetNodeOrNull("PlaySpace") is PlaySpace ps)
+			ps.TurnEnded -= OnEndOfTurn;
+	}
+
+	/// <summary>Called at the end of every turn. Triggers the active ability.</summary>
+	private void OnEndOfTurn(int turn)
+	{
+		if (ActiveAbility is not ComponentAbility ability) return;
+		ComponentAbilityRegistry.Instance.EndOfTurnExecute(ability, this);
 	}
 
 	// ---------------------------------------------------------------------------
@@ -183,7 +276,7 @@ public partial class ShipComponent : Node2D, IDraggable, IHealth
 
 	// Helpers -------------------------------------------------------------------
 
-	private void ShowFocusStats()
+	public void ShowFocusStats()
 	{
 		Node root = GetTree().Root;
 		if (root.GetNodeOrNull("PlaySpace/CanvasLayer/GUI/Gameplay/Stats/CurrentFocusStats") is not CanvasItem panel)
@@ -192,7 +285,16 @@ public partial class ShipComponent : Node2D, IDraggable, IHealth
 		panel.Visible = true;
 
 		if (panel.GetNodeOrNull("Tooltip/Label") is Label label)
-			label.Text = $"{Data.Name}\nHP: {CurrentHealth}/{MaxHealth}";
+		{
+			string maxCooldown = Data.Cooldown.HasValue ? Data.Cooldown.Value.ToString() : "?";
+			string text = $"{Data.Name}\nHP: {CurrentHealth}/{MaxHealth}\nCooldown: {CurrentCooldown}/{maxCooldown}\nRequired Skill: {Data.RequiredSkill}\nCurrent Skill: {new string('*', CrewSkill)}";
+			text += $"\nTier 1: {new string('*', Data.Tier1Req)}\n{Data.Tier1Text}";
+			text += $"\nTier 2: {new string('*', Data.Tier2Req)}\n{Data.Tier2Text}";
+			text += $"\nTier 3: {new string('*', Data.Tier3Req)}\n{Data.Tier3Text}";
+			if (Data.Tier4Req.HasValue)
+				text += $"\nTier 4: {new string('*', Data.Tier4Req.Value)}\n{Data.Tier4Text}";
+			label.Text = text;
+		}
 	}
 
 	private void HideFocusStats()

@@ -23,6 +23,7 @@ public partial class ComponentManager : Node
 		Instance = this;
 		_shipComponentScene = GD.Load<PackedScene>("res://Scenes/Component.tscn");
 		CollectSlots();
+		UpdateWorldSlotLabels();
 		SpawnInitialExternalComponents();
 	}
 
@@ -39,20 +40,45 @@ public partial class ComponentManager : Node
 			return;
 		}
 
-		Node container = playspace.GetNodeOrNull("PlayerShip/Pivot/ComponentSlots");
-		if (container == null)
+		Node shipViews = playspace.GetNodeOrNull("CanvasLayer/GUI/Gameplay/ShipViews");
+		if (shipViews == null)
 		{
-			GD.PushWarning("ComponentManager: Could not find PlayerShip/Pivot/ComponentSlots node.");
+			GD.PushWarning("ComponentManager: Could not find CanvasLayer/GUI/Gameplay/ShipViews node.");
 			return;
 		}
 
-		foreach (Node child in container.GetChildren())
+		foreach (Node shipView in shipViews.GetChildren())
 		{
-			if (child is not ShipComponentSlot slot) continue;
+			Node container = shipView.GetNodeOrNull("ShipGUI/ComponentSlots");
+			if (container == null) continue;
 
-			_slots.Add(slot);
-			UpdateSlotLabel(slot);
-			AssignSlotData(slot);
+			foreach (Node child in container.GetChildren())
+			{
+				if (child is not ShipComponentSlot slot) continue;
+
+				_slots.Add(slot);
+				UpdateSlotLabel(slot);
+				AssignSlotData(slot);
+			}
+		}
+	}
+
+	// Updates labels on world-space ComponentSlots for every ship in the PlaySpace.
+	private void UpdateWorldSlotLabels()
+	{
+		Node playspace = GetTree().Root.GetNodeOrNull("PlaySpace");
+		if (playspace == null) return;
+
+		foreach (Node ship in playspace.GetChildren())
+		{
+			Node container = ship.GetNodeOrNull("Pivot/ComponentSlots");
+			if (container == null) continue;
+
+			foreach (Node child in container.GetChildren())
+			{
+				if (child is ShipComponentSlot slot)
+					UpdateSlotLabel(slot);
+			}
 		}
 	}
 
@@ -72,6 +98,18 @@ public partial class ComponentManager : Node
 		{
 			GD.PushWarning("ComponentManager: Could not find PlayerShip/Pivot/Components node.");
 			return;
+		}
+
+		// Collect world-space slots from PlaySpace — their anchor GlobalPositions are valid world coords.
+		var worldSlots = new List<ShipComponentSlot>();
+		Node psSlotContainer = playspace.GetNodeOrNull("PlayerShip/Pivot/ComponentSlots");
+		if (psSlotContainer != null)
+		{
+			foreach (Node child in psSlotContainer.GetChildren())
+			{
+				if (child is ShipComponentSlot ws)
+					worldSlots.Add(ws);
+			}
 		}
 
 		int spawned = 0;
@@ -100,13 +138,27 @@ public partial class ComponentManager : Node
 
 			slot.Accept(component);
 
-			// Position using the slot's directional anchor node.
+			// Use the world-space PlaySpace slot's anchor for correct world positioning.
+			// Match by SlotType + Facing to find the corresponding world-space slot.
 			string anchorPath = slot.Facing == CardinalDirection.Right
 				? "Pivot/Anchors/RightExternal"
 				: "Pivot/Anchors/LeftExternal";
-			component.GlobalPosition = slot.GetNodeOrNull(anchorPath) is Node2D anchor
-				? anchor.GlobalPosition
-				: slot.GlobalPosition;
+
+			ShipComponentSlot worldSlot = worldSlots.Find(
+				ws => ws.SlotType == ShipComponentType.External && ws.Facing == slot.Facing && !ws.IsOccupied);
+
+			if (worldSlot != null)
+			{
+				worldSlot.Accept(component); // mark world slot occupied so the next one isn't reused
+				component.GlobalPosition = worldSlot.GetNodeOrNull(anchorPath) is Node2D anchor
+					? anchor.GlobalPosition
+					: worldSlot.GlobalPosition;
+			}
+			else
+			{
+				// Fallback: place at the component container's origin
+				component.GlobalPosition = componentContainer is Node2D cn ? cn.GlobalPosition : Vector2.Zero;
+			}
 
 			spawned++;
 		}

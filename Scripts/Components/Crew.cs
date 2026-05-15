@@ -16,6 +16,7 @@ public partial class Crew : Node2D, IDraggable, IOrientation, IHealth
 
 	private Node _originalParent;
 	private Vector2 _originalLocalPosition;
+	private bool _wasInCrewSlot;
 
 	/// <summary>Local position offset applied whenever this crew is slotted into a casket.</summary>
 	public Vector2 SlotOffset { get; set; } = Vector2.Zero;
@@ -188,6 +189,7 @@ public partial class Crew : Node2D, IDraggable, IOrientation, IHealth
 
 	public void OnDragStart()
 	{
+		_wasInCrewSlot = CurrentSlot is CrewSlot;
 		// Vacate the current slot before lifting the piece
 		if (CurrentSlot != null)
 		{
@@ -241,14 +243,26 @@ public partial class Crew : Node2D, IDraggable, IOrientation, IHealth
 			if (targetSlot is CrewSlot && _originalParent is Casket sourceCasket)
 				sourceCasket.SetReadyLabel("--");
 
-			// Reparent into the slot's node
-			if (targetSlot is Node slotNode && GetParent() != slotNode)
+			// Crew always lives under PlayerShip/Pivot/Crew; other draggables are parented to their slot
+			if (targetSlot is CrewSlot)
+			{
+				Node crewContainer = GetTree().Root.GetNodeOrNull("PlaySpace/PlayerShip/Pivot/Crew");
+				if (crewContainer != null && GetParent() != crewContainer)
+				{
+					GetParent().RemoveChild(this);
+					crewContainer.AddChild(this);
+				}
+			}
+			else if (targetSlot is Node slotNode && GetParent() != slotNode)
 			{
 				GetParent().RemoveChild(this);
 				slotNode.AddChild(this);
 			}
 			targetSlot.Accept(this);
-			Position = targetSlot is CrewSlot ? new Vector2(8, 8) : SlotOffset;
+			if (targetSlot is CrewSlot)
+				Position += new Vector2(8, 8);
+			else
+				Position = SlotOffset;
 
 			// CrewSlot.Accept already sets the correct rotation; restore top-down texture too
 			if (targetSlot is CrewSlot)
@@ -268,7 +282,7 @@ public partial class Crew : Node2D, IDraggable, IOrientation, IHealth
 		else
 		{
 			// If returning to a CrewSlot, restore top-down texture and correct rotation
-			if (_originalParent is CrewSlot)
+			if (_wasInCrewSlot)
 			{
 				if (GetNodeOrNull("Sprites/Sprite2D") is Sprite2D sprite)
 				{
@@ -290,9 +304,14 @@ public partial class Crew : Node2D, IDraggable, IOrientation, IHealth
 					sprite.RotationDegrees = Facing == CardinalDirection.Left ? 90f : -90f;
 			}
 
-			// If returning to the original casket, restore its label
+			// If returning to the original casket, restore its label (resume flicker if crew was ready)
 			if (_originalParent is Casket originalCasket)
-				originalCasket.SetReadyLabel("00");
+			{
+				if (IsReady)
+					originalCasket.StartReadyFlicker();
+				else
+					originalCasket.SetReadyLabel("00");
+			}
 
 			// Tween back to the original parent and position over 0.25 seconds
 			if (_originalParent != null)

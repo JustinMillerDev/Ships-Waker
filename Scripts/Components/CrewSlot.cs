@@ -83,7 +83,9 @@ public partial class CrewSlot : Node2D, ISlottable, IOrientation
 		_occupiedOnly = false;
 		_hoveredSlot = null;
 		foreach (var slot in _allSlots)
+		{
 			slot.SetFrame(FrameHighlight);
+		}
 	}
 
 	/// <summary>Highlights only occupied slots (e.g. for first aid targeting crew).</summary>
@@ -93,7 +95,9 @@ public partial class CrewSlot : Node2D, ISlottable, IOrientation
 		_occupiedOnly = true;
 		_hoveredSlot = null;
 		foreach (var slot in _allSlots)
+		{
 			slot.SetFrame(slot.IsOccupied ? FrameHighlight : FrameBase);
+		}
 	}
 
 	/// <summary>Returns all slots to their base frame when a drag ends.</summary>
@@ -103,7 +107,9 @@ public partial class CrewSlot : Node2D, ISlottable, IOrientation
 		_occupiedOnly = false;
 		_hoveredSlot = null;
 		foreach (var slot in _allSlots)
+		{
 			slot.SetFrame(FrameBase);
+		}
 	}
 
 	// ISlottable ----------------------------------------------------------------
@@ -140,6 +146,7 @@ public partial class CrewSlot : Node2D, ISlottable, IOrientation
 		// Match crew orientation and update texture
 		if (draggable is Crew crew)
 		{
+			CustomSignals.Instance.EmitSignal(CustomSignals.SignalName.CrewSlotted, crew);
 			crew.Facing = Facing;
 
 			_topDownTexture ??= GD.Load<CompressedTexture2D>("res://Assets/Characters/CrewTopDown.png");

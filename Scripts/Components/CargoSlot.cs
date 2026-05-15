@@ -9,6 +9,9 @@ public partial class CargoSlot : Node2D, ISlottable
 	/// <summary>Half-extents of the slot's drop area. Adjust in the Inspector.</summary>
 	[Export] public Vector2 HalfSize { get; set; } = new Vector2(32, 32);
 
+	/// <summary>The purpose of this cargo slot.</summary>
+	[Export] public CargoSlotType SlotType { get; set; } = CargoSlotType.Unreadied;
+
 	private static CompressedTexture2D _readyTexture;
 	private static CompressedTexture2D _defaultTexture;
 
@@ -55,16 +58,23 @@ public partial class CargoSlot : Node2D, ISlottable
 
 	public Vector2 SlotPosition => GlobalPosition;
 
+	[Signal] public delegate void SlotChangedEventHandler();
+
 	public IDraggable OccupiedBy { get; set; }
 
 	public bool IsOccupied => OccupiedBy != null;
 
 	/// <summary>
-	/// Accepts any Cargo draggable when the slot is free.
+	/// Accepts cargo according to SlotType rules:
+	/// Component slots accept only Ammo or Fuel; all other slots reject Ammo and Fuel.
 	/// </summary>
 	public bool CanAccept(IDraggable draggable)
 	{
-		return draggable is Cargo && (!IsOccupied || OccupiedBy == draggable);
+		if (draggable is not Cargo cargo) return false;
+		if (IsOccupied && OccupiedBy != draggable) return false;
+		return SlotType == CargoSlotType.Component
+			? cargo.CargoType == CargoType.Ammo || cargo.CargoType == CargoType.Fuel
+			: cargo.CargoType != CargoType.Ammo && cargo.CargoType != CargoType.Fuel;
 	}
 
 	public void Accept(IDraggable draggable)
@@ -77,6 +87,8 @@ public partial class CargoSlot : Node2D, ISlottable
 
 		if (draggable is Node2D node2D)
 			node2D.GlobalPosition = SlotPosition;
+
+		EmitSignal(SignalName.SlotChanged);
 	}
 
 	public void Vacate()
@@ -85,6 +97,7 @@ public partial class CargoSlot : Node2D, ISlottable
 		{
 			OccupiedBy.CurrentSlot = null;
 			OccupiedBy = null;
+			EmitSignal(SignalName.SlotChanged);
 		}
 	}
 
