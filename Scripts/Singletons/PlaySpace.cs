@@ -37,6 +37,12 @@ public partial class PlaySpace : Node
 	private static readonly float[] ZoomLevels = { 0.75f, 0.5f };
 	private int _zoomIndex = 0;
 
+	// Saved default position of CanvasLayer/EnemyShipUI/TargetIndicator (from scene).
+	private static readonly Vector2 _targetIndicatorDefaultPosition = new Vector2(482f, 104f);
+
+	// Combat range ----------------------------------------------------------
+	public CombatRange CurrentRange { get; private set; } = CombatRange.Mid;
+
 	public Vector2 CurrentZoom => new Vector2(ZoomLevels[_zoomIndex], ZoomLevels[_zoomIndex]);
 
 	public override void _Ready()
@@ -118,6 +124,59 @@ public partial class PlaySpace : Node
 		// S → pan back to player ship
 		if (@event is InputEventKey sKey && !sKey.IsEcho() && sKey.Pressed && sKey.Keycode == Key.S && _viewingEnemy)
 			PanCameraTo(_playerShipPos, enemy: false);
+
+		// Debug range controls
+		if (@event.IsActionPressed("ui_debug_0"))
+		{
+			foreach (var slot in ComponentManager.Instance.Slots)
+			{
+				if (slot.OccupiedBy is ShipComponent sc && sc.Data?.Cooldown.HasValue == true)
+				{
+					sc.CurrentCooldown = 0;
+					CustomSignals.Instance.EmitSignal(CustomSignals.SignalName.CooldownReduced, sc);
+				}
+			}
+		}
+		if (@event.IsActionPressed("ui_debug_9")) SetRange(CombatRange.Mid);
+		if (@event.IsActionPressed("ui_debug_8")) SetRange(CombatRange.Long);
+	}
+
+	public void SetRange(CombatRange range)
+	{
+		CurrentRange = range;
+		UpdateRangeLabel();
+		UpdateEnemyShip24Scale();
+	}
+
+	/// <summary>Builds the range label text, marking the active range with ***.</summary>
+	public string BuildRangeLabelText(CombatRange range)
+	{
+		static string Mark(string name, CombatRange value, CombatRange current)
+			=> value == current ? $"*** {name} ***" : name;
+
+		return $"{Mark("Long", CombatRange.Long, range)}\n{Mark("Mid", CombatRange.Mid, range)}\n{Mark("Close", CombatRange.Close, range)}";
+	}
+
+	private void UpdateRangeLabel()
+	{
+		var label = GetNodeOrNull<Label>("CanvasLayer/GUI/Gameplay/Stats/RangeIndicator/ColorRect/Label");
+		if (label != null)
+			label.Text = BuildRangeLabelText(CurrentRange);
+	}
+
+	private void UpdateEnemyShip24Scale()
+	{
+		var sprite = GetNodeOrNull<Sprite2D>("Camera2D/EnemyShip24/Pivot/Sprites/Sprite2D2");
+		if (sprite == null) return;
+
+		float s = CurrentRange switch
+		{
+			CombatRange.Long  => 0.05f,
+			CombatRange.Mid   => 0.10f,
+			CombatRange.Close => 0.20f,
+			_                 => sprite.Scale.X,
+		};
+		sprite.Scale = new Vector2(s, s);
 	}
 
 	private void PanCameraTo(Vector2 target, bool enemy)
@@ -184,6 +243,13 @@ public partial class PlaySpace : Node
 		float z = ZoomLevels[_zoomIndex];
 		_camera.Zoom = new Vector2(z, z);
 		ZoomChanged?.Invoke(_camera.Zoom);
+
+		// When zoom is 0.75 move TargetIndicator to its adjusted position; otherwise restore default.
+		var targetIndicator = GetNodeOrNull<Node2D>("CanvasLayer/GUI/Gameplay/EnemyShipUI/TargetIndicator");
+		if (targetIndicator != null)
+			targetIndicator.Position = Mathf.IsEqualApprox(z, 0.75f)
+				? new Vector2(560f, 77f)
+				: _targetIndicatorDefaultPosition;
 	}
 
 	/// <summary>Connected to the End Turn button's pressed signal.</summary>
@@ -229,6 +295,11 @@ public partial class PlaySpace : Node
 		CrewDeploysRemaining  = 1;
 		CargoDeploysRemaining = 1;
 		UpdateDeployLabels();
+
+		int enemyRangeIndex = GD.RandRange(0, 2);
+		if (CustomSignals.Instance != null)
+			CustomSignals.Instance.EmitSignal(CustomSignals.SignalName.EnemyRangeSelected, enemyRangeIndex);
+
 		TurnStarted?.Invoke(CurrentTurn);
 	}
 

@@ -116,9 +116,15 @@ public partial class ShipComponent : Node2D, IDraggable, IHealth
 			{
 				MaxHealth = _data.Health;
 				CurrentHealth = _data.Health;
+				CurrentStrength = _data.Strength ?? 0;
 			}
 		}
 	}
+
+	/// <summary>Runtime strength, initialised from Data and updated by ability tier changes.</summary>
+	public int CurrentStrength { get; private set; }
+
+	private ComponentAbility? _lastKnownAbility;
 
 	private Node _originalParent;
 	private Vector2 _originalLocalPosition;
@@ -133,12 +139,45 @@ public partial class ShipComponent : Node2D, IDraggable, IHealth
 
 		if (GetTree().Root.GetNodeOrNull("PlaySpace") is PlaySpace ps)
 			ps.TurnEnded += OnEndOfTurn;
+
+		if (CustomSignals.Instance != null)
+			CustomSignals.Instance.CrewSlotted += OnCrewSlotted;
 	}
 
 	public override void _ExitTree()
 	{
 		if (GetTree().Root.GetNodeOrNull("PlaySpace") is PlaySpace ps)
 			ps.TurnEnded -= OnEndOfTurn;
+
+		if (CustomSignals.Instance != null)
+			CustomSignals.Instance.CrewSlotted -= OnCrewSlotted;
+	}
+
+	private void OnCrewSlotted(Crew _) => RefreshEngineStrength();
+
+	/// <summary>
+	/// If this is an Engines component and the active ability tier has changed,
+	/// updates CurrentStrength to match the new tier.
+	/// </summary>
+	private void RefreshEngineStrength()
+	{
+		if (ComponentType != ShipComponentType.Engines) return;
+
+		ComponentAbility? ability = ActiveAbility;
+		if (ability == _lastKnownAbility) return;
+		_lastKnownAbility = ability;
+
+		CurrentStrength = ability switch
+		{
+			ComponentAbility.NoSpeed     => 0,
+			ComponentAbility.LowSpeed    => 1,
+			ComponentAbility.MediumSpeed => 2,
+			ComponentAbility.HighSpeed   => 3,
+			_                            => CurrentStrength,
+		};
+
+		if (CustomSignals.Instance != null)
+			CustomSignals.Instance.EmitSignal(CustomSignals.SignalName.EngineStrengthChanged, CurrentStrength);
 	}
 
 	/// <summary>Called at the end of every turn. Triggers the active ability.</summary>
@@ -286,8 +325,12 @@ public partial class ShipComponent : Node2D, IDraggable, IHealth
 
 		if (panel.GetNodeOrNull("Tooltip/Label") is Label label)
 		{
-			string maxCooldown = Data.Cooldown.HasValue ? Data.Cooldown.Value.ToString() : "?";
-			string text = $"{Data.Name}\nHP: {CurrentHealth}/{MaxHealth}\nCooldown: {CurrentCooldown}/{maxCooldown}\nRequired Skill: {Data.RequiredSkill}\nCurrent Skill: {new string('*', CrewSkill)}";
+			string text = $"{Data.Name}\nHP: {CurrentHealth}/{MaxHealth}";
+			if (Data.Cooldown.HasValue)
+				text += $"\nCooldown: {CurrentCooldown}/{Data.Cooldown.Value}";
+			if (ComponentType == ShipComponentType.Engines)
+				text += $"\nStrength: {CurrentStrength}";
+			text += $"\nRequired Skill: {Data.RequiredSkill}\nCurrent Skill: {new string('*', CrewSkill)}";
 			text += $"\nTier 1: {new string('*', Data.Tier1Req)}\n{Data.Tier1Text}";
 			text += $"\nTier 2: {new string('*', Data.Tier2Req)}\n{Data.Tier2Text}";
 			text += $"\nTier 3: {new string('*', Data.Tier3Req)}\n{Data.Tier3Text}";

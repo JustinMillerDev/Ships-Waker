@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Godot;
 
 /// <summary>
@@ -6,6 +7,11 @@ using Godot;
 /// </summary>
 public partial class Projectile : Node2D
 {
+	private const int TrailLength = 24;
+	private const int AttackTrailLength = 8;
+
+	private int _activeTrailLength = TrailLength;
+
 	/// <summary>The component that fired this projectile.</summary>
 	public ShipComponent Source { get; set; }
 
@@ -25,6 +31,60 @@ public partial class Projectile : Node2D
 	public Vector2 ImpactPosition =>
 		TargetComponent != null ? TargetComponent.GlobalPosition : TargetShip.GlobalPosition;
 
+	private Line2D _trail;
+	private readonly Queue<Vector2> _trailPoints = new();
+	private bool _draining;
+
+	public override void _Ready()
+	{
+		_trail = new Line2D
+		{
+			TopLevel     = true,   // world-space coordinates, unaffected by parent transform
+			Width        = 3f,
+			DefaultColor = new Color(1f, 0.85f, 0.3f, 0.7f),
+			Gradient     = BuildTrailGradient(),
+		};
+		AddChild(_trail);
+	}
+
+	public override void _Process(double delta)
+	{
+		if (_draining)
+		{
+			if (_trailPoints.Count > 0)
+				_trailPoints.Dequeue();
+
+			if (_trailPoints.Count == 0)
+			{
+				QueueFree();
+				return;
+			}
+
+			_trail.Points = [.. _trailPoints];
+			return;
+		}
+
+		_trailPoints.Enqueue(GlobalPosition);
+		if (_trailPoints.Count > _activeTrailLength)
+			_trailPoints.Dequeue();
+
+		_trail.Points = [.. _trailPoints];
+	}
+
+	/// <summary>Clears the trail history. Call this after a teleport to avoid a streak.</summary>
+	public void ClearTrail()
+	{
+		_trailPoints.Clear();
+		_trail.Points = [];
+	}
+
+	/// <summary>Switches to a shorter, skinnier trail for the attack run (stage 2).</summary>
+	public void SetAttackTrail()
+	{
+		_activeTrailLength = AttackTrailLength;
+		_trail.Width = 1.5f;
+	}
+
 	/// <summary>Called by ProjectileManager after the tween completes.</summary>
 	public void OnImpact()
 	{
@@ -36,6 +96,18 @@ public partial class Projectile : Node2D
 			GD.Print($"{Source?.Name ?? "Projectile"} dealt {Damage} damage to {TargetShip.Name}. HP: {TargetShip.CurrentHealth}/{TargetShip.MaxHealth}  Shields: {TargetShip.CurrentShields}/{TargetShip.MaxShields}");
 		}
 
-		QueueFree();
+		// Hide the sprite so only the trail remains visible.
+		GetNodeOrNull<Node2D>("Pivot")?.Hide();
+
+		// Drain the trail tail-first toward the impact point, then free.
+		_draining = true;
+	}
+
+	private static Gradient BuildTrailGradient()
+	{
+		var gradient = new Gradient();
+		gradient.SetColor(1, new Color(1f, 0.85f, 0.3f, 0.9f)); // bright tail
+		gradient.SetColor(0, new Color(1f, 0.4f,  0.1f, 0f));   // transparent head
+		return gradient;
 	}
 }

@@ -16,7 +16,7 @@ public interface IComponentAbilityStrategy
 // ---------------------------------------------------------------------------
 
 public sealed class BaseEvasionStrategy      : IComponentAbilityStrategy { public void EndOfTurnExecute(ShipComponent c) => GD.Print($"{c.Name}: BaseEvasion end-of-turn.");    public void OnFireExecute(ShipComponent c) => GD.Print($"{c.Name}: BaseEvasion fired."); }
-public sealed class BaseEscapeStrategy       : IComponentAbilityStrategy { public void EndOfTurnExecute(ShipComponent c) => GD.Print($"{c.Name}: BaseEscape end-of-turn.");     public void OnFireExecute(ShipComponent c) => GD.Print($"{c.Name}: BaseEscape fired."); }
+public sealed class NoSpeedStrategy        : IComponentAbilityStrategy { public void EndOfTurnExecute(ShipComponent c) => GD.Print($"{c.Name}: BaseSpeed end-of-turn.");     public void OnFireExecute(ShipComponent c) => GD.Print($"{c.Name}: BaseSpeed fired."); }
 public sealed class BaseShieldsStrategy      : IComponentAbilityStrategy { public void EndOfTurnExecute(ShipComponent c) => GD.Print($"{c.Name}: BaseShields end-of-turn.");    public void OnFireExecute(ShipComponent c) => GD.Print($"{c.Name}: BaseShields fired."); }
 public sealed class BaseCrewDeployStrategy   : IComponentAbilityStrategy { public void EndOfTurnExecute(ShipComponent c) => GD.Print($"{c.Name}: BaseCrewDeploy end-of-turn."); public void OnFireExecute(ShipComponent c) => GD.Print($"{c.Name}: BaseCrewDeploy fired."); }
 public sealed class BaseCargoDeployStrategy  : IComponentAbilityStrategy { public void EndOfTurnExecute(ShipComponent c) => GD.Print($"{c.Name}: BaseCargoDeploy end-of-turn.");public void OnFireExecute(ShipComponent c) => GD.Print($"{c.Name}: BaseCargoDeploy fired."); }
@@ -24,7 +24,7 @@ public sealed class BaseCannonStrategy       : IComponentAbilityStrategy { publi
 public sealed class BaseScannersStrategy     : IComponentAbilityStrategy { public void EndOfTurnExecute(ShipComponent c) => GD.Print($"{c.Name}: BaseScanners end-of-turn.");  public void OnFireExecute(ShipComponent c) => GD.Print($"{c.Name}: BaseScanners fired."); }
 
 public sealed class LowEvasionStrategy       : IComponentAbilityStrategy { public void EndOfTurnExecute(ShipComponent c) => GD.Print($"{c.Name}: LowEvasion end-of-turn.");    public void OnFireExecute(ShipComponent c) => GD.Print($"{c.Name}: LowEvasion fired."); }
-public sealed class LowEscapeStrategy        : IComponentAbilityStrategy { public void EndOfTurnExecute(ShipComponent c) => GD.Print($"{c.Name}: LowEscape end-of-turn.");     public void OnFireExecute(ShipComponent c) => GD.Print($"{c.Name}: LowEscape fired."); }
+public sealed class LowSpeedStrategy        : IComponentAbilityStrategy { public void EndOfTurnExecute(ShipComponent c) => GD.Print($"{c.Name}: LowSpeed end-of-turn.");     public void OnFireExecute(ShipComponent c) => GD.Print($"{c.Name}: LowSpeed fired."); }
 public sealed class LowShieldsStrategy       : IComponentAbilityStrategy { public void EndOfTurnExecute(ShipComponent c) => GD.Print($"{c.Name}: LowShields end-of-turn.");    public void OnFireExecute(ShipComponent c) => GD.Print($"{c.Name}: LowShields fired."); }
 public sealed class LowCrewDeployStrategy    : IComponentAbilityStrategy { public void EndOfTurnExecute(ShipComponent c) => GD.Print($"{c.Name}: LowCrewDeploy end-of-turn."); public void OnFireExecute(ShipComponent c) => GD.Print($"{c.Name}: LowCrewDeploy fired."); }
 public sealed class LowCargoDeployStrategy   : IComponentAbilityStrategy { public void EndOfTurnExecute(ShipComponent c) => GD.Print($"{c.Name}: LowCargoDeploy end-of-turn.");public void OnFireExecute(ShipComponent c) => GD.Print($"{c.Name}: LowCargoDeploy fired."); }
@@ -32,7 +32,7 @@ public sealed class LowCannonStrategy        : IComponentAbilityStrategy { publi
 public sealed class LowScannersStrategy      : IComponentAbilityStrategy { public void EndOfTurnExecute(ShipComponent c) => GD.Print($"{c.Name}: LowScanners end-of-turn.");  public void OnFireExecute(ShipComponent c) => GD.Print($"{c.Name}: LowScanners fired."); }
 
 public sealed class MediumEvasionStrategy    : IComponentAbilityStrategy { public void EndOfTurnExecute(ShipComponent c) => GD.Print($"{c.Name}: MediumEvasion end-of-turn.");    public void OnFireExecute(ShipComponent c) => GD.Print($"{c.Name}: MediumEvasion fired."); }
-public sealed class MediumEscapeStrategy     : IComponentAbilityStrategy { public void EndOfTurnExecute(ShipComponent c) => GD.Print($"{c.Name}: MediumEscape end-of-turn.");     public void OnFireExecute(ShipComponent c) => GD.Print($"{c.Name}: MediumEscape fired."); }
+public sealed class MediumSpeedStrategy     : IComponentAbilityStrategy { public void EndOfTurnExecute(ShipComponent c) => GD.Print($"{c.Name}: MediumSpeed end-of-turn.");     public void OnFireExecute(ShipComponent c) => GD.Print($"{c.Name}: MediumSpeed fired."); }
 public sealed class MediumShieldsStrategy    : IComponentAbilityStrategy { public void EndOfTurnExecute(ShipComponent c) => GD.Print($"{c.Name}: MediumShields end-of-turn.");    public void OnFireExecute(ShipComponent c) => GD.Print($"{c.Name}: MediumShields fired."); }
 public sealed class MediumCrewDeployStrategy : IComponentAbilityStrategy { public void EndOfTurnExecute(ShipComponent c) => GD.Print($"{c.Name}: MediumCrewDeploy end-of-turn."); public void OnFireExecute(ShipComponent c) => GD.Print($"{c.Name}: MediumCrewDeploy fired."); }
 public sealed class MediumCargoDeployStrategy: IComponentAbilityStrategy { public void EndOfTurnExecute(ShipComponent c) => GD.Print($"{c.Name}: MediumCargoDeploy end-of-turn.");public void OnFireExecute(ShipComponent c) => GD.Print($"{c.Name}: MediumCargoDeploy fired."); }
@@ -40,7 +40,7 @@ public sealed class MediumCannonStrategy     : IComponentAbilityStrategy { publi
 public sealed class MediumScannersStrategy   : IComponentAbilityStrategy { public void EndOfTurnExecute(ShipComponent c) => GD.Print($"{c.Name}: MediumScanners end-of-turn.");  public void OnFireExecute(ShipComponent c) => GD.Print($"{c.Name}: MediumScanners fired."); }
 
 public sealed class HighEvasionStrategy      : IComponentAbilityStrategy { public void EndOfTurnExecute(ShipComponent c) => GD.Print($"{c.Name}: HighEvasion end-of-turn.");    public void OnFireExecute(ShipComponent c) => GD.Print($"{c.Name}: HighEvasion fired."); }
-public sealed class HighEscapeStrategy       : IComponentAbilityStrategy { public void EndOfTurnExecute(ShipComponent c) => GD.Print($"{c.Name}: HighEscape end-of-turn.");     public void OnFireExecute(ShipComponent c) => GD.Print($"{c.Name}: HighEscape fired."); }
+public sealed class HighSpeedStrategy        : IComponentAbilityStrategy { public void EndOfTurnExecute(ShipComponent c) => GD.Print($"{c.Name}: HighSpeed end-of-turn.");     public void OnFireExecute(ShipComponent c) => GD.Print($"{c.Name}: HighSpeed fired."); }
 public sealed class HighShieldsStrategy      : IComponentAbilityStrategy { public void EndOfTurnExecute(ShipComponent c) => GD.Print($"{c.Name}: HighShields end-of-turn.");    public void OnFireExecute(ShipComponent c) => GD.Print($"{c.Name}: HighShields fired."); }
 public sealed class HighCrewDeployStrategy   : IComponentAbilityStrategy { public void EndOfTurnExecute(ShipComponent c) => GD.Print($"{c.Name}: HighCrewDeploy end-of-turn."); public void OnFireExecute(ShipComponent c) => GD.Print($"{c.Name}: HighCrewDeploy fired."); }
 public sealed class HighCargoDeployStrategy  : IComponentAbilityStrategy { public void EndOfTurnExecute(ShipComponent c) => GD.Print($"{c.Name}: HighCargoDeploy end-of-turn.");public void OnFireExecute(ShipComponent c) => GD.Print($"{c.Name}: HighCargoDeploy fired."); }
@@ -88,28 +88,28 @@ public sealed class ComponentAbilityRegistry
 	private readonly Dictionary<ComponentAbility, IComponentAbilityStrategy> _strategies = new()
 	{
 		{ ComponentAbility.BaseEvasion,       new BaseEvasionStrategy()       },
-		{ ComponentAbility.BaseEscape,        new BaseEscapeStrategy()        },
+		{ ComponentAbility.NoSpeed,           new NoSpeedStrategy()        },
 		{ ComponentAbility.BaseShields,       new BaseShieldsStrategy()       },
 		{ ComponentAbility.BaseCrewDeploy,    new BaseCrewDeployStrategy()    },
 		{ ComponentAbility.BaseCargoDeploy,   new BaseCargoDeployStrategy()   },
 		{ ComponentAbility.BaseCannon,        new BaseCannonStrategy()        },
 		{ ComponentAbility.BaseScanners,      new BaseScannersStrategy()      },
 		{ ComponentAbility.LowEvasion,        new LowEvasionStrategy()        },
-		{ ComponentAbility.LowEscape,         new LowEscapeStrategy()         },
+		{ ComponentAbility.LowSpeed,          new LowSpeedStrategy()         },
 		{ ComponentAbility.LowShields,        new LowShieldsStrategy()        },
 		{ ComponentAbility.LowCrewDeploy,     new LowCrewDeployStrategy()     },
 		{ ComponentAbility.LowCargoDeploy,    new LowCargoDeployStrategy()    },
 		{ ComponentAbility.LowCannon,         new LowCannonStrategy()         },
 		{ ComponentAbility.LowScanners,       new LowScannersStrategy()       },
 		{ ComponentAbility.MediumEvasion,     new MediumEvasionStrategy()     },
-		{ ComponentAbility.MediumEscape,      new MediumEscapeStrategy()      },
+		{ ComponentAbility.MediumSpeed,       new MediumSpeedStrategy()      },
 		{ ComponentAbility.MediumShields,     new MediumShieldsStrategy()     },
 		{ ComponentAbility.MediumCrewDeploy,  new MediumCrewDeployStrategy()  },
 		{ ComponentAbility.MediumCargoDeploy, new MediumCargoDeployStrategy() },
 		{ ComponentAbility.MediumCannon,      new MediumCannonStrategy()      },
 		{ ComponentAbility.MediumScanners,    new MediumScannersStrategy()    },
 		{ ComponentAbility.HighEvasion,       new HighEvasionStrategy()       },
-		{ ComponentAbility.HighEscape,        new HighEscapeStrategy()        },
+		{ ComponentAbility.HighSpeed,         new HighSpeedStrategy()        },
 		{ ComponentAbility.HighShields,       new HighShieldsStrategy()       },
 		{ ComponentAbility.HighCrewDeploy,    new HighCrewDeployStrategy()    },
 		{ ComponentAbility.HighCargoDeploy,   new HighCargoDeployStrategy()   },

@@ -1,4 +1,4 @@
-[gd_scene load_steps=26 format=3 uid="uid://dwn6w7t2pvk3b"]
+[gd_scene load_steps=27 format=3 uid="uid://dwn6w7t2pvk3b"]
 
 [ext_resource type="Script" uid="uid://dhktcp2cgrjok" path="res://Scripts/Singletons/PlaySpace.cs" id="1_bvtvd"]
 [ext_resource type="Texture2D" uid="uid://cw3ijnjtukqce" path="res://Assets/Backgrounds/Background_BluePlanetBig.png" id="2_b7nil"]
@@ -18,13 +18,14 @@
 [ext_resource type="PackedScene" uid="uid://i54ed3cf6xqw" path="res://Scenes/FuelSlot.tscn" id="12_l7dj0"]
 [ext_resource type="Texture2D" uid="uid://bi6hvw21uuljf" path="res://Assets/GUI/EnemyShipBackground.png" id="13_l7dj0"]
 [ext_resource type="PackedScene" uid="uid://c4muevi83ajfg" path="res://Scenes/ShipPreview.tscn" id="14_d18xh"]
-[ext_resource type="Texture2D" uid="uid://cs4qx2k20xweo" path="res://Assets/Backgrounds/SpaceShip24.png" id="14_tb4ff"]
 [ext_resource type="Texture2D" uid="uid://dutkyye2q1554" path="res://Assets/GUI/HealthBarUnder.png" id="17_2i8fn"]
 [ext_resource type="Texture2D" uid="uid://chadalgvof56k" path="res://Assets/GUI/HealthBarOver.png" id="18_21n7f"]
 [ext_resource type="Texture2D" uid="uid://ch24bja2y7cvj" path="res://Assets/GUI/HealthBarProgress.png" id="19_u3u7p"]
 [ext_resource type="Texture2D" uid="uid://dcmxnknf88i02" path="res://Assets/GUI/HealthBarProgressShields.png" id="20_2i8fn"]
 [ext_resource type="PackedScene" uid="uid://makjrbc3f5x" path="res://Scenes/ShipView.tscn" id="21_2i8fn"]
 [ext_resource type="PackedScene" uid="uid://e4umpoj2e3qp" path="res://Scenes/SideBarComponent.tscn" id="21_21n7f"]
+[ext_resource type="Script" uid="uid://bb8bhmg4g45gj" path="res://Scripts/Components/RangeIndicator.cs" id="22_yqwh3"]
+[ext_resource type="Texture2D" uid="uid://bqjigpwowywj1" path="res://Assets/GUI/TargetIndicatorLine.png" id="26_yqwh3"]
 
 [node name="PlaySpace" type="Node2D"]
 script = ExtResource("1_bvtvd")
@@ -51,12 +52,6 @@ offset = Vector2(-480, -270)
 [node name="Pivot" type="Node2D" parent="Camera2D/EnemyShip24"]
 
 [node name="Sprites" type="Node2D" parent="Camera2D/EnemyShip24/Pivot"]
-
-[node name="Sprite2D" type="Sprite2D" parent="Camera2D/EnemyShip24/Pivot/Sprites"]
-visible = false
-position = Vector2(588, -31)
-texture = ExtResource("14_tb4ff")
-centered = false
 
 [node name="Sprite2D2" type="Sprite2D" parent="Camera2D/EnemyShip24/Pivot/Sprites"]
 position = Vector2(616, 73)
@@ -1091,7 +1086,70 @@ text = "50/50"
 horizontal_alignment = 1
 vertical_alignment = 1
 
+[node name="RangeIndicator" type="Node2D" parent="CanvasLayer/GUI/Gameplay/Stats"]
+script = ExtResource("22_yqwh3")
+
+[node name="ColorRect" type="ColorRect" parent="CanvasLayer/GUI/Gameplay/Stats/RangeIndicator"]
+offset_top = 19.0
+offset_right = 60.0
+offset_bottom = 37.0
+color = Color(0.258824, 0.258824, 0.258824, 1)
+
+[node name="Label" type="Label" parent="CanvasLayer/GUI/Gameplay/Stats/RangeIndicator/ColorRect"]
+layout_mode = 0
+offset_right = 120.0
+offset_bottom = 36.0
+scale = Vector2(0.5, 0.5)
+theme_override_fonts/font = ExtResource("8_st7tj")
+theme_override_font_sizes/font_size = 8
+text = "Long
+*** Mid ***
+Close"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="LabelSelected" type="Label" parent="CanvasLayer/GUI/Gameplay/Stats/RangeIndicator/ColorRect"]
+layout_mode = 0
+offset_left = 61.0
+offset_top = 7.0
+offset_right = 91.0
+offset_bottom = 15.0
+scale = Vector2(0.5, 0.5)
+theme_override_fonts/font = ExtResource("8_st7tj")
+theme_override_font_sizes/font_size = 8
+text = "E:0"
+
+[node name="LabelSelectedEnemy" type="Label" parent="CanvasLayer/GUI/Gameplay/Stats/RangeIndicator/ColorRect"]
+layout_mode = 0
+offset_left = 75.0
+offset_top = 7.0
+offset_right = 105.0
+offset_bottom = 15.0
+scale = Vector2(0.5, 0.5)
+theme_override_colors/font_color = Color(0.85098, 0.341176, 0.388235, 1)
+theme_override_fonts/font = ExtResource("8_st7tj")
+theme_override_font_sizes/font_size = 8
+text = "E:0"
+
+[node name="TextureButtonLong" type="TextureButton" parent="CanvasLayer/GUI/Gameplay/Stats/RangeIndicator/ColorRect"]
+layout_mode = 0
+offset_right = 60.0
+offset_bottom = 6.0
+
+[node name="TextureButtonMid" type="TextureButton" parent="CanvasLayer/GUI/Gameplay/Stats/RangeIndicator/ColorRect"]
+layout_mode = 0
+offset_top = 6.0
+offset_right = 60.0
+offset_bottom = 12.0
+
+[node name="TextureButtonClose" type="TextureButton" parent="CanvasLayer/GUI/Gameplay/Stats/RangeIndicator/ColorRect"]
+layout_mode = 0
+offset_top = 12.0
+offset_right = 60.0
+offset_bottom = 18.0
+
 [node name="ShipPreviews" type="Node2D" parent="CanvasLayer/GUI/Gameplay"]
+visible = false
 
 [node name="ShipPreview1" parent="CanvasLayer/GUI/Gameplay/ShipPreviews" instance=ExtResource("14_d18xh")]
 position = Vector2(560, 0)
@@ -1110,6 +1168,7 @@ visible = false
 position = Vector2(321, 0)
 
 [node name="ShipViews" type="Node2D" parent="CanvasLayer/GUI/Gameplay"]
+visible = false
 
 [node name="ShipView1" parent="CanvasLayer/GUI/Gameplay/ShipViews" instance=ExtResource("21_2i8fn")]
 visible = false
@@ -1132,6 +1191,38 @@ ComponentSlot = NodePath("../../../../../../PlayerShip/Pivot/ComponentSlots/Comp
 layout_mode = 2
 ComponentSlot = NodePath("../../../../../../PlayerShip/Pivot/ComponentSlots/ComponentSlot3")
 
+[node name="EnemyShipUI" type="Node2D" parent="CanvasLayer/GUI/Gameplay"]
+
+[node name="TargetIndicator" type="Sprite2D" parent="CanvasLayer/GUI/Gameplay/EnemyShipUI"]
+position = Vector2(482, 104)
+texture = ExtResource("26_yqwh3")
+centered = false
+
+[node name="Name" type="Label" parent="CanvasLayer/GUI/Gameplay/EnemyShipUI/TargetIndicator"]
+offset_left = 9.0
+offset_top = 2.0
+offset_right = 119.0
+offset_bottom = 12.0
+scale = Vector2(0.5, 0.5)
+theme_override_colors/font_color = Color(0.85098, 0.341176, 0.388235, 1)
+theme_override_fonts/font = ExtResource("8_st7tj")
+theme_override_font_sizes/font_size = 8
+text = "Enemy Ship"
+
+[node name="Health" type="Label" parent="CanvasLayer/GUI/Gameplay/EnemyShipUI/TargetIndicator"]
+offset_left = 9.0
+offset_top = 9.0
+offset_right = 119.0
+offset_bottom = 19.0
+scale = Vector2(0.5, 0.5)
+theme_override_colors/font_color = Color(0.85098, 0.341176, 0.388235, 1)
+theme_override_fonts/font = ExtResource("8_st7tj")
+theme_override_font_sizes/font_size = 8
+text = "HP: 50/50"
+
 [node name="Temp" type="Node2D" parent="."]
 
 [connection signal="pressed" from="CanvasLayer/GUI/Gameplay/Buttons/EndTurnButton" to="." method="_on_end_turn_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/GUI/Gameplay/Stats/RangeIndicator/ColorRect/TextureButtonLong" to="CanvasLayer/GUI/Gameplay/Stats/RangeIndicator" method="_on_texture_button_long_pressed"]
+[connection signal="pressed" from="CanvasLayer/GUI/Gameplay/Stats/RangeIndicator/ColorRect/TextureButtonMid" to="CanvasLayer/GUI/Gameplay/Stats/RangeIndicator" method="_on_texture_button_mid_pressed"]
+[connection signal="pressed" from="CanvasLayer/GUI/Gameplay/Stats/RangeIndicator/ColorRect/TextureButtonClose" to="CanvasLayer/GUI/Gameplay/Stats/RangeIndicator" method="_on_texture_button_close_pressed"]

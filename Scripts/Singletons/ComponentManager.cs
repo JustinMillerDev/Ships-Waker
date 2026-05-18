@@ -25,6 +25,7 @@ public partial class ComponentManager : Node
 		CollectSlots();
 		UpdateWorldSlotLabels();
 		SpawnInitialExternalComponents();
+		SpawnInitialInternalComponents();
 	}
 
 	// ---------------------------------------------------------------------------
@@ -96,6 +97,82 @@ public partial class ComponentManager : Node
 			{
 				if (child is ShipComponentSlot slot)
 					UpdateSlotLabel(slot);
+			}
+		}
+	}
+
+	private void SpawnInitialInternalComponents()
+	{
+		if (_shipComponentScene == null) return;
+
+		Node playspace = GetTree().Root.GetNodeOrNull("PlaySpace");
+		if (playspace == null) return;
+
+		Node componentContainer = playspace.GetNodeOrNull("PlayerShip/Pivot/Components");
+		if (componentContainer == null)
+		{
+			GD.PushWarning("ComponentManager: Could not find PlayerShip/Pivot/Components node.");
+			return;
+		}
+
+		// Build a lookup of world-space slots by type.
+		var worldSlotsByType = new Dictionary<ShipComponentType, ShipComponentSlot>();
+		Node psSlotContainer = playspace.GetNodeOrNull("PlayerShip/Pivot/ComponentSlots");
+		if (psSlotContainer != null)
+		{
+			foreach (Node child in psSlotContainer.GetChildren())
+			{
+				if (child is ShipComponentSlot ws && !worldSlotsByType.ContainsKey(ws.SlotType))
+					worldSlotsByType[ws.SlotType] = ws;
+			}
+		}
+
+		ShipComponentType[] internalTypes =
+		{
+			ShipComponentType.Piloting,
+			ShipComponentType.Engines,
+			ShipComponentType.Caskets,
+			ShipComponentType.Hold,
+			ShipComponentType.Shields,
+		};
+
+		foreach (ShipComponentType type in internalTypes)
+		{
+			// Find the first unoccupied GUI slot matching this type.
+			ShipComponentSlot guiSlot = null;
+			foreach (ShipComponentSlot slot in _slots)
+			{
+				if (slot.SlotType == type && !slot.IsOccupied) { guiSlot = slot; break; }
+			}
+			if (guiSlot == null) continue;
+
+			// Look up data by the type name ("Piloting", "Engines", etc.).
+			string dataName = type.ToString();
+			if (DataManager.Components == null ||
+				!DataManager.Components.ByDataName.TryGetValue(dataName, out ComponentData data))
+			{
+				GD.PushWarning($"ComponentManager: No ComponentData found for '{dataName}'.");
+				continue;
+			}
+
+			ShipComponent component = _shipComponentScene.Instantiate<ShipComponent>();
+			componentContainer.AddChild(component);
+			component.ComponentType = type;
+			component.Data = data;
+			component.GetNodeOrNull<Sprite2D>("Sprites/Sprite2D").Visible = false;
+			component.GetNodeOrNull<TextureButton>("Focus").Position = Vector2.Zero; // align focus button to slot pivot	
+			component.GetNodeOrNull<Label>("Tooltip/PanelContainer/Label").Text = $"{data.Name}"; // set tooltip text
+			guiSlot.Accept(component);
+
+			// Position at the world-space slot; fall back to the container origin.
+			if (worldSlotsByType.TryGetValue(type, out ShipComponentSlot worldSlot))
+			{
+				worldSlot.Accept(component);
+				component.GlobalPosition = worldSlot.GlobalPosition;
+			}
+			else
+			{
+				component.GlobalPosition = componentContainer is Node2D cn ? cn.GlobalPosition : Vector2.Zero;
 			}
 		}
 	}

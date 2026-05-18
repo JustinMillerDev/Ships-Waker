@@ -8,14 +8,20 @@ public partial class ProjectileManager : Node
 {
 	public static ProjectileManager Instance { get; private set; }
 
-	/// <summary>Travel time for each leg of a projectile's journey, in seconds.</summary>
+	/// <summary>Travel time for the second leg (attack run toward the enemy), in seconds.</summary>
 	[Export] public float TravelTime { get; set; } = .75f;
+
+	/// <summary>Travel time for the first leg (rise to staging point), in seconds. Defaults to half of TravelTime.</summary>
+	[Export] public float StagingTravelTime { get; set; } = 0.35f;
 
 	/// <summary>Radius of the circle around the enemy ship anchor used for attack radian positions.</summary>
 	[Export] public float AttackRadianRadius { get; set; } = 330f;
 
 	/// <summary>Delay in seconds between the projectile reaching the staging point and launching toward the enemy.</summary>
 	[Export] public float StagingDelay { get; set; } = 0.25f;
+
+	/// <summary>Radius (in world units) of the circle around the enemy sprite center used to pick a random impact point.</summary>
+	[Export] public float AttackTargetRadius { get; set; } = 120f;
 
 	/// <summary>The Y coordinate the projectile rises to before teleporting to the attack radian.</summary>
 	[Export] public float StagingY { get; set; } = -280f;
@@ -110,7 +116,7 @@ public partial class ProjectileManager : Node
 		Vector2 stagingPoint = new Vector2(projectile.GlobalPosition.X, StagingY);
 
 		Tween tween = projectile.CreateTween();
-		tween.TweenProperty(projectile, "global_position", stagingPoint, TravelTime)
+		tween.TweenProperty(projectile, "global_position", stagingPoint, StagingTravelTime)
 			 .SetTrans(Tween.TransitionType.Linear)
 			 .SetEase(Tween.EaseType.In);
 
@@ -128,14 +134,31 @@ public partial class ProjectileManager : Node
 			// Teleport to that node's global position.
 			projectile.GlobalPosition = midRange?.GlobalPosition ?? PlayerAttackRadian;
 			projectile.Scale = new Vector2(0.2f, 0.2f);
+
+			// Prevent a streak from the teleport jump, then shrink the trail for the attack run.
+			projectile.ClearTrail();
+			projectile.SetAttackTrail();
 		}));
 
-		// --- Stage 2: fly toward Camera2D/EnemyShip24/Pivot/Sprites/Sprite2D2 ---
+		// --- Stage 2: fly toward a random point within the enemy ship sprite bounds ---
 		tween.TweenCallback(Callable.From(() =>
 		{
-			var sprite2D2 = GetTree().Root.GetNodeOrNull<Node2D>(
+			var sprite2D2 = GetTree().Root.GetNodeOrNull<Sprite2D>(
 				"PlaySpace/Camera2D/EnemyShip24/Pivot/Sprites/Sprite2D2");
-			Vector2 target = sprite2D2?.GlobalPosition ?? destination;
+
+			Vector2 target;
+			if (sprite2D2 != null)
+			{
+				// Uniform sample inside a circle so every point is equally likely.
+				float angle  = GD.Randf() * Mathf.Tau;
+				float radius = AttackTargetRadius * Mathf.Sqrt(GD.Randf());
+				var localOffset = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)) * radius;
+				target = sprite2D2.GlobalTransform * localOffset; // center is (0,0) in local space
+			}
+			else
+			{
+				target = destination;
+			}
 
 			Tween flyTween = projectile.CreateTween();
 			flyTween.TweenProperty(projectile, "global_position", target, TravelTime)

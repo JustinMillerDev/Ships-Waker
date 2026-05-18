@@ -27,6 +27,12 @@ public partial class CustomSignals : Node
 	/// <summary>Fired when a Ship's health or shields change.</summary>
 	[Signal] public delegate void ShipHealthChangedEventHandler(Ship ship);
 
+	/// <summary>Fired when the Engines component's strength tier changes.</summary>
+	[Signal] public delegate void EngineStrengthChangedEventHandler(int strength);
+
+	/// <summary>Fired at the start of each turn with the enemy's randomly selected range y-position (1=long, 7=mid, 13=close).</summary>
+	[Signal] public delegate void EnemyRangeSelectedEventHandler(int yPosition);
+
 	public override void _Ready()
 	{
 		Instance = this;
