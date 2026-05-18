@@ -1132,6 +1132,6 @@ ComponentSlot = NodePath("../../../../../../PlayerShip/Pivot/ComponentSlots/Comp
 layout_mode = 2
 ComponentSlot = NodePath("../../../../../../PlayerShip/Pivot/ComponentSlots/ComponentSlot3")
 
-[node name="Projectiles" type="Node2D" parent="CanvasLayer/GUI/Gameplay"]
+[node name="Temp" type="Node2D" parent="."]
 
 [connection signal="pressed" from="CanvasLayer/GUI/Gameplay/Buttons/EndTurnButton" to="." method="_on_end_turn_button_pressed"]
