@@ -23,12 +23,18 @@ public partial class PlaySpace : Node
 	// Camera panning -----------------------------------------------------------
 
 	private Camera2D _camera;
+	private Node2D _playerShip;
 	private Vector2 _playerShipPos;
 	private Vector2 _enemyShipPos;
 	private bool _viewingEnemy = false;
-	private const float CameraPanDuration = 0.2f;
 
-	private static readonly float[] ZoomLevels = { 0.75f, 0.5f, 0.25f };
+	/// <summary>World-space anchor used to generate the player attack radian circle.</summary>
+	private Vector2 _enemyAnchor;
+	private const float CameraPanDuration = 0.2f;
+	/// <summary>World-units per second the camera moves when holding an arrow key.</summary>
+	private const float CameraMoveSpeed = 600f;
+
+	private static readonly float[] ZoomLevels = { 0.75f, 0.5f };
 	private int _zoomIndex = 0;
 
 	public Vector2 CurrentZoom => new Vector2(ZoomLevels[_zoomIndex], ZoomLevels[_zoomIndex]);
@@ -40,10 +46,17 @@ public partial class PlaySpace : Node
 		Node2D playerShip = GetNodeOrNull<Node2D>("PlayerShip");
 		Node2D enemyShip  = GetNodeOrNull<Node2D>("EnemyShip");
 
-		if (playerShip != null) _playerShipPos = playerShip.GlobalPosition;
-		if (enemyShip  != null) _enemyShipPos  = enemyShip.GlobalPosition;
+		if (playerShip != null) { _playerShip = playerShip; _playerShipPos = playerShip.GlobalPosition; }
+		if (enemyShip  != null)
+		{
+			_enemyShipPos = enemyShip.GlobalPosition;
+			_enemyAnchor  = GetNodeOrNull<Node2D>("EnemyShipClipAndDraw/Pivot/Sprite2D/Anchors/TargetPoint")?.GlobalPosition ?? _enemyShipPos;
+		}
 
 		if (_camera != null) _camera.GlobalPosition = _playerShipPos;
+
+		// Initialise the attack radian for the first turn.
+		ProjectileManager.Instance?.RandomizeAttackRadian(_enemyAnchor);
 
 		// Share the main World2D with the sub-camera viewport so it renders scene content.
 		var subVp = GetNodeOrNull<SubViewport>("CanvasLayer/GUI/Gameplay/ShipPreviews/SubViewportContainer/SubViewport");
@@ -52,6 +65,25 @@ public partial class PlaySpace : Node
 
 		EnterCombat();
 		StartTurn();
+	}
+
+	public override void _Process(double delta)
+	{
+		if (_camera == null) return;
+
+		Vector2 dir = Vector2.Zero;
+		if (Input.IsActionPressed("ui_left"))  dir.X -= 1f;
+		if (Input.IsActionPressed("ui_right")) dir.X += 1f;
+		if (Input.IsActionPressed("ui_up"))    dir.Y -= 1f;
+		if (Input.IsActionPressed("ui_down"))  dir.Y += 1f;
+
+		if (dir != Vector2.Zero)
+		{
+			// Scale speed by zoom so movement feels the same at every zoom level.
+			float zoom = ZoomLevels[_zoomIndex];
+			_camera.GlobalPosition += dir.Normalized() * CameraMoveSpeed * (1f / zoom) * (float)delta;
+			_viewingEnemy = false;
+		}
 	}
 
 	public override void _Input(InputEvent @event)
@@ -79,19 +111,12 @@ public partial class PlaySpace : Node
 			}
 		}
 
-		// W / Up arrow  → pan to enemy ship
-		bool panUp = @event.IsActionPressed("ui_up") ||
-					 (@event is InputEventKey key && !key.IsEcho() && key.Pressed &&
-					  (key.Keycode == Key.W));
-
-		// S / Down arrow → pan back to player ship
-		bool panDown = @event.IsActionPressed("ui_down") ||
-					   (@event is InputEventKey key2 && !key2.IsEcho() && key2.Pressed &&
-						(key2.Keycode == Key.S));
-
-		if (panUp && !_viewingEnemy)
+		// W → pan to enemy ship
+		if (@event is InputEventKey wKey && !wKey.IsEcho() && wKey.Pressed && wKey.Keycode == Key.W && !_viewingEnemy)
 			PanCameraTo(_enemyShipPos, enemy: true);
-		else if (panDown && _viewingEnemy)
+
+		// S → pan back to player ship
+		if (@event is InputEventKey sKey && !sKey.IsEcho() && sKey.Pressed && sKey.Keycode == Key.S && _viewingEnemy)
 			PanCameraTo(_playerShipPos, enemy: false);
 	}
 
@@ -104,6 +129,53 @@ public partial class PlaySpace : Node
 		tween.TweenProperty(_camera, "global_position", target, CameraPanDuration)
 			 .SetTrans(Tween.TransitionType.Sine)
 			 .SetEase(Tween.EaseType.InOut);
+	}
+
+	/// <summary>
+	/// Called when a ShipPreview is selected. Shifts the player ship 320 px left
+	/// and the camera 320 px right so both move out of the way for the preview panel.
+	/// </summary>
+	public void OnShipPreviewSelected()
+	{
+		if (_playerShip != null)
+			_playerShip.GlobalPosition = _playerShipPos + new Vector2(-320f, 0f);
+
+		var cargo = GetNodeOrNull<Node2D>("PlayerShip/Pivot/Cargo");
+		// if (cargo != null)
+		// 	cargo.Position = cargo.Position + new Vector2(-320f, 0f);
+
+		//if (_camera != null)
+			//_camera.GlobalPosition = _camera.GlobalPosition + new Vector2(160f, 0f);
+	}
+
+	/// <summary>
+	/// Called when a ShipPreview is deselected. Restores the player ship to its
+	/// original position and shifts the camera back 320 px.
+	/// </summary>
+	public void OnShipPreviewDeselected()
+	{
+		if (_playerShip != null)
+			_playerShip.GlobalPosition = _playerShipPos;
+
+		var cargo = GetNodeOrNull<Node2D>("PlayerShip/Pivot/Cargo");
+		// if (cargo != null)
+		// 	cargo.Position = cargo.Position - new Vector2(-320f, 0f);
+
+		//if (_camera != null)
+			//_camera.GlobalPosition = _camera.GlobalPosition - new Vector2(160f, 0f);
+	}
+
+	/// <summary>Sets the camera zoom to the nearest available zoom level.</summary>
+	public void SetZoom(float zoom)
+	{
+		// Find the closest zoom level in the array.
+		float bestDist = float.MaxValue;
+		for (int i = 0; i < ZoomLevels.Length; i++)
+		{
+			float dist = Mathf.Abs(ZoomLevels[i] - zoom);
+			if (dist < bestDist) { bestDist = dist; _zoomIndex = i; }
+		}
+		ApplyZoom();
 	}
 
 	private void ApplyZoom()
@@ -147,6 +219,7 @@ public partial class PlaySpace : Node
 	private void EndTurn()
 	{
 		TurnEnded?.Invoke(CurrentTurn);
+		ProjectileManager.Instance?.RandomizeAttackRadian(_enemyAnchor);
 		CurrentTurn++;
 		StartTurn();
 	}

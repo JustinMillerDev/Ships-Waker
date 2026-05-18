@@ -307,3 +307,15 @@ swapping
 	Cargo cannot be dropped back into a readied slot
 	Cargo CAN be dropped back into deep storage
 	Cargo CANNOT be dropped onto an occupied cargo slot
+targeting
+	Each weapon component gets numbered 1 through 4
+		each Weapon UI has a targeting reticle
+			click this and then your cursor changes to the targeting reticle + the weapon number
+			it brings up the enemy ship overlay when you do this
+			2 modes
+				if no scanners, no components are visible, just target the ship
+				if scanners, components are visible, select a component to target (OR THE SHIP still an option)
+Droids do not currently contribute to component crew skill
+How to represent evasion/dodged from piloting?
+	P for now
+	icon of a joystick or a ship later

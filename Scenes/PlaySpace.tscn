@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=3 uid="uid://dwn6w7t2pvk3b"]
+[gd_scene load_steps=26 format=3 uid="uid://dwn6w7t2pvk3b"]
 
 [ext_resource type="Script" uid="uid://dhktcp2cgrjok" path="res://Scripts/Singletons/PlaySpace.cs" id="1_bvtvd"]
 [ext_resource type="Texture2D" uid="uid://cw3ijnjtukqce" path="res://Assets/Backgrounds/Background_BluePlanetBig.png" id="2_b7nil"]
@@ -14,7 +14,11 @@
 [ext_resource type="Texture2D" uid="uid://dbxsn3kolr1ft" path="res://Assets/Backgrounds/SpaceShipGame_UI_Rooms.png" id="8_q8m5i"]
 [ext_resource type="FontFile" uid="uid://bx73bfi2nt2l6" path="res://Assets/Fonts/PressStart2P.ttf" id="8_st7tj"]
 [ext_resource type="Texture2D" uid="uid://d0ggud1g0ve6n" path="res://Assets/GUI/EnemyShipBox.png" id="10_kdh2w"]
+[ext_resource type="PackedScene" uid="uid://dgygcisakqmxk" path="res://Scenes/AmmoSlot.tscn" id="11_u3u7p"]
+[ext_resource type="PackedScene" uid="uid://i54ed3cf6xqw" path="res://Scenes/FuelSlot.tscn" id="12_l7dj0"]
+[ext_resource type="Texture2D" uid="uid://bi6hvw21uuljf" path="res://Assets/GUI/EnemyShipBackground.png" id="13_l7dj0"]
 [ext_resource type="PackedScene" uid="uid://c4muevi83ajfg" path="res://Scenes/ShipPreview.tscn" id="14_d18xh"]
+[ext_resource type="Texture2D" uid="uid://cs4qx2k20xweo" path="res://Assets/Backgrounds/SpaceShip24.png" id="14_tb4ff"]
 [ext_resource type="Texture2D" uid="uid://dutkyye2q1554" path="res://Assets/GUI/HealthBarUnder.png" id="17_2i8fn"]
 [ext_resource type="Texture2D" uid="uid://chadalgvof56k" path="res://Assets/GUI/HealthBarOver.png" id="18_21n7f"]
 [ext_resource type="Texture2D" uid="uid://ch24bja2y7cvj" path="res://Assets/GUI/HealthBarProgress.png" id="19_u3u7p"]
@@ -41,6 +45,23 @@ scale = Vector2(2, 2)
 texture = ExtResource("2_b7nil")
 centered = false
 offset = Vector2(-480, -270)
+
+[node name="EnemyShip24" type="Node2D" parent="Camera2D"]
+
+[node name="Pivot" type="Node2D" parent="Camera2D/EnemyShip24"]
+
+[node name="Sprites" type="Node2D" parent="Camera2D/EnemyShip24/Pivot"]
+
+[node name="Sprite2D" type="Sprite2D" parent="Camera2D/EnemyShip24/Pivot/Sprites"]
+visible = false
+position = Vector2(588, -31)
+texture = ExtResource("14_tb4ff")
+centered = false
+
+[node name="Sprite2D2" type="Sprite2D" parent="Camera2D/EnemyShip24/Pivot/Sprites"]
+position = Vector2(616, 73)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("2_n8iyk")
 
 [node name="PlayerShip" type="Node2D" parent="."]
 script = ExtResource("3_f1of7")
@@ -375,6 +396,7 @@ texture = ExtResource("3_ll70r")
 centered = false
 
 [node name="UIBorder" type="Sprite2D" parent="EnemyShip/Pivot/Sprites"]
+visible = false
 texture = ExtResource("10_kdh2w")
 centered = false
 
@@ -393,6 +415,564 @@ position = Vector2(-320, -180)
 [node name="Anchors" type="Node2D" parent="EnemyShip/Pivot"]
 
 [node name="TargetPoint" type="Node2D" parent="EnemyShip/Pivot/Anchors"]
+
+[node name="ShipGUI" type="Node2D" parent="EnemyShip/Pivot"]
+visible = false
+position = Vector2(-320, -180)
+scale = Vector2(2, 2)
+
+[node name="Caskets" type="Node2D" parent="EnemyShip/Pivot/ShipGUI"]
+scale = Vector2(0.5, 0.5)
+
+[node name="Column1" type="Node2D" parent="EnemyShip/Pivot/ShipGUI/Caskets"]
+position = Vector2(129, 205)
+
+[node name="Column2" type="Node2D" parent="EnemyShip/Pivot/ShipGUI/Caskets"]
+position = Vector2(192, 205)
+
+[node name="CrewSlots" type="Node2D" parent="EnemyShip/Pivot/ShipGUI"]
+scale = Vector2(0.5, 0.5)
+
+[node name="CrewSlot" parent="EnemyShip/Pivot/ShipGUI/CrewSlots" instance=ExtResource("3_snlng")]
+position = Vector2(303, 44)
+Facing = 0
+
+[node name="CrewSlot2" parent="EnemyShip/Pivot/ShipGUI/CrewSlots" instance=ExtResource("3_snlng")]
+position = Vector2(321, 44)
+Facing = 0
+
+[node name="CrewSlot3" parent="EnemyShip/Pivot/ShipGUI/CrewSlots" instance=ExtResource("3_snlng")]
+position = Vector2(230, 72)
+Facing = 2
+
+[node name="CrewSlot4" parent="EnemyShip/Pivot/ShipGUI/CrewSlots" instance=ExtResource("3_snlng")]
+position = Vector2(230, 90)
+Facing = 2
+
+[node name="CrewSlot5" parent="EnemyShip/Pivot/ShipGUI/CrewSlots" instance=ExtResource("3_snlng")]
+position = Vector2(394, 71)
+Facing = 3
+
+[node name="CrewSlot6" parent="EnemyShip/Pivot/ShipGUI/CrewSlots" instance=ExtResource("3_snlng")]
+position = Vector2(394, 89)
+Facing = 3
+
+[node name="CrewSlot7" parent="EnemyShip/Pivot/ShipGUI/CrewSlots" instance=ExtResource("3_snlng")]
+position = Vector2(287, 103)
+Facing = 3
+
+[node name="CrewSlot8" parent="EnemyShip/Pivot/ShipGUI/CrewSlots" instance=ExtResource("3_snlng")]
+position = Vector2(336, 103)
+Facing = 2
+
+[node name="CrewSlot9" parent="EnemyShip/Pivot/ShipGUI/CrewSlots" instance=ExtResource("3_snlng")]
+position = Vector2(198, 127)
+Facing = 2
+
+[node name="CrewSlot10" parent="EnemyShip/Pivot/ShipGUI/CrewSlots" instance=ExtResource("3_snlng")]
+position = Vector2(198, 145)
+Facing = 2
+
+[node name="CrewSlot11" parent="EnemyShip/Pivot/ShipGUI/CrewSlots" instance=ExtResource("3_snlng")]
+position = Vector2(302, 126)
+Facing = 0
+
+[node name="CrewSlot12" parent="EnemyShip/Pivot/ShipGUI/CrewSlots" instance=ExtResource("3_snlng")]
+position = Vector2(320, 126)
+Facing = 0
+
+[node name="CrewSlot13" parent="EnemyShip/Pivot/ShipGUI/CrewSlots" instance=ExtResource("3_snlng")]
+position = Vector2(425, 127)
+Facing = 3
+
+[node name="CrewSlot14" parent="EnemyShip/Pivot/ShipGUI/CrewSlots" instance=ExtResource("3_snlng")]
+position = Vector2(425, 145)
+Facing = 3
+
+[node name="CrewSlot15" parent="EnemyShip/Pivot/ShipGUI/CrewSlots" instance=ExtResource("3_snlng")]
+position = Vector2(284, 157)
+Facing = 3
+
+[node name="CrewSlot16" parent="EnemyShip/Pivot/ShipGUI/CrewSlots" instance=ExtResource("3_snlng")]
+position = Vector2(284, 175)
+Facing = 3
+
+[node name="CrewSlot17" parent="EnemyShip/Pivot/ShipGUI/CrewSlots" instance=ExtResource("3_snlng")]
+position = Vector2(284, 193)
+Facing = 3
+
+[node name="CrewSlot18" parent="EnemyShip/Pivot/ShipGUI/CrewSlots" instance=ExtResource("3_snlng")]
+position = Vector2(284, 211)
+Facing = 3
+
+[node name="CrewSlot19" parent="EnemyShip/Pivot/ShipGUI/CrewSlots" instance=ExtResource("3_snlng")]
+position = Vector2(284, 229)
+Facing = 3
+
+[node name="CrewSlot20" parent="EnemyShip/Pivot/ShipGUI/CrewSlots" instance=ExtResource("3_snlng")]
+position = Vector2(284, 247)
+Facing = 3
+
+[node name="CrewSlot21" parent="EnemyShip/Pivot/ShipGUI/CrewSlots" instance=ExtResource("3_snlng")]
+position = Vector2(339, 157)
+Facing = 2
+
+[node name="CrewSlot22" parent="EnemyShip/Pivot/ShipGUI/CrewSlots" instance=ExtResource("3_snlng")]
+position = Vector2(339, 175)
+Facing = 2
+
+[node name="CrewSlot23" parent="EnemyShip/Pivot/ShipGUI/CrewSlots" instance=ExtResource("3_snlng")]
+position = Vector2(339, 193)
+Facing = 2
+
+[node name="CrewSlot24" parent="EnemyShip/Pivot/ShipGUI/CrewSlots" instance=ExtResource("3_snlng")]
+position = Vector2(339, 211)
+Facing = 2
+
+[node name="CrewSlot25" parent="EnemyShip/Pivot/ShipGUI/CrewSlots" instance=ExtResource("3_snlng")]
+position = Vector2(339, 229)
+Facing = 2
+
+[node name="CrewSlot26" parent="EnemyShip/Pivot/ShipGUI/CrewSlots" instance=ExtResource("3_snlng")]
+position = Vector2(339, 247)
+Facing = 2
+
+[node name="CrewSlot27" parent="EnemyShip/Pivot/ShipGUI/CrewSlots" instance=ExtResource("3_snlng")]
+position = Vector2(454, 185)
+Facing = 0
+
+[node name="CrewSlot28" parent="EnemyShip/Pivot/ShipGUI/CrewSlots" instance=ExtResource("3_snlng")]
+position = Vector2(472, 185)
+Facing = 0
+
+[node name="CrewSlot29" parent="EnemyShip/Pivot/ShipGUI/CrewSlots" instance=ExtResource("3_snlng")]
+position = Vector2(303, 284)
+
+[node name="CrewSlot30" parent="EnemyShip/Pivot/ShipGUI/CrewSlots" instance=ExtResource("3_snlng")]
+position = Vector2(321, 284)
+
+[node name="CrewSlot31" parent="EnemyShip/Pivot/ShipGUI/CrewSlots" instance=ExtResource("3_snlng")]
+position = Vector2(152, 186)
+Facing = 0
+
+[node name="CrewSlot32" parent="EnemyShip/Pivot/ShipGUI/CrewSlots" instance=ExtResource("3_snlng")]
+position = Vector2(170, 186)
+Facing = 0
+
+[node name="CargoSlots" type="Node2D" parent="EnemyShip/Pivot/ShipGUI"]
+scale = Vector2(0.5, 0.5)
+
+[node name="ReadiedSlots" type="Node2D" parent="EnemyShip/Pivot/ShipGUI/CargoSlots"]
+position = Vector2(442, 219)
+
+[node name="DeepStorageSlots" type="Node2D" parent="EnemyShip/Pivot/ShipGUI/CargoSlots"]
+position = Vector2(423, 248)
+
+[node name="AmmoSlots" type="Node2D" parent="EnemyShip/Pivot/ShipGUI/CargoSlots"]
+
+[node name="AmmoSlot" parent="EnemyShip/Pivot/ShipGUI/CargoSlots/AmmoSlots" instance=ExtResource("11_u3u7p")]
+position = Vector2(230, 107)
+
+[node name="AmmoSlot2" parent="EnemyShip/Pivot/ShipGUI/CargoSlots/AmmoSlots" instance=ExtResource("11_u3u7p")]
+position = Vector2(394, 107)
+
+[node name="AmmoSlot3" parent="EnemyShip/Pivot/ShipGUI/CargoSlots/AmmoSlots" instance=ExtResource("11_u3u7p")]
+position = Vector2(198, 162)
+
+[node name="AmmoSlot4" parent="EnemyShip/Pivot/ShipGUI/CargoSlots/AmmoSlots" instance=ExtResource("11_u3u7p")]
+position = Vector2(425, 162)
+
+[node name="FuelSlots" type="Node2D" parent="EnemyShip/Pivot/ShipGUI/CargoSlots"]
+
+[node name="FuelSlot" parent="EnemyShip/Pivot/ShipGUI/CargoSlots/FuelSlots" instance=ExtResource("12_l7dj0")]
+position = Vector2(287, 86)
+
+[node name="FuelSlot2" parent="EnemyShip/Pivot/ShipGUI/CargoSlots/FuelSlots" instance=ExtResource("12_l7dj0")]
+position = Vector2(336, 86)
+
+[node name="FuelSlot3" parent="EnemyShip/Pivot/ShipGUI/CargoSlots/FuelSlots" instance=ExtResource("12_l7dj0")]
+position = Vector2(339, 284)
+
+[node name="FuelSlot4" parent="EnemyShip/Pivot/ShipGUI/CargoSlots/FuelSlots" instance=ExtResource("12_l7dj0")]
+position = Vector2(285, 284)
+
+[node name="ComponentSlots" type="Node2D" parent="EnemyShip/Pivot/ShipGUI"]
+scale = Vector2(0.5, 0.5)
+
+[node name="ComponentSlot" parent="EnemyShip/Pivot/ShipGUI/ComponentSlots" instance=ExtResource("7_rndpj")]
+position = Vector2(306, 1)
+SlotType = 2
+Facing = 0
+
+[node name="ComponentSlot2" parent="EnemyShip/Pivot/ShipGUI/ComponentSlots" instance=ExtResource("7_rndpj")]
+position = Vector2(198, 75)
+SlotType = 1
+Facing = 3
+
+[node name="ComponentSlot3" parent="EnemyShip/Pivot/ShipGUI/ComponentSlots" instance=ExtResource("7_rndpj")]
+position = Vector2(413, 74)
+SlotType = 1
+Facing = 2
+
+[node name="ComponentSlot4" parent="EnemyShip/Pivot/ShipGUI/ComponentSlots" instance=ExtResource("7_rndpj")]
+position = Vector2(167, 130)
+SlotType = 1
+Facing = 3
+
+[node name="ComponentSlot5" parent="EnemyShip/Pivot/ShipGUI/ComponentSlots" instance=ExtResource("7_rndpj")]
+position = Vector2(444, 130)
+SlotType = 1
+Facing = 2
+
+[node name="ComponentSlot6" parent="EnemyShip/Pivot/ShipGUI/ComponentSlots" instance=ExtResource("7_rndpj")]
+position = Vector2(305, 96)
+SlotType = 3
+
+[node name="ComponentSlot7" parent="EnemyShip/Pivot/ShipGUI/ComponentSlots" instance=ExtResource("7_rndpj")]
+position = Vector2(253, 159)
+Facing = 3
+
+[node name="ComponentSlot8" parent="EnemyShip/Pivot/ShipGUI/ComponentSlots" instance=ExtResource("7_rndpj")]
+position = Vector2(357, 160)
+Facing = 2
+
+[node name="ComponentSlot9" parent="EnemyShip/Pivot/ShipGUI/ComponentSlots" instance=ExtResource("7_rndpj")]
+position = Vector2(253, 196)
+Facing = 3
+
+[node name="ComponentSlot10" parent="EnemyShip/Pivot/ShipGUI/ComponentSlots" instance=ExtResource("7_rndpj")]
+position = Vector2(357, 196)
+Facing = 2
+
+[node name="ComponentSlot11" parent="EnemyShip/Pivot/ShipGUI/ComponentSlots" instance=ExtResource("7_rndpj")]
+position = Vector2(253, 232)
+Facing = 3
+
+[node name="ComponentSlot12" parent="EnemyShip/Pivot/ShipGUI/ComponentSlots" instance=ExtResource("7_rndpj")]
+position = Vector2(357, 231)
+Facing = 2
+
+[node name="ComponentSlot13" parent="EnemyShip/Pivot/ShipGUI/ComponentSlots" instance=ExtResource("7_rndpj")]
+position = Vector2(134, 155)
+SlotType = 5
+
+[node name="ComponentSlot14" parent="EnemyShip/Pivot/ShipGUI/ComponentSlots" instance=ExtResource("7_rndpj")]
+position = Vector2(478, 155)
+SlotType = 6
+
+[node name="ComponentSlot15" parent="EnemyShip/Pivot/ShipGUI/ComponentSlots" instance=ExtResource("7_rndpj")]
+position = Vector2(306, 308)
+SlotType = 4
+Facing = 0
+
+[node name="EnemyShipClipAndDraw" type="Node2D" parent="."]
+visible = false
+position = Vector2(320, 0)
+script = ExtResource("3_f1of7")
+Faction = 2
+
+[node name="Pivot" type="Node2D" parent="EnemyShipClipAndDraw"]
+position = Vector2(320, 180)
+
+[node name="Sprite2D" type="Sprite2D" parent="EnemyShipClipAndDraw/Pivot"]
+clip_children = 2
+texture = ExtResource("13_l7dj0")
+
+[node name="Sprites" type="Node2D" parent="EnemyShipClipAndDraw/Pivot/Sprite2D"]
+position = Vector2(-320, -180)
+
+[node name="Background" type="ColorRect" parent="EnemyShipClipAndDraw/Pivot/Sprite2D/Sprites"]
+visible = false
+offset_right = 640.0
+offset_bottom = 360.0
+color = Color(0.258824, 0.258824, 0.258824, 1)
+
+[node name="SpaceShip" type="Sprite2D" parent="EnemyShipClipAndDraw/Pivot/Sprite2D/Sprites"]
+texture = ExtResource("2_n8iyk")
+centered = false
+
+[node name="Rooms" type="Sprite2D" parent="EnemyShipClipAndDraw/Pivot/Sprite2D/Sprites"]
+position = Vector2(-1.99951, -1.0008)
+texture = ExtResource("8_q8m5i")
+centered = false
+
+[node name="Slots" type="Sprite2D" parent="EnemyShipClipAndDraw/Pivot/Sprite2D/Sprites"]
+visible = false
+texture = ExtResource("3_ll70r")
+centered = false
+
+[node name="UIBorder" type="Sprite2D" parent="EnemyShipClipAndDraw/Pivot/Sprite2D/Sprites"]
+texture = ExtResource("10_kdh2w")
+centered = false
+
+[node name="Crew" type="Node2D" parent="EnemyShipClipAndDraw/Pivot/Sprite2D"]
+visible = false
+position = Vector2(-320, -180)
+
+[node name="Cargo" type="Node2D" parent="EnemyShipClipAndDraw/Pivot/Sprite2D"]
+visible = false
+position = Vector2(-320, -180)
+
+[node name="Components" type="Node2D" parent="EnemyShipClipAndDraw/Pivot/Sprite2D"]
+visible = false
+position = Vector2(-320, -180)
+
+[node name="Anchors" type="Node2D" parent="EnemyShipClipAndDraw/Pivot/Sprite2D"]
+
+[node name="TargetPoint" type="Node2D" parent="EnemyShipClipAndDraw/Pivot/Sprite2D/Anchors"]
+
+[node name="ShipGUI" type="Node2D" parent="EnemyShipClipAndDraw/Pivot/Sprite2D"]
+position = Vector2(-320, -180)
+scale = Vector2(2, 2)
+
+[node name="Caskets" type="Node2D" parent="EnemyShipClipAndDraw/Pivot/Sprite2D/ShipGUI"]
+scale = Vector2(0.5, 0.5)
+
+[node name="Column1" type="Node2D" parent="EnemyShipClipAndDraw/Pivot/Sprite2D/ShipGUI/Caskets"]
+position = Vector2(129, 205)
+
+[node name="Column2" type="Node2D" parent="EnemyShipClipAndDraw/Pivot/Sprite2D/ShipGUI/Caskets"]
+position = Vector2(192, 205)
+
+[node name="CrewSlots" type="Node2D" parent="EnemyShipClipAndDraw/Pivot/Sprite2D/ShipGUI"]
+scale = Vector2(0.5, 0.5)
+
+[node name="CrewSlot" parent="EnemyShipClipAndDraw/Pivot/Sprite2D/ShipGUI/CrewSlots" instance=ExtResource("3_snlng")]
+position = Vector2(303, 44)
+Facing = 0
+
+[node name="CrewSlot2" parent="EnemyShipClipAndDraw/Pivot/Sprite2D/ShipGUI/CrewSlots" instance=ExtResource("3_snlng")]
+position = Vector2(321, 44)
+Facing = 0
+
+[node name="CrewSlot3" parent="EnemyShipClipAndDraw/Pivot/Sprite2D/ShipGUI/CrewSlots" instance=ExtResource("3_snlng")]
+position = Vector2(230, 72)
+Facing = 2
+
+[node name="CrewSlot4" parent="EnemyShipClipAndDraw/Pivot/Sprite2D/ShipGUI/CrewSlots" instance=ExtResource("3_snlng")]
+position = Vector2(230, 90)
+Facing = 2
+
+[node name="CrewSlot5" parent="EnemyShipClipAndDraw/Pivot/Sprite2D/ShipGUI/CrewSlots" instance=ExtResource("3_snlng")]
+position = Vector2(394, 71)
+Facing = 3
+
+[node name="CrewSlot6" parent="EnemyShipClipAndDraw/Pivot/Sprite2D/ShipGUI/CrewSlots" instance=ExtResource("3_snlng")]
+position = Vector2(394, 89)
+Facing = 3
+
+[node name="CrewSlot7" parent="EnemyShipClipAndDraw/Pivot/Sprite2D/ShipGUI/CrewSlots" instance=ExtResource("3_snlng")]
+position = Vector2(287, 103)
+Facing = 3
+
+[node name="CrewSlot8" parent="EnemyShipClipAndDraw/Pivot/Sprite2D/ShipGUI/CrewSlots" instance=ExtResource("3_snlng")]
+position = Vector2(336, 103)
+Facing = 2
+
+[node name="CrewSlot9" parent="EnemyShipClipAndDraw/Pivot/Sprite2D/ShipGUI/CrewSlots" instance=ExtResource("3_snlng")]
+position = Vector2(198, 127)
+Facing = 2
+
+[node name="CrewSlot10" parent="EnemyShipClipAndDraw/Pivot/Sprite2D/ShipGUI/CrewSlots" instance=ExtResource("3_snlng")]
+position = Vector2(198, 145)
+Facing = 2
+
+[node name="CrewSlot11" parent="EnemyShipClipAndDraw/Pivot/Sprite2D/ShipGUI/CrewSlots" instance=ExtResource("3_snlng")]
+position = Vector2(302, 126)
+Facing = 0
+
+[node name="CrewSlot12" parent="EnemyShipClipAndDraw/Pivot/Sprite2D/ShipGUI/CrewSlots" instance=ExtResource("3_snlng")]
+position = Vector2(320, 126)
+Facing = 0
+
+[node name="CrewSlot13" parent="EnemyShipClipAndDraw/Pivot/Sprite2D/ShipGUI/CrewSlots" instance=ExtResource("3_snlng")]
+position = Vector2(425, 127)
+Facing = 3
+
+[node name="CrewSlot14" parent="EnemyShipClipAndDraw/Pivot/Sprite2D/ShipGUI/CrewSlots" instance=ExtResource("3_snlng")]
+position = Vector2(425, 145)
+Facing = 3
+
+[node name="CrewSlot15" parent="EnemyShipClipAndDraw/Pivot/Sprite2D/ShipGUI/CrewSlots" instance=ExtResource("3_snlng")]
+position = Vector2(284, 157)
+Facing = 3
+
+[node name="CrewSlot16" parent="EnemyShipClipAndDraw/Pivot/Sprite2D/ShipGUI/CrewSlots" instance=ExtResource("3_snlng")]
+position = Vector2(284, 175)
+Facing = 3
+
+[node name="CrewSlot17" parent="EnemyShipClipAndDraw/Pivot/Sprite2D/ShipGUI/CrewSlots" instance=ExtResource("3_snlng")]
+position = Vector2(284, 193)
+Facing = 3
+
+[node name="CrewSlot18" parent="EnemyShipClipAndDraw/Pivot/Sprite2D/ShipGUI/CrewSlots" instance=ExtResource("3_snlng")]
+position = Vector2(284, 211)
+Facing = 3
+
+[node name="CrewSlot19" parent="EnemyShipClipAndDraw/Pivot/Sprite2D/ShipGUI/CrewSlots" instance=ExtResource("3_snlng")]
+position = Vector2(284, 229)
+Facing = 3
+
+[node name="CrewSlot20" parent="EnemyShipClipAndDraw/Pivot/Sprite2D/ShipGUI/CrewSlots" instance=ExtResource("3_snlng")]
+position = Vector2(284, 247)
+Facing = 3
+
+[node name="CrewSlot21" parent="EnemyShipClipAndDraw/Pivot/Sprite2D/ShipGUI/CrewSlots" instance=ExtResource("3_snlng")]
+position = Vector2(339, 157)
+Facing = 2
+
+[node name="CrewSlot22" parent="EnemyShipClipAndDraw/Pivot/Sprite2D/ShipGUI/CrewSlots" instance=ExtResource("3_snlng")]
+position = Vector2(339, 175)
+Facing = 2
+
+[node name="CrewSlot23" parent="EnemyShipClipAndDraw/Pivot/Sprite2D/ShipGUI/CrewSlots" instance=ExtResource("3_snlng")]
+position = Vector2(339, 193)
+Facing = 2
+
+[node name="CrewSlot24" parent="EnemyShipClipAndDraw/Pivot/Sprite2D/ShipGUI/CrewSlots" instance=ExtResource("3_snlng")]
+position = Vector2(339, 211)
+Facing = 2
+
+[node name="CrewSlot25" parent="EnemyShipClipAndDraw/Pivot/Sprite2D/ShipGUI/CrewSlots" instance=ExtResource("3_snlng")]
+position = Vector2(339, 229)
+Facing = 2
+
+[node name="CrewSlot26" parent="EnemyShipClipAndDraw/Pivot/Sprite2D/ShipGUI/CrewSlots" instance=ExtResource("3_snlng")]
+position = Vector2(339, 247)
+Facing = 2
+
+[node name="CrewSlot27" parent="EnemyShipClipAndDraw/Pivot/Sprite2D/ShipGUI/CrewSlots" instance=ExtResource("3_snlng")]
+position = Vector2(454, 185)
+Facing = 0
+
+[node name="CrewSlot28" parent="EnemyShipClipAndDraw/Pivot/Sprite2D/ShipGUI/CrewSlots" instance=ExtResource("3_snlng")]
+position = Vector2(472, 185)
+Facing = 0
+
+[node name="CrewSlot29" parent="EnemyShipClipAndDraw/Pivot/Sprite2D/ShipGUI/CrewSlots" instance=ExtResource("3_snlng")]
+position = Vector2(303, 284)
+
+[node name="CrewSlot30" parent="EnemyShipClipAndDraw/Pivot/Sprite2D/ShipGUI/CrewSlots" instance=ExtResource("3_snlng")]
+position = Vector2(321, 284)
+
+[node name="CrewSlot31" parent="EnemyShipClipAndDraw/Pivot/Sprite2D/ShipGUI/CrewSlots" instance=ExtResource("3_snlng")]
+position = Vector2(152, 186)
+Facing = 0
+
+[node name="CrewSlot32" parent="EnemyShipClipAndDraw/Pivot/Sprite2D/ShipGUI/CrewSlots" instance=ExtResource("3_snlng")]
+position = Vector2(170, 186)
+Facing = 0
+
+[node name="CargoSlots" type="Node2D" parent="EnemyShipClipAndDraw/Pivot/Sprite2D/ShipGUI"]
+scale = Vector2(0.5, 0.5)
+
+[node name="ReadiedSlots" type="Node2D" parent="EnemyShipClipAndDraw/Pivot/Sprite2D/ShipGUI/CargoSlots"]
+position = Vector2(442, 219)
+
+[node name="DeepStorageSlots" type="Node2D" parent="EnemyShipClipAndDraw/Pivot/Sprite2D/ShipGUI/CargoSlots"]
+position = Vector2(423, 248)
+
+[node name="AmmoSlots" type="Node2D" parent="EnemyShipClipAndDraw/Pivot/Sprite2D/ShipGUI/CargoSlots"]
+
+[node name="AmmoSlot" parent="EnemyShipClipAndDraw/Pivot/Sprite2D/ShipGUI/CargoSlots/AmmoSlots" instance=ExtResource("11_u3u7p")]
+position = Vector2(230, 107)
+
+[node name="AmmoSlot2" parent="EnemyShipClipAndDraw/Pivot/Sprite2D/ShipGUI/CargoSlots/AmmoSlots" instance=ExtResource("11_u3u7p")]
+position = Vector2(394, 107)
+
+[node name="AmmoSlot3" parent="EnemyShipClipAndDraw/Pivot/Sprite2D/ShipGUI/CargoSlots/AmmoSlots" instance=ExtResource("11_u3u7p")]
+position = Vector2(198, 162)
+
+[node name="AmmoSlot4" parent="EnemyShipClipAndDraw/Pivot/Sprite2D/ShipGUI/CargoSlots/AmmoSlots" instance=ExtResource("11_u3u7p")]
+position = Vector2(425, 162)
+
+[node name="FuelSlots" type="Node2D" parent="EnemyShipClipAndDraw/Pivot/Sprite2D/ShipGUI/CargoSlots"]
+
+[node name="FuelSlot" parent="EnemyShipClipAndDraw/Pivot/Sprite2D/ShipGUI/CargoSlots/FuelSlots" instance=ExtResource("12_l7dj0")]
+position = Vector2(287, 86)
+
+[node name="FuelSlot2" parent="EnemyShipClipAndDraw/Pivot/Sprite2D/ShipGUI/CargoSlots/FuelSlots" instance=ExtResource("12_l7dj0")]
+position = Vector2(336, 86)
+
+[node name="FuelSlot3" parent="EnemyShipClipAndDraw/Pivot/Sprite2D/ShipGUI/CargoSlots/FuelSlots" instance=ExtResource("12_l7dj0")]
+position = Vector2(339, 284)
+
+[node name="FuelSlot4" parent="EnemyShipClipAndDraw/Pivot/Sprite2D/ShipGUI/CargoSlots/FuelSlots" instance=ExtResource("12_l7dj0")]
+position = Vector2(285, 284)
+
+[node name="ComponentSlots" type="Node2D" parent="EnemyShipClipAndDraw/Pivot/Sprite2D/ShipGUI"]
+scale = Vector2(0.5, 0.5)
+
+[node name="ComponentSlot" parent="EnemyShipClipAndDraw/Pivot/Sprite2D/ShipGUI/ComponentSlots" instance=ExtResource("7_rndpj")]
+position = Vector2(306, 1)
+SlotType = 2
+Facing = 0
+
+[node name="ComponentSlot2" parent="EnemyShipClipAndDraw/Pivot/Sprite2D/ShipGUI/ComponentSlots" instance=ExtResource("7_rndpj")]
+position = Vector2(198, 75)
+SlotType = 1
+Facing = 3
+
+[node name="ComponentSlot3" parent="EnemyShipClipAndDraw/Pivot/Sprite2D/ShipGUI/ComponentSlots" instance=ExtResource("7_rndpj")]
+position = Vector2(413, 74)
+SlotType = 1
+Facing = 2
+
+[node name="ComponentSlot4" parent="EnemyShipClipAndDraw/Pivot/Sprite2D/ShipGUI/ComponentSlots" instance=ExtResource("7_rndpj")]
+position = Vector2(167, 130)
+SlotType = 1
+Facing = 3
+
+[node name="ComponentSlot5" parent="EnemyShipClipAndDraw/Pivot/Sprite2D/ShipGUI/ComponentSlots" instance=ExtResource("7_rndpj")]
+position = Vector2(444, 130)
+SlotType = 1
+Facing = 2
+
+[node name="ComponentSlot6" parent="EnemyShipClipAndDraw/Pivot/Sprite2D/ShipGUI/ComponentSlots" instance=ExtResource("7_rndpj")]
+position = Vector2(305, 96)
+SlotType = 3
+
+[node name="ComponentSlot7" parent="EnemyShipClipAndDraw/Pivot/Sprite2D/ShipGUI/ComponentSlots" instance=ExtResource("7_rndpj")]
+position = Vector2(253, 159)
+Facing = 3
+
+[node name="ComponentSlot8" parent="EnemyShipClipAndDraw/Pivot/Sprite2D/ShipGUI/ComponentSlots" instance=ExtResource("7_rndpj")]
+position = Vector2(357, 160)
+Facing = 2
+
+[node name="ComponentSlot9" parent="EnemyShipClipAndDraw/Pivot/Sprite2D/ShipGUI/ComponentSlots" instance=ExtResource("7_rndpj")]
+position = Vector2(253, 196)
+Facing = 3
+
+[node name="ComponentSlot10" parent="EnemyShipClipAndDraw/Pivot/Sprite2D/ShipGUI/ComponentSlots" instance=ExtResource("7_rndpj")]
+position = Vector2(357, 196)
+Facing = 2
+
+[node name="ComponentSlot11" parent="EnemyShipClipAndDraw/Pivot/Sprite2D/ShipGUI/ComponentSlots" instance=ExtResource("7_rndpj")]
+position = Vector2(253, 232)
+Facing = 3
+
+[node name="ComponentSlot12" parent="EnemyShipClipAndDraw/Pivot/Sprite2D/ShipGUI/ComponentSlots" instance=ExtResource("7_rndpj")]
+position = Vector2(357, 231)
+Facing = 2
+
+[node name="ComponentSlot13" parent="EnemyShipClipAndDraw/Pivot/Sprite2D/ShipGUI/ComponentSlots" instance=ExtResource("7_rndpj")]
+position = Vector2(134, 155)
+SlotType = 5
+
+[node name="ComponentSlot14" parent="EnemyShipClipAndDraw/Pivot/Sprite2D/ShipGUI/ComponentSlots" instance=ExtResource("7_rndpj")]
+position = Vector2(478, 155)
+SlotType = 6
+
+[node name="ComponentSlot15" parent="EnemyShipClipAndDraw/Pivot/Sprite2D/ShipGUI/ComponentSlots" instance=ExtResource("7_rndpj")]
+position = Vector2(306, 308)
+SlotType = 4
+Facing = 0
+
+[node name="Projectiles" type="Node2D" parent="."]
+
+[node name="MidRangePlayerAttacks" type="Node2D" parent="Projectiles"]
+position = Vector2(602, -400)
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
@@ -538,16 +1118,20 @@ position = Vector2(80, 45)
 [node name="SideBarComponents" type="Node2D" parent="CanvasLayer/GUI/Gameplay"]
 position = Vector2(0, 159)
 
-[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/GUI/Gameplay/SideBarComponents"]
-offset_right = 40.0
-offset_bottom = 40.0
+[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer/GUI/Gameplay/SideBarComponents"]
+offset_left = 248.0
+offset_top = 174.0
+offset_right = 402.0
+offset_bottom = 200.0
 
-[node name="SideBarComponent" parent="CanvasLayer/GUI/Gameplay/SideBarComponents/VBoxContainer" node_paths=PackedStringArray("ComponentSlot") instance=ExtResource("21_21n7f")]
+[node name="SideBarComponent" parent="CanvasLayer/GUI/Gameplay/SideBarComponents/HBoxContainer" node_paths=PackedStringArray("ComponentSlot") instance=ExtResource("21_21n7f")]
 layout_mode = 2
 ComponentSlot = NodePath("../../../../../../PlayerShip/Pivot/ComponentSlots/ComponentSlot2")
 
-[node name="SideBarComponent2" parent="CanvasLayer/GUI/Gameplay/SideBarComponents/VBoxContainer" node_paths=PackedStringArray("ComponentSlot") instance=ExtResource("21_21n7f")]
+[node name="SideBarComponent2" parent="CanvasLayer/GUI/Gameplay/SideBarComponents/HBoxContainer" node_paths=PackedStringArray("ComponentSlot") instance=ExtResource("21_21n7f")]
 layout_mode = 2
 ComponentSlot = NodePath("../../../../../../PlayerShip/Pivot/ComponentSlots/ComponentSlot3")
+
+[node name="Projectiles" type="Node2D" parent="CanvasLayer/GUI/Gameplay"]
 
 [connection signal="pressed" from="CanvasLayer/GUI/Gameplay/Buttons/EndTurnButton" to="." method="_on_end_turn_button_pressed"]

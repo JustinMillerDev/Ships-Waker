@@ -40,26 +40,44 @@ public partial class ComponentManager : Node
 			return;
 		}
 
+		// --- Player ship: slots live inside the ShipView GUI ---
 		Node shipViews = playspace.GetNodeOrNull("CanvasLayer/GUI/Gameplay/ShipViews");
-		if (shipViews == null)
+		if (shipViews != null)
+		{
+			foreach (Node shipView in shipViews.GetChildren())
+			{
+				Node container = shipView.GetNodeOrNull("ShipGUI/ComponentSlots");
+				if (container == null) continue;
+
+				foreach (Node child in container.GetChildren())
+				{
+					if (child is not ShipComponentSlot slot) continue;
+					_slots.Add(slot);
+					UpdateSlotLabel(slot);
+					AssignSlotData(slot);
+				}
+			}
+		}
+		else
 		{
 			GD.PushWarning("ComponentManager: Could not find CanvasLayer/GUI/Gameplay/ShipViews node.");
-			return;
 		}
 
-		foreach (Node shipView in shipViews.GetChildren())
+		// --- Enemy ship: slots now live directly on the ship node ---
+		Node enemyGui = playspace.GetNodeOrNull("EnemyShip/Pivot/ShipGUI/ComponentSlots");
+		if (enemyGui != null)
 		{
-			Node container = shipView.GetNodeOrNull("ShipGUI/ComponentSlots");
-			if (container == null) continue;
-
-			foreach (Node child in container.GetChildren())
+			foreach (Node child in enemyGui.GetChildren())
 			{
 				if (child is not ShipComponentSlot slot) continue;
-
 				_slots.Add(slot);
 				UpdateSlotLabel(slot);
 				AssignSlotData(slot);
 			}
+		}
+		else
+		{
+			GD.PushWarning("ComponentManager: Could not find EnemyShip/Pivot/ShipGUI/ComponentSlots node.");
 		}
 	}
 

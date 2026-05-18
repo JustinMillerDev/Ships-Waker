@@ -74,6 +74,15 @@ public partial class ShipPreview : Node2D
 	{
 		IsSelected = !IsSelected;
 		ApplySelection();
+
+		var playSpace = GetTree().Root.GetNodeOrNull<PlaySpace>("PlaySpace");
+		// Zoom to 0.5 when a ship preview is clicked.
+		playSpace?.SetZoom(0.5f);
+
+		if (IsSelected)
+			playSpace?.OnShipPreviewSelected();
+		else
+			playSpace?.OnShipPreviewDeselected();
 	}
 
 	public void _on_focus_mouse_entered()
@@ -92,18 +101,10 @@ public partial class ShipPreview : Node2D
 
 	private void ApplySelection()
 	{
-		if (LinkedShipViewPath != null && !LinkedShipViewPath.IsEmpty)
-		{
-			var shipView = GetNodeOrNull<CanvasItem>(LinkedShipViewPath);
-			if (shipView != null)
-			{
-				shipView.Visible = IsSelected;
-				return;
-			}
-		}
-
-		// Fallback: legacy EnemyShip visibility toggle.
-		if (_enemyShip != null)
-			_enemyShip.Visible = IsSelected;
+		var target = GetTree().Root.GetNodeOrNull<CanvasItem>("PlaySpace/EnemyShipClipAndDraw");
+		if (target != null)
+			target.Visible = IsSelected;
+		else
+			GD.PushWarning("ShipPreview: Could not find PlaySpace/EnemyShipClipAndDraw");
 	}
 }

@@ -21,7 +21,7 @@ public partial class SideBarComponent : Control
 
 	private void OnCargoSlotted(Cargo cargo)
 	{
-        UpdateLabel();
+		UpdateLabel();
 	}
 
 	private void OnCooldownReduced(ShipComponent component)
@@ -46,23 +46,23 @@ public partial class SideBarComponent : Control
 		label.Text = $"{name}\nCooldown: {component.CurrentCooldown}/{maxCooldown}\nAmmo: {component.Ammo}";
 	}
 
-    private void _on_button_pressed()
-    {
-        if (ComponentSlot?.OccupiedBy is not ShipComponent component) return;
-        if (component.CurrentCooldown != 0) return;
-        if (component.ActiveAbility is not ComponentAbility ability) return;
-        ComponentAbilityRegistry.Instance.OnFireExecute(ability, component);
-    }
+	private void _on_button_pressed()
+	{
+		if (ComponentSlot?.OccupiedBy is not ShipComponent component) return;
+		if (component.CurrentCooldown != 0) return;
+		if (component.ActiveAbility is not ComponentAbility ability) return;
+		ComponentAbilityRegistry.Instance.OnFireExecute(ability, component);
+	}
 
-    private void _on_focus_mouse_entered()
-    {
-        if (ComponentSlot != null)
-            ComponentSlot._on_focus_mouse_entered();
-    }
+	private void _on_focus_mouse_entered()
+	{
+		if (ComponentSlot != null)
+			ComponentSlot._on_focus_mouse_entered();
+	}
 
-    private void _on_focus_mouse_exited()
-    {
-        if (ComponentSlot != null)
-            ComponentSlot._on_focus_mouse_exited();
-    }
+	private void _on_focus_mouse_exited()
+	{
+		if (ComponentSlot != null)
+			ComponentSlot._on_focus_mouse_exited();
+	}
 }

@@ -4,8 +4,10 @@
 [ext_resource type="Script" uid="uid://dptmpnp2ag3jf" path="res://Scripts/Components/SideBarComponent.cs" id="2_sidebarcomp"]
 
 [node name="SideBarComponent" type="Control"]
+custom_minimum_size = Vector2(75, 26)
 layout_mode = 3
 anchors_preset = 0
+size_flags_horizontal = 3
 size_flags_vertical = 3
 script = ExtResource("2_sidebarcomp")
 
