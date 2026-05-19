@@ -59,5 +59,54 @@ public partial class Ship : Node2D, IHealth
 
 	public override void _Ready()
 	{
+		if (_faction == ShipFaction.Enemy)
+			SpawnExhaustTrails();
+	}
+
+	// Exhaust trails -----------------------------------------------------------
+
+	/// <summary>
+	/// Spawns white-to-transparent downward Line2D exhaust trails on the six
+	/// engine exhaust nodes that live under the enemy ship's animated sprite.
+	/// </summary>
+	private void SpawnExhaustTrails()
+	{
+		// Positions match the Node2D1-6 positions on the AnimatedSprite2D.
+		Vector2[] exhaustPositions =
+		{
+			new Vector2(113, 14),
+			new Vector2(190, 14),
+			new Vector2(152, 17),
+			new Vector2(450, 14),
+			new Vector2(527, 14),
+			new Vector2(489, 17),
+		};
+
+		// The animated sprite that owns the exhaust anchor positions.
+		Node animSprite = GetNodeOrNull("Pivot/Sprites/Sprite2D2/AnimatedSprite2D");
+		if (animSprite == null)
+		{
+			GD.PushWarning("Ship: Could not find AnimatedSprite2D to attach exhaust trails.");
+			return;
+		}
+
+		// Shared gradient: white opaque → white transparent.
+		var gradient = new Gradient();
+		gradient.Colors = new Color[] { new Color(1, 1, 1, 1), new Color(1, 1, 1, 0) };
+
+		foreach (Vector2 pos in exhaustPositions)
+		{
+			var anchor = new Node2D();
+			anchor.Position = pos;
+			animSprite.AddChild(anchor);
+
+			var line = new Line2D();
+			line.AddPoint(Vector2.Zero);
+			line.AddPoint(new Vector2(0, 4500));
+			line.Width = 10f;
+			line.DefaultColor = new Color(1, 1, 1, 1);
+			line.Gradient = gradient;
+			anchor.AddChild(line);
+		}
 	}
 }

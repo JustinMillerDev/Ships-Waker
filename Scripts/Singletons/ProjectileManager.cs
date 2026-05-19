@@ -46,7 +46,7 @@ public partial class ProjectileManager : Node
 		_projectileContainer = GetTree().Root.GetNodeOrNull("PlaySpace") ?? GetTree().Root;
 
 		_targetPoint = GetTree().Root.GetNodeOrNull<Node2D>(
-			"PlaySpace/EnemyShipClipAndDraw/Pivot/Sprite2D/Anchors/TargetPoint");
+			"PlaySpace/EnemyShip/Pivot/Sprites/Sprite2D2");
 	}
 
 	/// <summary>
@@ -144,7 +144,7 @@ public partial class ProjectileManager : Node
 		tween.TweenCallback(Callable.From(() =>
 		{
 			var sprite2D2 = GetTree().Root.GetNodeOrNull<Sprite2D>(
-				"PlaySpace/Camera2D/EnemyShip24/Pivot/Sprites/Sprite2D2");
+				"PlaySpace/EnemyShip/Pivot/Sprites/Sprite2D2");
 
 			Vector2 target;
 			if (sprite2D2 != null)
