@@ -808,9 +808,9 @@ position = Vector2(80, 45)
 position = Vector2(0, 159)
 
 [node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer/GUI/Gameplay/SideBarComponents"]
-offset_left = 248.0
+offset_left = 155.0
 offset_top = 174.0
-offset_right = 402.0
+offset_right = 487.0
 offset_bottom = 200.0
 
 [node name="SideBarComponent" parent="CanvasLayer/GUI/Gameplay/SideBarComponents/HBoxContainer" node_paths=PackedStringArray("ComponentSlot") instance=ExtResource("21_21n7f")]
@@ -820,6 +820,14 @@ ComponentSlot = NodePath("../../../../../../PlayerShip/Pivot/ComponentSlots/Comp
 [node name="SideBarComponent2" parent="CanvasLayer/GUI/Gameplay/SideBarComponents/HBoxContainer" node_paths=PackedStringArray("ComponentSlot") instance=ExtResource("21_21n7f")]
 layout_mode = 2
 ComponentSlot = NodePath("../../../../../../PlayerShip/Pivot/ComponentSlots/ComponentSlot3")
+
+[node name="SideBarComponent3" parent="CanvasLayer/GUI/Gameplay/SideBarComponents/HBoxContainer" node_paths=PackedStringArray("ComponentSlot") instance=ExtResource("21_21n7f")]
+layout_mode = 2
+ComponentSlot = NodePath("../../../../../../PlayerShip/Pivot/ComponentSlots/ComponentSlot4")
+
+[node name="SideBarComponent4" parent="CanvasLayer/GUI/Gameplay/SideBarComponents/HBoxContainer" node_paths=PackedStringArray("ComponentSlot") instance=ExtResource("21_21n7f")]
+layout_mode = 2
+ComponentSlot = NodePath("../../../../../../PlayerShip/Pivot/ComponentSlots/ComponentSlot5")
 
 [node name="EnemyShipUI" type="Node2D" parent="CanvasLayer/GUI/Gameplay"]
 

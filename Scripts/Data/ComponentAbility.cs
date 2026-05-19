@@ -28,4 +28,12 @@ public enum ComponentAbility
 	HighCargoDeploy,
 	HighCannon,
 	MaxShields,
+	BaseMissileLauncher,
+	LowMissileLauncher,
+	MediumMissileLauncher,
+	HighMissileLauncher,
+	BaseRailGun,
+	LowRailGun,
+	MediumRailGun,
+	HighRailGun,
 }

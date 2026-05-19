@@ -24,7 +24,9 @@ public partial class ComponentManager : Node
 		_shipComponentScene = GD.Load<PackedScene>("res://Scenes/Component.tscn");
 		CollectSlots();
 		UpdateWorldSlotLabels();
+		SpawnInitialRailGun();
 		SpawnInitialExternalComponents();
+		SpawnInitialMissileLaunchers();
 		SpawnInitialInternalComponents();
 	}
 
@@ -171,6 +173,54 @@ public partial class ComponentManager : Node
 		}
 	}
 
+	private void SpawnInitialRailGun()
+	{
+		if (_shipComponentScene == null) return;
+
+		Node playspace = GetTree().Root.GetNodeOrNull("PlaySpace");
+		if (playspace == null) return;
+
+		Node componentContainer = playspace.GetNodeOrNull("PlayerShip/Pivot/Components");
+		if (componentContainer == null) return;
+
+		if (DataManager.Components == null ||
+			!DataManager.Components.ByDataName.TryGetValue("Rail Gun", out ComponentData railGunData))
+		{
+			GD.PushWarning("ComponentManager: No ComponentData found for 'Rail Gun'.");
+			return;
+		}
+
+		// Find the first unoccupied external slot.
+		ShipComponentSlot slot = null;
+		foreach (ShipComponentSlot s in _slots)
+		{
+			if (s.SlotType == ShipComponentType.External && !s.IsOccupied) { slot = s; break; }
+		}
+		if (slot == null) return;
+
+		GD.Print("Spawning ship component: Rail Gun");
+		ShipComponent component = _shipComponentScene.Instantiate<ShipComponent>();
+		componentContainer.AddChild(component);
+		component.ComponentType = ShipComponentType.External;
+		component.Facing = slot.Facing;
+		component.Data = railGunData;
+
+		if (slot.GetNodeOrNull("Pivot/Sprites/Sprite2D") is Sprite2D slotSprite)
+			slotSprite.Visible = false;
+
+		if (component.GetNodeOrNull("Sprites/Sprite2D") is Sprite2D sprite)
+			sprite.FlipH = slot.Facing == CardinalDirection.Right;
+
+		string anchorPath = slot.Facing == CardinalDirection.Right
+			? "Pivot/Anchors/RightExternal"
+			: "Pivot/Anchors/LeftExternal";
+
+		slot.Accept(component);
+		component.GlobalPosition = (slot.GetNodeOrNull(anchorPath) is Node2D anchor
+			? anchor.GlobalPosition
+			: slot.GlobalPosition) + new Vector2(0, -24);
+	}
+
 	private void SpawnInitialExternalComponents()
 	{
 		if (_shipComponentScene == null)
@@ -189,24 +239,13 @@ public partial class ComponentManager : Node
 			return;
 		}
 
-		// Collect world-space slots from PlaySpace — their anchor GlobalPositions are valid world coords.
-		var worldSlots = new List<ShipComponentSlot>();
-		Node psSlotContainer = playspace.GetNodeOrNull("PlayerShip/Pivot/ComponentSlots");
-		if (psSlotContainer != null)
-		{
-			foreach (Node child in psSlotContainer.GetChildren())
-			{
-				if (child is ShipComponentSlot ws)
-					worldSlots.Add(ws);
-			}
-		}
-
 		int spawned = 0;
 		foreach (ShipComponentSlot slot in _slots)
 		{
 			if (spawned >= InitialExternalComponents) break;
 			if (slot.SlotType != ShipComponentType.External || slot.IsOccupied) continue;
 
+			GD.Print("Spawning ship component: Cannon");
 			ShipComponent component = _shipComponentScene.Instantiate<ShipComponent>();
 			componentContainer.AddChild(component);
 			component.ComponentType = ShipComponentType.External;
@@ -225,29 +264,63 @@ public partial class ComponentManager : Node
 			if (component.GetNodeOrNull("Sprites/Sprite2D") is Sprite2D sprite)
 				sprite.FlipH = slot.Facing == CardinalDirection.Right;
 
-			slot.Accept(component);
-
-			// Use the world-space PlaySpace slot's anchor for correct world positioning.
-			// Match by SlotType + Facing to find the corresponding world-space slot.
 			string anchorPath = slot.Facing == CardinalDirection.Right
 				? "Pivot/Anchors/RightExternal"
 				: "Pivot/Anchors/LeftExternal";
 
-			ShipComponentSlot worldSlot = worldSlots.Find(
-				ws => ws.SlotType == ShipComponentType.External && ws.Facing == slot.Facing && !ws.IsOccupied);
+			slot.Accept(component);
+			component.GlobalPosition = slot.GetNodeOrNull(anchorPath) is Node2D anchor
+				? anchor.GlobalPosition
+				: slot.GlobalPosition;
 
-			if (worldSlot != null)
-			{
-				worldSlot.Accept(component); // mark world slot occupied so the next one isn't reused
-				component.GlobalPosition = worldSlot.GetNodeOrNull(anchorPath) is Node2D anchor
-					? anchor.GlobalPosition
-					: worldSlot.GlobalPosition;
-			}
-			else
-			{
-				// Fallback: place at the component container's origin
-				component.GlobalPosition = componentContainer is Node2D cn ? cn.GlobalPosition : Vector2.Zero;
-			}
+			spawned++;
+		}
+	}
+
+	private void SpawnInitialMissileLaunchers()
+	{
+		if (_shipComponentScene == null) return;
+
+		Node playspace = GetTree().Root.GetNodeOrNull("PlaySpace");
+		if (playspace == null) return;
+
+		Node componentContainer = playspace.GetNodeOrNull("PlayerShip/Pivot/Components");
+		if (componentContainer == null) return;
+
+		if (DataManager.Components == null ||
+			!DataManager.Components.ByDataName.TryGetValue("Missile Launcher", out ComponentData missileData))
+		{
+			GD.PushWarning("ComponentManager: No ComponentData found for 'Missile Launcher'.");
+			return;
+		}
+
+		int spawned = 0;
+		foreach (ShipComponentSlot slot in _slots)
+		{
+			if (spawned >= 2) break;
+			if (slot.SlotType != ShipComponentType.External || slot.IsOccupied) continue;
+
+			GD.Print("Spawning ship component: Missile Launcher");
+			ShipComponent component = _shipComponentScene.Instantiate<ShipComponent>();
+			componentContainer.AddChild(component);
+			component.ComponentType = ShipComponentType.External;
+			component.Facing = slot.Facing;
+			component.Data = missileData;
+
+			if (slot.GetNodeOrNull("Pivot/Sprites/Sprite2D") is Sprite2D slotSprite)
+				slotSprite.Visible = false;
+
+			if (component.GetNodeOrNull("Sprites/Sprite2D") is Sprite2D sprite)
+				sprite.FlipH = slot.Facing == CardinalDirection.Right;
+
+			string anchorPath = slot.Facing == CardinalDirection.Right
+				? "Pivot/Anchors/RightExternal"
+				: "Pivot/Anchors/LeftExternal";
+
+			slot.Accept(component);
+			component.GlobalPosition = slot.GetNodeOrNull(anchorPath) is Node2D anchor
+				? anchor.GlobalPosition
+				: slot.GlobalPosition;
 
 			spawned++;
 		}

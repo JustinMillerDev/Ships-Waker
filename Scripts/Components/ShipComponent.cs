@@ -117,6 +117,13 @@ public partial class ShipComponent : Node2D, IDraggable, IHealth
 				MaxHealth = _data.Health;
 				CurrentHealth = _data.Health;
 				CurrentStrength = _data.Strength ?? 0;
+
+				if (_data.Image != null)
+				{
+					var texture = GD.Load<Texture2D>("res://Assets/Characters/" + _data.Image + ".png");
+					if (GetNodeOrNull("Sprites/Sprite2D") is Sprite2D sprite)
+						sprite.Texture = texture;
+				}
 			}
 		}
 	}

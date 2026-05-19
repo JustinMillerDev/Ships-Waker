@@ -22,6 +22,13 @@ public class ComponentData
 	[JsonPropertyName("Image")]
 	public string Image { get; set; }
 
+	[JsonPropertyName("ProjectileImage")]
+	public string ProjectileImage { get; set; }
+
+	[JsonPropertyName("TrailType")]
+	[JsonConverter(typeof(JsonStringEnumConverter))]
+	public TrailType? TrailType { get; set; }
+
 	[JsonPropertyName("Price")]
 	public int Price { get; set; }
 

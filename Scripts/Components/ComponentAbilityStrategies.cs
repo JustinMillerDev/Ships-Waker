@@ -46,7 +46,17 @@ public sealed class HighCrewDeployStrategy   : IComponentAbilityStrategy { publi
 public sealed class HighCargoDeployStrategy  : IComponentAbilityStrategy { public void EndOfTurnExecute(ShipComponent c) => GD.Print($"{c.Name}: HighCargoDeploy end-of-turn.");public void OnFireExecute(ShipComponent c) => GD.Print($"{c.Name}: HighCargoDeploy fired."); }
 public sealed class HighCannonStrategy       : IComponentAbilityStrategy { public void EndOfTurnExecute(ShipComponent c) { c.CurrentCooldown = Mathf.Max(0, c.CurrentCooldown - 6); GD.Print($"{c.Name}: HighCannon end-of-turn. Cooldown reduced to {c.CurrentCooldown}."); CustomSignals.Instance.EmitSignal(CustomSignals.SignalName.CooldownReduced, c); } public void OnFireExecute(ShipComponent c) => CannonFireHelper.Fire(c); }
 
-public sealed class MaxShieldsStrategy       : IComponentAbilityStrategy { public void EndOfTurnExecute(ShipComponent c) => GD.Print($"{c.Name}: MaxShields end-of-turn.");    public void OnFireExecute(ShipComponent c) => GD.Print($"{c.Name}: MaxShields fired."); }
+public sealed class MaxShieldsStrategy              : IComponentAbilityStrategy { public void EndOfTurnExecute(ShipComponent c) => GD.Print($"{c.Name}: MaxShields end-of-turn.");    public void OnFireExecute(ShipComponent c) => GD.Print($"{c.Name}: MaxShields fired."); }
+
+public sealed class BaseMissileLauncherStrategy  : IComponentAbilityStrategy { public void EndOfTurnExecute(ShipComponent c) { GD.Print($"{c.Name}: BaseMissileLauncher end-of-turn. Cooldown unchanged ({c.CurrentCooldown})."); } public void OnFireExecute(ShipComponent c) => CannonFireHelper.Fire(c); }
+public sealed class LowMissileLauncherStrategy   : IComponentAbilityStrategy { public void EndOfTurnExecute(ShipComponent c) { c.CurrentCooldown = Mathf.Max(0, c.CurrentCooldown - 1); GD.Print($"{c.Name}: LowMissileLauncher end-of-turn. Cooldown reduced to {c.CurrentCooldown}."); CustomSignals.Instance.EmitSignal(CustomSignals.SignalName.CooldownReduced, c); } public void OnFireExecute(ShipComponent c) => CannonFireHelper.Fire(c); }
+public sealed class MediumMissileLauncherStrategy: IComponentAbilityStrategy { public void EndOfTurnExecute(ShipComponent c) { c.CurrentCooldown = Mathf.Max(0, c.CurrentCooldown - 3); GD.Print($"{c.Name}: MediumMissileLauncher end-of-turn. Cooldown reduced to {c.CurrentCooldown}."); CustomSignals.Instance.EmitSignal(CustomSignals.SignalName.CooldownReduced, c); } public void OnFireExecute(ShipComponent c) => CannonFireHelper.Fire(c); }
+public sealed class HighMissileLauncherStrategy  : IComponentAbilityStrategy { public void EndOfTurnExecute(ShipComponent c) { c.CurrentCooldown = Mathf.Max(0, c.CurrentCooldown - 6); GD.Print($"{c.Name}: HighMissileLauncher end-of-turn. Cooldown reduced to {c.CurrentCooldown}."); CustomSignals.Instance.EmitSignal(CustomSignals.SignalName.CooldownReduced, c); } public void OnFireExecute(ShipComponent c) => CannonFireHelper.Fire(c); }
+
+public sealed class BaseRailGunStrategy   : IComponentAbilityStrategy { public void EndOfTurnExecute(ShipComponent c) { GD.Print($"{c.Name}: BaseRailGun end-of-turn. Cooldown unchanged ({c.CurrentCooldown})."); } public void OnFireExecute(ShipComponent c) => CannonFireHelper.Fire(c); }
+public sealed class LowRailGunStrategy    : IComponentAbilityStrategy { public void EndOfTurnExecute(ShipComponent c) { c.CurrentCooldown = Mathf.Max(0, c.CurrentCooldown - 1); GD.Print($"{c.Name}: LowRailGun end-of-turn. Cooldown reduced to {c.CurrentCooldown}."); CustomSignals.Instance.EmitSignal(CustomSignals.SignalName.CooldownReduced, c); } public void OnFireExecute(ShipComponent c) => CannonFireHelper.Fire(c); }
+public sealed class MediumRailGunStrategy : IComponentAbilityStrategy { public void EndOfTurnExecute(ShipComponent c) { c.CurrentCooldown = Mathf.Max(0, c.CurrentCooldown - 3); GD.Print($"{c.Name}: MediumRailGun end-of-turn. Cooldown reduced to {c.CurrentCooldown}."); CustomSignals.Instance.EmitSignal(CustomSignals.SignalName.CooldownReduced, c); } public void OnFireExecute(ShipComponent c) => CannonFireHelper.Fire(c); }
+public sealed class HighRailGunStrategy   : IComponentAbilityStrategy { public void EndOfTurnExecute(ShipComponent c) { c.CurrentCooldown = Mathf.Max(0, c.CurrentCooldown - 6); GD.Print($"{c.Name}: HighRailGun end-of-turn. Cooldown reduced to {c.CurrentCooldown}."); CustomSignals.Instance.EmitSignal(CustomSignals.SignalName.CooldownReduced, c); } public void OnFireExecute(ShipComponent c) => CannonFireHelper.Fire(c); }
 
 // ---------------------------------------------------------------------------
 // Shared cannon fire logic
@@ -114,7 +124,15 @@ public sealed class ComponentAbilityRegistry
 		{ ComponentAbility.HighCrewDeploy,    new HighCrewDeployStrategy()    },
 		{ ComponentAbility.HighCargoDeploy,   new HighCargoDeployStrategy()   },
 		{ ComponentAbility.HighCannon,        new HighCannonStrategy()        },
-		{ ComponentAbility.MaxShields,        new MaxShieldsStrategy()        },
+		{ ComponentAbility.MaxShields,             new MaxShieldsStrategy()             },
+		{ ComponentAbility.BaseMissileLauncher,  new BaseMissileLauncherStrategy()  },
+		{ ComponentAbility.LowMissileLauncher,   new LowMissileLauncherStrategy()   },
+		{ ComponentAbility.MediumMissileLauncher,new MediumMissileLauncherStrategy() },
+		{ ComponentAbility.HighMissileLauncher,  new HighMissileLauncherStrategy()  },
+		{ ComponentAbility.BaseRailGun,          new BaseRailGunStrategy()          },
+		{ ComponentAbility.LowRailGun,           new LowRailGunStrategy()           },
+		{ ComponentAbility.MediumRailGun,        new MediumRailGunStrategy()        },
+		{ ComponentAbility.HighRailGun,          new HighRailGunStrategy()          },
 	};
 
 	private ComponentAbilityRegistry() { }

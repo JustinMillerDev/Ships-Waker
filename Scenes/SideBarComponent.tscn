@@ -4,7 +4,7 @@
 [ext_resource type="Script" uid="uid://dptmpnp2ag3jf" path="res://Scripts/Components/SideBarComponent.cs" id="2_sidebarcomp"]
 
 [node name="SideBarComponent" type="Control"]
-custom_minimum_size = Vector2(75, 26)
+custom_minimum_size = Vector2(80, 26)
 layout_mode = 3
 anchors_preset = 0
 size_flags_horizontal = 3
@@ -13,8 +13,10 @@ script = ExtResource("2_sidebarcomp")
 
 [node name="ColorRect" type="ColorRect" parent="."]
 layout_mode = 0
-offset_right = 75.0
-offset_bottom = 26.0
+offset_left = -5.0
+offset_top = -5.0
+offset_right = 80.0
+offset_bottom = 31.0
 color = Color(0.258824, 0.258824, 0.258824, 1)
 
 [node name="Label" type="Label" parent="."]

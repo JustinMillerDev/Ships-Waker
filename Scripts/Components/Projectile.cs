@@ -9,8 +9,11 @@ public partial class Projectile : Node2D
 {
 	private const int TrailLength = 24;
 	private const int AttackTrailLength = 8;
+	private const int MissileTrailLength = TrailLength * 3;
+	private const int MissileAttackTrailLength = AttackTrailLength * 3;
 
 	private int _activeTrailLength = TrailLength;
+	private int _attackTrailLength = AttackTrailLength;
 
 	/// <summary>The component that fired this projectile.</summary>
 	public ShipComponent Source { get; set; }
@@ -37,12 +40,36 @@ public partial class Projectile : Node2D
 
 	public override void _Ready()
 	{
+		TrailType? trailType = Source?.Data?.TrailType;
+		bool isMissile = trailType == TrailType.Missile;
+		bool isRailGun = trailType == TrailType.RailGun;
+
+		if (isMissile)
+		{
+			_activeTrailLength = MissileTrailLength;
+			_attackTrailLength = MissileAttackTrailLength;
+		}
+
+		Color defaultColor = trailType switch
+		{
+			TrailType.Missile => new Color(1f, 1f, 1f, 0.7f),
+			TrailType.RailGun => new Color(0.4f, 0.8f, 1f, 0.9f),
+			_                 => new Color(1f, 0.85f, 0.3f, 0.7f),
+		};
+
+		Gradient gradient = trailType switch
+		{
+			TrailType.Missile => BuildMissileTrailGradient(),
+			TrailType.RailGun => BuildRailGunTrailGradient(),
+			_                 => BuildTrailGradient(),
+		};
+
 		_trail = new Line2D
 		{
-			TopLevel     = true,   // world-space coordinates, unaffected by parent transform
-			Width        = 3f,
-			DefaultColor = new Color(1f, 0.85f, 0.3f, 0.7f),
-			Gradient     = BuildTrailGradient(),
+			TopLevel     = true,
+			Width        = isRailGun ? 5f : 3f,
+			DefaultColor = defaultColor,
+			Gradient     = gradient,
 		};
 		AddChild(_trail);
 	}
@@ -81,7 +108,7 @@ public partial class Projectile : Node2D
 	/// <summary>Switches to a shorter, skinnier trail for the attack run (stage 2).</summary>
 	public void SetAttackTrail()
 	{
-		_activeTrailLength = AttackTrailLength;
+		_activeTrailLength = _attackTrailLength;
 		_trail.Width = 1.5f;
 	}
 
@@ -110,4 +137,20 @@ public partial class Projectile : Node2D
 		gradient.SetColor(0, new Color(1f, 0.4f,  0.1f, 0f));   // transparent head
 		return gradient;
 	}
-}
+
+	private static Gradient BuildMissileTrailGradient()
+	{
+		var gradient = new Gradient();
+		gradient.SetColor(1, new Color(1f, 1f, 1f, 0.9f));    // white tail
+		gradient.SetColor(0, new Color(0.8f, 0.8f, 0.8f, 0f)); // transparent head
+		// Add an extra stop near the head so opacity holds long then drops suddenly.
+		gradient.AddPoint(0.85f, new Color(1f, 1f, 1f, 0.85f));
+		return gradient;
+	}
+	private static Gradient BuildRailGunTrailGradient()
+	{
+		var gradient = new Gradient();
+		gradient.SetColor(1, new Color(0.4f, 0.8f, 1f, 1f));  // bright cyan tail
+		gradient.SetColor(0, new Color(0.2f, 0.5f, 1f, 0f));  // transparent head
+		return gradient;
+	}}

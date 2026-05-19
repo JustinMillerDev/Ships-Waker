@@ -130,6 +130,9 @@ public partial class ShipComponentSlot : Node2D, ISlottable
 
 		if (draggable is Node2D node2D)
 			node2D.GlobalPosition = SlotPosition;
+
+		if (SlotType == ShipComponentType.External)
+			Visible = false;
 	}
 
 	public void Vacate()
@@ -139,6 +142,9 @@ public partial class ShipComponentSlot : Node2D, ISlottable
 			OccupiedBy.CurrentSlot = null;
 			OccupiedBy = null;
 		}
+
+		if (SlotType == ShipComponentType.External)
+			Visible = true;
 	}
 
 	public bool ContainsPoint(Vector2 point)

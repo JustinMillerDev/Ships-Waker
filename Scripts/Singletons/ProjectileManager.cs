@@ -12,7 +12,7 @@ public partial class ProjectileManager : Node
 	[Export] public float TravelTime { get; set; } = .75f;
 
 	/// <summary>Travel time for the first leg (rise to staging point), in seconds. Defaults to half of TravelTime.</summary>
-	[Export] public float StagingTravelTime { get; set; } = 0.35f;
+	[Export] public float StagingTravelTime { get; set; } = 1.2f;
 
 	/// <summary>Radius of the circle around the enemy ship anchor used for attack radian positions.</summary>
 	[Export] public float AttackRadianRadius { get; set; } = 330f;
@@ -24,7 +24,7 @@ public partial class ProjectileManager : Node
 	[Export] public float AttackTargetRadius { get; set; } = 120f;
 
 	/// <summary>The Y coordinate the projectile rises to before teleporting to the attack radian.</summary>
-	[Export] public float StagingY { get; set; } = -280f;
+	[Export] public float StagingY { get; set; } = -2000f;
 
 	/// <summary>
 	/// The current randomised launch position — a point on a circle of radius
@@ -78,18 +78,14 @@ public partial class ProjectileManager : Node
 	{
 		if (source == null || targetShip == null) return;
 
-		var projectile = _projectileScene.Instantiate<Projectile>();
-		projectile.Source          = source;
-		projectile.TargetShip      = targetShip;
-		projectile.TargetComponent = targetComponent;
-		projectile.Damage          = damage;
+		if (source.Data?.TrailType == TrailType.Missile)
+		{
+			FireMissileVolley(source, targetShip, targetComponent, null, damage);
+			return;
+		}
 
-		_projectileContainer.AddChild(projectile);
-		projectile.GlobalPosition = source.GlobalPosition;
-
-		Vector2 destination = projectile.ImpactPosition;
-
-		Launch(projectile, destination);
+		Projectile projectile = SpawnProjectile(source, targetShip, targetComponent, damage, Vector2.Zero);
+		Launch(projectile, projectile.ImpactPosition);
 	}
 
 	/// <summary>
@@ -99,18 +95,51 @@ public partial class ProjectileManager : Node
 	{
 		if (source == null || targetShip == null) return;
 
-		var projectile = _projectileScene.Instantiate<Projectile>();
-		projectile.Source     = source;
-		projectile.TargetShip = targetShip;
-		projectile.Damage     = damage;
+		if (source.Data?.TrailType == TrailType.Missile)
+		{
+			FireMissileVolley(source, targetShip, null, targetPosition, damage);
+			return;
+		}
 
-		_projectileContainer.AddChild(projectile);
-		projectile.GlobalPosition = source.GlobalPosition;
-
+		Projectile projectile = SpawnProjectile(source, targetShip, null, damage, Vector2.Zero);
 		Launch(projectile, targetPosition);
 	}
 
-	private void Launch(Projectile projectile, Vector2 destination)
+	private void FireMissileVolley(ShipComponent source, Ship targetShip, ShipComponent targetComponent, Vector2? explicitTarget, int damage)
+	{
+		for (int i = 0; i < 4; i++)
+		{
+			int index = i;
+			float xOffset = index * 5f;
+			float stage2XOffset = (index - 1.5f) * 80f; // spread: -60, -20, +20, +60
+			GetTree().CreateTimer(index * 0.15f).Timeout += () =>
+			{
+				Projectile projectile = SpawnProjectile(source, targetShip, targetComponent, damage, new Vector2(xOffset, 0));
+				Vector2 dest = explicitTarget ?? projectile.ImpactPosition;
+				Launch(projectile, dest, stage2XOffset);
+			};
+		}
+	}
+
+	private Projectile SpawnProjectile(ShipComponent source, Ship targetShip, ShipComponent targetComponent, int damage, Vector2 spawnOffset)
+	{
+		var projectile = _projectileScene.Instantiate<Projectile>();
+		projectile.Source          = source;
+		projectile.TargetShip      = targetShip;
+		projectile.TargetComponent = targetComponent;
+		projectile.Damage          = damage;
+
+		_projectileContainer.AddChild(projectile);
+		projectile.GlobalPosition = source.GlobalPosition + spawnOffset;
+
+		if (source.Data?.ProjectileImage != null &&
+			projectile.GetNodeOrNull<Sprite2D>("Pivot/Sprite2D") is Sprite2D sprite)
+			sprite.Texture = GD.Load<Texture2D>("res://Assets/Effects/" + source.Data.ProjectileImage + ".png");
+
+		return projectile;
+	}
+
+	private void Launch(Projectile projectile, Vector2 destination, float stage2XOffset = 0f)
 	{
 		// --- Stage 1: rise straight up to the staging Y coordinate ---
 		Vector2 stagingPoint = new Vector2(projectile.GlobalPosition.X, StagingY);
@@ -131,8 +160,9 @@ public partial class ProjectileManager : Node
 			if (midRange != null)
 				projectile.Reparent(midRange);
 
-			// Teleport to that node's global position.
-			projectile.GlobalPosition = midRange?.GlobalPosition ?? PlayerAttackRadian;
+			// Teleport to that node's global position, offset by stage2XOffset for missile spread.
+			Vector2 basePos = midRange?.GlobalPosition ?? PlayerAttackRadian;
+			projectile.GlobalPosition = basePos + new Vector2(stage2XOffset, 0);
 			projectile.Scale = new Vector2(0.2f, 0.2f);
 
 			// Prevent a streak from the teleport jump, then shrink the trail for the attack run.
@@ -160,10 +190,28 @@ public partial class ProjectileManager : Node
 				target = destination;
 			}
 
+			bool isMissile = projectile.Source?.Data?.TrailType == TrailType.Missile;
+
 			Tween flyTween = projectile.CreateTween();
-			flyTween.TweenProperty(projectile, "global_position", target, TravelTime)
-					.SetTrans(Tween.TransitionType.Linear)
-					.SetEase(Tween.EaseType.In);
+			if (isMissile && stage2XOffset != 0f)
+			{
+				Vector2 start = projectile.GlobalPosition;
+				Vector2 delta = target - start;
+				float dist = delta.Length();
+				// Midpoint offset: half the distance on both axes, in the direction away from center.
+				float xSign = stage2XOffset > 0 ? 1f : -1f;
+				Vector2 midPoint = start + new Vector2(xSign * dist * 0.25f, dist * 0.5f);
+				flyTween.TweenProperty(projectile, "global_position", midPoint, TravelTime * 0.5f)
+						.SetTrans(Tween.TransitionType.Linear);
+				flyTween.TweenProperty(projectile, "global_position", target, TravelTime * 0.5f)
+						.SetTrans(Tween.TransitionType.Linear);
+			}
+			else
+			{
+				flyTween.TweenProperty(projectile, "global_position", target, TravelTime)
+						.SetTrans(Tween.TransitionType.Linear)
+						.SetEase(Tween.EaseType.In);
+			}
 			flyTween.TweenCallback(Callable.From(projectile.OnImpact));
 		}));
 	}
