@@ -1,4 +1,4 @@
-[gd_scene load_steps=28 format=3 uid="uid://dwn6w7t2pvk3b"]
+[gd_scene load_steps=32 format=3 uid="uid://dwn6w7t2pvk3b"]
 
 [ext_resource type="Script" uid="uid://dhktcp2cgrjok" path="res://Scripts/Singletons/PlaySpace.cs" id="1_bvtvd"]
 [ext_resource type="Texture2D" uid="uid://cw3ijnjtukqce" path="res://Assets/Backgrounds/Background_BluePlanetBig.png" id="2_b7nil"]
@@ -10,6 +10,7 @@
 [ext_resource type="Texture2D" uid="uid://dm4idhds6mgut" path="res://Assets/GUI/EndTurnDown.png" id="6_st7tj"]
 [ext_resource type="Texture2D" uid="uid://btuvxri6u8d8m" path="res://Assets/GUI/EndTurnOver.png" id="7_jxuwt"]
 [ext_resource type="PackedScene" uid="uid://c6twj2p5ntq0u" path="res://Scenes/ComponentSlot.tscn" id="7_rndpj"]
+[ext_resource type="Texture2D" uid="uid://dtwtywqxu48t0" path="res://Assets/Backgrounds/ExhaustParticle.png" id="7_u3u7p"]
 [ext_resource type="PackedScene" uid="uid://dkbeyq12s7j3w" path="res://Scenes/CargoSlot.tscn" id="8_21n7f"]
 [ext_resource type="Texture2D" uid="uid://dbxsn3kolr1ft" path="res://Assets/Backgrounds/SpaceShipGame_UI_Rooms.png" id="8_q8m5i"]
 [ext_resource type="FontFile" uid="uid://bx73bfi2nt2l6" path="res://Assets/Fonts/PressStart2P.ttf" id="8_st7tj"]
@@ -59,6 +60,25 @@ animations = [{
 "speed": 5.0
 }]
 
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_u3u7p"]
+light_mode = 1
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_u3u7p"]
+particle_flag_disable_z = true
+gravity = Vector3(0, 98, 0)
+scale_min = 0.1
+scale_max = 0.1
+hue_variation_min = -2.23517e-08
+hue_variation_max = -2.23517e-08
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_l7dj0"]
+particle_flag_disable_z = true
+gravity = Vector3(0, 98, 0)
+scale_min = 1.5
+scale_max = 1.5
+scale_over_velocity_min = 1.0
+scale_over_velocity_max = 1.0
+
 [node name="PlaySpace" type="Node2D"]
 script = ExtResource("1_bvtvd")
 
@@ -80,6 +100,7 @@ centered = false
 offset = Vector2(-480, -270)
 
 [node name="EnemyShip" type="Node2D" parent="."]
+position = Vector2(3, 0)
 script = ExtResource("3_f1of7")
 Faction = 2
 
@@ -88,7 +109,7 @@ Faction = 2
 [node name="Sprites" type="Node2D" parent="EnemyShip/Pivot"]
 
 [node name="Sprite2D2" type="Sprite2D" parent="EnemyShip/Pivot/Sprites"]
-position = Vector2(616, 73)
+position = Vector2(636, 75)
 scale = Vector2(0.1, 0.1)
 texture = ExtResource("2_n8iyk")
 
@@ -118,6 +139,96 @@ position = Vector2(527, 14)
 [node name="Node2D6" type="Node2D" parent="EnemyShip/Pivot/Sprites/Sprite2D2/AnimatedSprite2D"]
 position = Vector2(489, 17)
 
+[node name="GPUParticles2D" type="GPUParticles2D" parent="EnemyShip/Pivot/Sprites/Sprite2D2/AnimatedSprite2D"]
+visible = false
+material = SubResource("CanvasItemMaterial_u3u7p")
+position = Vector2(110, 34)
+amount = 15
+texture = ExtResource("7_u3u7p")
+lifetime = 1.5
+interp_to_end = 1.0
+preprocess = 3.5
+speed_scale = 0.75
+randomness = 0.1
+trail_enabled = true
+trail_sections = 7
+process_material = SubResource("ParticleProcessMaterial_u3u7p")
+
+[node name="GPUParticles2D2" type="GPUParticles2D" parent="EnemyShip/Pivot/Sprites/Sprite2D2/AnimatedSprite2D"]
+visible = false
+material = SubResource("CanvasItemMaterial_u3u7p")
+position = Vector2(188, 34)
+amount = 15
+texture = ExtResource("7_u3u7p")
+lifetime = 1.5
+interp_to_end = 1.0
+preprocess = 3.5
+speed_scale = 0.75
+randomness = 0.1
+trail_enabled = true
+trail_sections = 7
+process_material = SubResource("ParticleProcessMaterial_u3u7p")
+
+[node name="GPUParticles2D3" type="GPUParticles2D" parent="EnemyShip/Pivot/Sprites/Sprite2D2/AnimatedSprite2D"]
+visible = false
+material = SubResource("CanvasItemMaterial_u3u7p")
+position = Vector2(447, 34)
+amount = 15
+texture = ExtResource("7_u3u7p")
+lifetime = 1.5
+interp_to_end = 1.0
+preprocess = 3.5
+speed_scale = 0.75
+randomness = 0.1
+trail_enabled = true
+trail_sections = 7
+process_material = SubResource("ParticleProcessMaterial_u3u7p")
+
+[node name="GPUParticles2D4" type="GPUParticles2D" parent="EnemyShip/Pivot/Sprites/Sprite2D2/AnimatedSprite2D"]
+visible = false
+material = SubResource("CanvasItemMaterial_u3u7p")
+position = Vector2(525, 34)
+amount = 15
+texture = ExtResource("7_u3u7p")
+lifetime = 1.5
+interp_to_end = 1.0
+preprocess = 3.5
+speed_scale = 0.75
+randomness = 0.1
+trail_enabled = true
+trail_sections = 7
+process_material = SubResource("ParticleProcessMaterial_u3u7p")
+
+[node name="GPUParticles2D5" type="GPUParticles2D" parent="EnemyShip/Pivot/Sprites/Sprite2D2/AnimatedSprite2D"]
+visible = false
+material = SubResource("CanvasItemMaterial_u3u7p")
+position = Vector2(486, 45)
+amount = 15
+texture = ExtResource("7_u3u7p")
+lifetime = 1.5
+interp_to_end = 1.0
+preprocess = 3.5
+speed_scale = 0.75
+randomness = 0.1
+trail_enabled = true
+trail_sections = 7
+process_material = SubResource("ParticleProcessMaterial_u3u7p")
+
+[node name="GPUParticles2D6" type="GPUParticles2D" parent="EnemyShip/Pivot/Sprites/Sprite2D2/AnimatedSprite2D"]
+visible = false
+material = SubResource("CanvasItemMaterial_u3u7p")
+position = Vector2(150, 45)
+amount = 15
+texture = ExtResource("7_u3u7p")
+lifetime = 1.5
+interp_to_end = 1.0
+preprocess = 3.5
+speed_scale = 0.75
+randomness = 0.1
+trail_enabled = true
+trail_sections = 7
+process_material = SubResource("ParticleProcessMaterial_u3u7p")
+
 [node name="PlayerShip" type="Node2D" parent="."]
 script = ExtResource("3_f1of7")
 
@@ -142,6 +253,68 @@ autoplay = "default"
 frame = 2
 frame_progress = 0.212665
 centered = false
+
+[node name="Particles" type="Node2D" parent="PlayerShip/Pivot/Sprites/AnimatedSprite2D"]
+
+[node name="GPUParticles2D" type="GPUParticles2D" parent="PlayerShip/Pivot/Sprites/AnimatedSprite2D/Particles"]
+position = Vector2(113, 38)
+amount = 20
+texture = ExtResource("7_u3u7p")
+lifetime = 3.5
+preprocess = 3.5
+speed_scale = 1.75
+randomness = 0.2
+process_material = SubResource("ParticleProcessMaterial_l7dj0")
+
+[node name="GPUParticles2D2" type="GPUParticles2D" parent="PlayerShip/Pivot/Sprites/AnimatedSprite2D/Particles"]
+position = Vector2(191, 38)
+amount = 20
+texture = ExtResource("7_u3u7p")
+lifetime = 3.5
+preprocess = 3.5
+speed_scale = 1.75
+randomness = 0.2
+process_material = SubResource("ParticleProcessMaterial_l7dj0")
+
+[node name="GPUParticles2D3" type="GPUParticles2D" parent="PlayerShip/Pivot/Sprites/AnimatedSprite2D/Particles"]
+position = Vector2(450, 38)
+amount = 20
+texture = ExtResource("7_u3u7p")
+lifetime = 3.5
+preprocess = 3.5
+speed_scale = 1.75
+randomness = 0.2
+process_material = SubResource("ParticleProcessMaterial_l7dj0")
+
+[node name="GPUParticles2D4" type="GPUParticles2D" parent="PlayerShip/Pivot/Sprites/AnimatedSprite2D/Particles"]
+position = Vector2(528, 38)
+amount = 20
+texture = ExtResource("7_u3u7p")
+lifetime = 3.5
+preprocess = 3.5
+speed_scale = 1.75
+randomness = 0.2
+process_material = SubResource("ParticleProcessMaterial_l7dj0")
+
+[node name="GPUParticles2D5" type="GPUParticles2D" parent="PlayerShip/Pivot/Sprites/AnimatedSprite2D/Particles"]
+position = Vector2(489, 49)
+amount = 20
+texture = ExtResource("7_u3u7p")
+lifetime = 3.5
+preprocess = 3.5
+speed_scale = 1.75
+randomness = 0.2
+process_material = SubResource("ParticleProcessMaterial_l7dj0")
+
+[node name="GPUParticles2D6" type="GPUParticles2D" parent="PlayerShip/Pivot/Sprites/AnimatedSprite2D/Particles"]
+position = Vector2(153, 49)
+amount = 20
+texture = ExtResource("7_u3u7p")
+lifetime = 3.5
+preprocess = 3.5
+speed_scale = 1.75
+randomness = 0.2
+process_material = SubResource("ParticleProcessMaterial_l7dj0")
 
 [node name="Caskets" type="Node2D" parent="PlayerShip/Pivot"]
 position = Vector2(-320, -180)

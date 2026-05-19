@@ -147,7 +147,7 @@ public partial class PlaySpace : Node
 	{
 		CurrentRange = range;
 		UpdateRangeLabel();
-		UpdateEnemyShip24Scale();
+		UpdateEnemyShipScale();
 	}
 
 	/// <summary>Builds the range label text, marking the active range with ***.</summary>
@@ -166,9 +166,9 @@ public partial class PlaySpace : Node
 			label.Text = BuildRangeLabelText(CurrentRange);
 	}
 
-	private void UpdateEnemyShip24Scale()
+	private void UpdateEnemyShipScale()
 	{
-		var sprite = GetNodeOrNull<Sprite2D>("Camera2D/EnemyShip24/Pivot/Sprites/Sprite2D2");
+		var sprite = GetNodeOrNull<Sprite2D>("EnemyShip/Pivot/Sprites/Sprite2D2");
 		if (sprite == null) return;
 
 		float s = CurrentRange switch
@@ -178,7 +178,11 @@ public partial class PlaySpace : Node
 			CombatRange.Close => 0.20f,
 			_                 => sprite.Scale.X,
 		};
-		sprite.Scale = new Vector2(s, s);
+
+		Tween tween = CreateTween();
+		tween.TweenProperty(sprite, "scale", new Vector2(s, s), 0.5)
+			 .SetTrans(Tween.TransitionType.Sine)
+			 .SetEase(Tween.EaseType.InOut);
 	}
 
 	private void PanCameraTo(Vector2 target, bool enemy)
