@@ -310,7 +310,7 @@ public partial class Cargo : Node2D, IDraggable, IHealth
 	// Helpers -------------------------------------------------------------------
 
 	private Node GetCargoContainer() =>
-		GetTree().Root.GetNodeOrNull("PlaySpace/PlayerShip/Pivot/Cargo");
+		GetTree().Root.GetNodeOrNull("PlaySpace/PlayerShip/Pivot/Portrait//Cargo");
 
 	private void ShowFocusStats(CargoData data)
 	{

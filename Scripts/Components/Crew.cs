@@ -243,10 +243,10 @@ public partial class Crew : Node2D, IDraggable, IOrientation, IHealth
 			if (targetSlot is CrewSlot && _originalParent is Casket sourceCasket)
 				sourceCasket.SetReadyLabel("--");
 
-			// Crew always lives under PlayerShip/Pivot/Crew; other draggables are parented to their slot
+			// Crew always lives under PlayerShip/Pivot/Portrait//Crew; other draggables are parented to their slot
 			if (targetSlot is CrewSlot)
 			{
-				Node crewContainer = GetTree().Root.GetNodeOrNull("PlaySpace/PlayerShip/Pivot/Crew");
+				Node crewContainer = GetTree().Root.GetNodeOrNull("PlaySpace/PlayerShip/Pivot/Portrait/Crew");
 				if (crewContainer != null && GetParent() != crewContainer)
 				{
 					GetParent().RemoveChild(this);

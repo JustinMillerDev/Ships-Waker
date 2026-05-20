@@ -11,7 +11,7 @@ public partial class SideBarComponent : Control
 	{
 		CustomSignals.Instance.CargoSlotted += OnCargoSlotted;
 		CustomSignals.Instance.CooldownReduced += OnCooldownReduced;
-        UpdateLabel();
+		UpdateLabel();
 	}
 
 	public override void _ExitTree()
@@ -43,7 +43,7 @@ public partial class SideBarComponent : Control
 		}
 
 		string name = component.Data?.Name ?? component.Name;
-        GD.Print("Updating label for component: " + name);
+		GD.Print("Updating label for component: " + name);
 		string maxCooldown = component.Data?.Cooldown.HasValue == true ? component.Data.Cooldown.Value.ToString() : "?";
 		label.Text = $"{name}\nCooldown: {component.CurrentCooldown}/{maxCooldown}\nAmmo: {component.Ammo}";
 	}

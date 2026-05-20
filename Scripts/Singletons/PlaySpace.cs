@@ -100,22 +100,7 @@ public partial class PlaySpace : Node
 			return;
 		}
 
-		// Scroll → cycle zoom
-		if (@event is InputEventMouseButton mbZoom && mbZoom.Pressed)
-		{
-			if (mbZoom.ButtonIndex == MouseButton.WheelUp)
-			{
-				_zoomIndex = Mathf.Max(_zoomIndex - 1, 0);
-				ApplyZoom();
-				return;
-			}
-			else if (mbZoom.ButtonIndex == MouseButton.WheelDown)
-			{
-				_zoomIndex = Mathf.Min(_zoomIndex + 1, ZoomLevels.Length - 1);
-				ApplyZoom();
-				return;
-			}
-		}
+		// Scroll zoom disabled.
 
 		// W → pan to enemy ship
 		if (@event is InputEventKey wKey && !wKey.IsEcho() && wKey.Pressed && wKey.Keycode == Key.W && !_viewingEnemy)
@@ -139,6 +124,7 @@ public partial class PlaySpace : Node
 				}
 			}
 		}
+		if (@event.IsActionPressed("ui_debug_7")) SetRange(CombatRange.Close);
 		if (@event.IsActionPressed("ui_debug_9")) SetRange(CombatRange.Mid);
 		if (@event.IsActionPressed("ui_debug_8")) SetRange(CombatRange.Long);
 	}
@@ -147,7 +133,7 @@ public partial class PlaySpace : Node
 	{
 		CurrentRange = range;
 		UpdateRangeLabel();
-		UpdateEnemyShipScale();
+		UpdateShipSmallScales();
 	}
 
 	/// <summary>Builds the range label text, marking the active range with ***.</summary>
@@ -166,23 +152,30 @@ public partial class PlaySpace : Node
 			label.Text = BuildRangeLabelText(CurrentRange);
 	}
 
-	private void UpdateEnemyShipScale()
+	private void UpdateShipSmallScales()
 	{
-		var sprite = GetNodeOrNull<Sprite2D>("EnemyShip/Pivot/Sprites/Sprite2D2");
-		if (sprite == null) return;
-
 		float s = CurrentRange switch
 		{
 			CombatRange.Long  => 0.05f,
 			CombatRange.Mid   => 0.10f,
 			CombatRange.Close => 0.20f,
-			_                 => sprite.Scale.X,
+			_                 => 0.10f,
 		};
 
-		Tween tween = CreateTween();
-		tween.TweenProperty(sprite, "scale", new Vector2(s, s), 0.5)
-			 .SetTrans(Tween.TransitionType.Sine)
-			 .SetEase(Tween.EaseType.InOut);
+		Sprite2D[] sprites =
+		{
+			GetNodeOrNull<Sprite2D>("EnemyShipSmall/Pivot/Sprites/Sprite2D2"),
+			GetNodeOrNull<Sprite2D>("PlayerShipSmall/Pivot/Sprites/Sprite2D2"),
+		};
+
+		foreach (Sprite2D sprite in sprites)
+		{
+			if (sprite == null) continue;
+			Tween tween = CreateTween();
+			tween.TweenProperty(sprite, "scale", new Vector2(s, s), 0.5)
+				 .SetTrans(Tween.TransitionType.Sine)
+				 .SetEase(Tween.EaseType.InOut);
+		}
 	}
 
 	private void PanCameraTo(Vector2 target, bool enemy)
@@ -205,7 +198,7 @@ public partial class PlaySpace : Node
 		if (_playerShip != null)
 			_playerShip.GlobalPosition = _playerShipPos + new Vector2(-320f, 0f);
 
-		var cargo = GetNodeOrNull<Node2D>("PlayerShip/Pivot/Cargo");
+		var cargo = GetNodeOrNull<Node2D>("PlayerShip/Pivot/Portrait//Cargo");
 		// if (cargo != null)
 		// 	cargo.Position = cargo.Position + new Vector2(-320f, 0f);
 
@@ -222,7 +215,7 @@ public partial class PlaySpace : Node
 		if (_playerShip != null)
 			_playerShip.GlobalPosition = _playerShipPos;
 
-		var cargo = GetNodeOrNull<Node2D>("PlayerShip/Pivot/Cargo");
+		var cargo = GetNodeOrNull<Node2D>("PlayerShip/Pivot/Portrait//Cargo");
 		// if (cargo != null)
 		// 	cargo.Position = cargo.Position - new Vector2(-320f, 0f);
 

@@ -43,8 +43,8 @@ public partial class ComponentManager : Node
 			return;
 		}
 
-		// --- Player ship: slots live at PlayerShip/Pivot/ComponentSlots ---
-		Node playerSlots = playspace.GetNodeOrNull("PlayerShip/Pivot/ComponentSlots");
+		// --- Player ship: slots live at PlayerShip/Pivot/Portrait/ComponentSlots ---
+		Node playerSlots = playspace.GetNodeOrNull("PlayerShip/Pivot/Portrait/ComponentSlots");
 		if (playerSlots != null)
 		{
 			foreach (Node child in playerSlots.GetChildren())
@@ -57,7 +57,7 @@ public partial class ComponentManager : Node
 		}
 		else
 		{
-			GD.PushWarning("ComponentManager: Could not find PlayerShip/Pivot/ComponentSlots node.");
+			GD.PushWarning("ComponentManager: Could not find PlayerShip/Pivot/Portrait/ComponentSlots node.");
 		}
 
 		// --- Enemy ship: slots now live directly on the ship node ---
@@ -104,16 +104,16 @@ public partial class ComponentManager : Node
 		Node playspace = GetTree().Root.GetNodeOrNull("PlaySpace");
 		if (playspace == null) return;
 
-		Node componentContainer = playspace.GetNodeOrNull("PlayerShip/Pivot/Components");
+		Node componentContainer = playspace.GetNodeOrNull("PlayerShip/Pivot/Portrait/Components");
 		if (componentContainer == null)
 		{
-			GD.PushWarning("ComponentManager: Could not find PlayerShip/Pivot/Components node.");
+			GD.PushWarning("ComponentManager: Could not find PlayerShip/Pivot/Portrait/Components node.");
 			return;
 		}
 
 		// Build a lookup of world-space slots by type.
 		var worldSlotsByType = new Dictionary<ShipComponentType, ShipComponentSlot>();
-		Node psSlotContainer = playspace.GetNodeOrNull("PlayerShip/Pivot/ComponentSlots");
+		Node psSlotContainer = playspace.GetNodeOrNull("PlayerShip/Pivot/Portrait/ComponentSlots");
 		if (psSlotContainer != null)
 		{
 			foreach (Node child in psSlotContainer.GetChildren())
@@ -180,7 +180,7 @@ public partial class ComponentManager : Node
 		Node playspace = GetTree().Root.GetNodeOrNull("PlaySpace");
 		if (playspace == null) return;
 
-		Node componentContainer = playspace.GetNodeOrNull("PlayerShip/Pivot/Components");
+		Node componentContainer = playspace.GetNodeOrNull("PlayerShip/Pivot/Portrait/Components");
 		if (componentContainer == null) return;
 
 		if (DataManager.Components == null ||
@@ -219,6 +219,12 @@ public partial class ComponentManager : Node
 		component.GlobalPosition = (slot.GetNodeOrNull(anchorPath) is Node2D anchor
 			? anchor.GlobalPosition
 			: slot.GlobalPosition) + new Vector2(0, -24);
+
+		if (component.GetNodeOrNull<TextureButton>("Focus") is TextureButton focusBtn)
+			focusBtn.Position = new Vector2(focusBtn.Position.X, focusBtn.Position.Y + 24);
+
+		if (component.GetNodeOrNull<Label>("Tooltip/PanelContainer/Label") is Label tooltip)
+			tooltip.Text = railGunData.Name;
 	}
 
 	private void SpawnInitialExternalComponents()
@@ -232,10 +238,10 @@ public partial class ComponentManager : Node
 		Node playspace = GetTree().Root.GetNodeOrNull("PlaySpace");
 		if (playspace == null) return;
 
-		Node componentContainer = playspace.GetNodeOrNull("PlayerShip/Pivot/Components");
+		Node componentContainer = playspace.GetNodeOrNull("PlayerShip/Pivot/Portrait/Components");
 		if (componentContainer == null)
 		{
-			GD.PushWarning("ComponentManager: Could not find PlayerShip/Pivot/Components node.");
+			GD.PushWarning("ComponentManager: Could not find PlayerShip/Pivot/Portrait/Components node.");
 			return;
 		}
 
@@ -284,7 +290,7 @@ public partial class ComponentManager : Node
 		Node playspace = GetTree().Root.GetNodeOrNull("PlaySpace");
 		if (playspace == null) return;
 
-		Node componentContainer = playspace.GetNodeOrNull("PlayerShip/Pivot/Components");
+		Node componentContainer = playspace.GetNodeOrNull("PlayerShip/Pivot/Portrait/Components");
 		if (componentContainer == null) return;
 
 		if (DataManager.Components == null ||
@@ -321,6 +327,9 @@ public partial class ComponentManager : Node
 			component.GlobalPosition = slot.GetNodeOrNull(anchorPath) is Node2D anchor
 				? anchor.GlobalPosition
 				: slot.GlobalPosition;
+
+			if (component.GetNodeOrNull<Label>("Tooltip/PanelContainer/Label") is Label tooltip)
+				tooltip.Text = missileData.Name;
 
 			spawned++;
 		}

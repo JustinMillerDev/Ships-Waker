@@ -36,7 +36,7 @@ public partial class CargoManager : Node
 		Instance = this;
 		_cargoSlotScene = GD.Load<PackedScene>("res://Scenes/CargoSlot.tscn");
 		_cargoScene     = GD.Load<PackedScene>("res://Scenes/Cargo.tscn");
-		_cargoContainer = GetParentNode("PlayerShip/Pivot/Cargo");
+		_cargoContainer = GetParentNode("PlayerShip/Pivot/Portrait/Cargo");
 
 		SpawnDeepStorageSlots();
 		SpawnReadiedSlots();
@@ -53,7 +53,7 @@ public partial class CargoManager : Node
 
 	private void SpawnDeepStorageSlots()
 	{
-		Node parent = GetParentNode("PlayerShip/Pivot/CargoSlots/DeepStorageSlots");
+		Node parent = GetParentNode("PlayerShip/Pivot/Portrait//CargoSlots/DeepStorageSlots");
 		if (parent == null) return;
 
 		for (int row = 0; row < DeepStorageRows; row++)
@@ -76,7 +76,7 @@ public partial class CargoManager : Node
 
 	private void SpawnReadiedSlots()
 	{
-		Node parent = GetParentNode("PlayerShip/Pivot/CargoSlots/ReadiedSlots");
+		Node parent = GetParentNode("PlayerShip/Pivot/Portrait//CargoSlots/ReadiedSlots");
 		if (parent == null) return;
 
 		for (int i = 0; i < ReadiedSlotCount; i++)

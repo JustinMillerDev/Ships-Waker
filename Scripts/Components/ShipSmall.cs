@@ -1,44 +1,11 @@
 using Godot;
 
 /// <summary>
-/// Describes which faction a ship belongs to.
+/// A lightweight ship node used for small/preview representations of a ship.
+/// Unlike <see cref="Ship"/>, ShipSmall has no health or shields.
 /// </summary>
-public enum ShipFaction
+public partial class ShipSmall : Node2D
 {
-	Player,
-	Ally,
-	Enemy,
-}
-
-/// <summary>
-/// A ship node. Tracks faction and hit points via <see cref="IHealth"/>.
-/// </summary>
-public partial class Ship : Node2D, IHealth
-{
-	// IHealth ------------------------------------------------------------------
-
-	public int MaxHealth { get; private set; } = 50;
-	public int CurrentHealth { get; set; } = 50;
-
-	// Shields ------------------------------------------------------------------
-
-	public int MaxShields { get; private set; } = 20;
-	public int CurrentShields { get; set; } = 20;
-
-	/// <summary>
-	/// Absorbs damage from shields first, then spills into health.
-	/// Emits <see cref="CustomSignals.ShipHealthChanged"/> after applying damage.
-	/// </summary>
-	public void TakeDamage(int amount)
-	{
-		int shieldAbsorb = Mathf.Min(CurrentShields, amount);
-		CurrentShields -= shieldAbsorb;
-		int remainder = amount - shieldAbsorb;
-		if (remainder > 0)
-			CurrentHealth = Mathf.Max(0, CurrentHealth - remainder);
-		CustomSignals.Instance.EmitSignal(CustomSignals.SignalName.ShipHealthChanged, this);
-	}
-
 	// Faction ------------------------------------------------------------------
 
 	private ShipFaction _faction = ShipFaction.Player;
@@ -59,8 +26,7 @@ public partial class Ship : Node2D, IHealth
 
 	public override void _Ready()
 	{
-		if (_faction == ShipFaction.Enemy)
-			SpawnExhaustTrails();
+		SpawnExhaustTrails();
 	}
 
 	// Exhaust trails -----------------------------------------------------------
@@ -86,7 +52,7 @@ public partial class Ship : Node2D, IHealth
 		Node animSprite = GetNodeOrNull("Pivot/Sprites/Sprite2D2/AnimatedSprite2D");
 		if (animSprite == null)
 		{
-			GD.PushWarning("Ship: Could not find AnimatedSprite2D to attach exhaust trails.");
+			GD.PushWarning("ShipSmall: Could not find AnimatedSprite2D to attach exhaust trails.");
 			return;
 		}
 
@@ -100,8 +66,15 @@ public partial class Ship : Node2D, IHealth
 
 	// UI callbacks -------------------------------------------------------------
 
-	private void _on_close_button_pressed()
+	/// <summary>
+	/// When the focus button is pressed on a player-faction ShipSmall,
+	/// makes the full PlayerShip node visible.
+	/// </summary>
+	public void _on_focus_pressed()
 	{
-		Visible = false;
+		if (_faction != ShipFaction.Player) return;
+
+		if (GetTree().Root.GetNodeOrNull<Node2D>("PlaySpace/PlayerShip") is Node2D playerShip)
+			playerShip.Visible = true;
 	}
 }

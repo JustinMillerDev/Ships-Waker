@@ -66,8 +66,8 @@ public partial class CrewManager : Node
 			return;
 		}
 
-		Node column1 = playspace.GetNodeOrNull("PlayerShip/Pivot/Caskets/Column1");
-		Node column2 = playspace.GetNodeOrNull("PlayerShip/Pivot/Caskets/Column2");
+		Node column1 = playspace.GetNodeOrNull("PlayerShip/Pivot/Portrait//Caskets/Column1");
+		Node column2 = playspace.GetNodeOrNull("PlayerShip/Pivot/Portrait//Caskets/Column2");
 
 		SpawnCasketColumn(column1, CardinalDirection.Right, new Vector2(8, 8));
 		SpawnCasketColumn(column2, CardinalDirection.Left, new Vector2(16, 8));
