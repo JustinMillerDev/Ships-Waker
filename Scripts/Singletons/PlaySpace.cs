@@ -42,6 +42,7 @@ public partial class PlaySpace : Node
 
 	// Combat range ----------------------------------------------------------
 	public CombatRange CurrentRange { get; private set; } = CombatRange.Mid;
+	private CombatRange _previousRange = CombatRange.Mid;
 
 	public Vector2 CurrentZoom => new Vector2(ZoomLevels[_zoomIndex], ZoomLevels[_zoomIndex]);
 
@@ -125,15 +126,22 @@ public partial class PlaySpace : Node
 			}
 		}
 		if (@event.IsActionPressed("ui_debug_7")) SetRange(CombatRange.Close);
-		if (@event.IsActionPressed("ui_debug_9")) SetRange(CombatRange.Mid);
-		if (@event.IsActionPressed("ui_debug_8")) SetRange(CombatRange.Long);
+		if (@event.IsActionPressed("ui_debug_8")) SetRange(CombatRange.Mid);
+		if (@event.IsActionPressed("ui_debug_9")) SetRange(CombatRange.Long);
 	}
 
 	public void SetRange(CombatRange range)
 	{
+		_previousRange = CurrentRange;
 		CurrentRange = range;
+
+		bool isLongCloseJump = (_previousRange == CombatRange.Long  && CurrentRange == CombatRange.Close)
+							 || (_previousRange == CombatRange.Close && CurrentRange == CombatRange.Long);
+		double cameraMultiplier = isLongCloseJump ? 2.0 : 1.0;
+
 		UpdateRangeLabel();
-		UpdateShipSmallScales();
+		UpdateCameraZoomForRange(cameraMultiplier);
+		UpdateShipSmallPositions(1.5);
 	}
 
 	/// <summary>Builds the range label text, marking the active range with ***.</summary>
@@ -152,29 +160,52 @@ public partial class PlaySpace : Node
 			label.Text = BuildRangeLabelText(CurrentRange);
 	}
 
-	private void UpdateShipSmallScales()
+	private void UpdateCameraZoomForRange(double multiplier = 1.0)
 	{
-		float s = CurrentRange switch
+		if (_camera == null) return;
+
+		float z = CurrentRange switch
 		{
-			CombatRange.Long  => 0.05f,
-			CombatRange.Mid   => 0.10f,
-			CombatRange.Close => 0.20f,
-			_                 => 0.10f,
+			CombatRange.Long  => 0.15f,
+			CombatRange.Mid   => 0.25f,
+			CombatRange.Close => 0.50f,
+			_                 => 0.25f,
 		};
 
-		Sprite2D[] sprites =
+		Tween tween = CreateTween();
+		tween.TweenProperty(_camera, "zoom", new Vector2(z, z), 0.5 * multiplier)
+			 .SetTrans(Tween.TransitionType.Sine)
+			 .SetEase(Tween.EaseType.InOut);
+	}
+
+	private void UpdateShipSmallPositions(double multiplier = 1.0)
+	{
+		(float enemyX, float playerX) = CurrentRange switch
 		{
-			GetNodeOrNull<Sprite2D>("EnemyShipSmall/Pivot/Sprites/Sprite2D2"),
-			GetNodeOrNull<Sprite2D>("PlayerShipSmall/Pivot/Sprites/Sprite2D2"),
+			CombatRange.Close => (832f,    -193f),
+			CombatRange.Mid   => (1366f,   -683f),
+			CombatRange.Long  => (2083f,  -1453f),
+			_                 => (1366f,   -683f),
 		};
 
-		foreach (Sprite2D sprite in sprites)
+		Node2D enemy  = GetNodeOrNull<Node2D>("EnemyShipSmall");
+		Node2D player = GetNodeOrNull<Node2D>("PlayerShipSmall");
+
+		double duration = 0.5 * multiplier;
+
+		if (enemy != null)
 		{
-			if (sprite == null) continue;
-			Tween tween = CreateTween();
-			tween.TweenProperty(sprite, "scale", new Vector2(s, s), 0.5)
-				 .SetTrans(Tween.TransitionType.Sine)
-				 .SetEase(Tween.EaseType.InOut);
+			Tween t = CreateTween();
+			t.TweenProperty(enemy, "position", new Vector2(enemyX, enemy.Position.Y), duration)
+			 .SetTrans(Tween.TransitionType.Sine)
+			 .SetEase(Tween.EaseType.InOut);
+		}
+		if (player != null)
+		{
+			Tween t = CreateTween();
+			t.TweenProperty(player, "position", new Vector2(playerX, player.Position.Y), duration)
+			 .SetTrans(Tween.TransitionType.Sine)
+			 .SetEase(Tween.EaseType.InOut);
 		}
 	}
 
@@ -198,7 +229,7 @@ public partial class PlaySpace : Node
 		if (_playerShip != null)
 			_playerShip.GlobalPosition = _playerShipPos + new Vector2(-320f, 0f);
 
-		var cargo = GetNodeOrNull<Node2D>("PlayerShip/Pivot/Portrait//Cargo");
+		var cargo = GetNodeOrNull<Node2D>("CanvasLayer/PlayerShip/Portrait/Pivot//Cargo");
 		// if (cargo != null)
 		// 	cargo.Position = cargo.Position + new Vector2(-320f, 0f);
 
@@ -215,7 +246,7 @@ public partial class PlaySpace : Node
 		if (_playerShip != null)
 			_playerShip.GlobalPosition = _playerShipPos;
 
-		var cargo = GetNodeOrNull<Node2D>("PlayerShip/Pivot/Portrait//Cargo");
+		var cargo = GetNodeOrNull<Node2D>("CanvasLayer/PlayerShip/Portrait/Pivot//Cargo");
 		// if (cargo != null)
 		// 	cargo.Position = cargo.Position - new Vector2(-320f, 0f);
 

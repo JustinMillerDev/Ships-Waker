@@ -85,6 +85,62 @@ texture = ExtResource("2_d284w")
 centered = false
 offset = Vector2(-480, -270)
 
+[node name="Background2" type="Sprite2D" parent="Camera2D"]
+position = Vector2(0, -1440)
+scale = Vector2(2, 2)
+texture = ExtResource("2_d284w")
+centered = false
+offset = Vector2(-480, -270)
+
+[node name="Background3" type="Sprite2D" parent="Camera2D"]
+position = Vector2(2560, -1440)
+scale = Vector2(2, 2)
+texture = ExtResource("2_d284w")
+centered = false
+offset = Vector2(-480, -270)
+
+[node name="Background4" type="Sprite2D" parent="Camera2D"]
+position = Vector2(2560, 0)
+scale = Vector2(2, 2)
+texture = ExtResource("2_d284w")
+centered = false
+offset = Vector2(-480, -270)
+
+[node name="Background5" type="Sprite2D" parent="Camera2D"]
+position = Vector2(2560, 1440)
+scale = Vector2(2, 2)
+texture = ExtResource("2_d284w")
+centered = false
+offset = Vector2(-480, -270)
+
+[node name="Background6" type="Sprite2D" parent="Camera2D"]
+position = Vector2(0, 1440)
+scale = Vector2(2, 2)
+texture = ExtResource("2_d284w")
+centered = false
+offset = Vector2(-480, -270)
+
+[node name="Background7" type="Sprite2D" parent="Camera2D"]
+position = Vector2(-2560, 1440)
+scale = Vector2(2, 2)
+texture = ExtResource("2_d284w")
+centered = false
+offset = Vector2(-480, -270)
+
+[node name="Background8" type="Sprite2D" parent="Camera2D"]
+position = Vector2(-2560, 0)
+scale = Vector2(2, 2)
+texture = ExtResource("2_d284w")
+centered = false
+offset = Vector2(-480, -270)
+
+[node name="Background9" type="Sprite2D" parent="Camera2D"]
+position = Vector2(-2560, -1440)
+scale = Vector2(2, 2)
+texture = ExtResource("2_d284w")
+centered = false
+offset = Vector2(-480, -270)
+
 [node name="PlayerShipSmall" parent="." instance=ExtResource("3_d284w")]
 position = Vector2(-193, 75)
 
@@ -92,19 +148,26 @@ position = Vector2(-193, 75)
 position = Vector2(832, 74)
 Faction = 2
 
-[node name="PlayerShip" type="Node2D" parent="."]
+[node name="Projectiles" type="Node2D" parent="."]
+
+[node name="MidRangePlayerAttacks" type="Node2D" parent="Projectiles"]
+position = Vector2(602, -400)
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="PlayerShip" type="Node2D" parent="CanvasLayer"]
 visible = false
+position = Vector2(160, 80)
+scale = Vector2(0.5, 0.5)
 script = ExtResource("3_f1of7")
 
-[node name="Pivot" type="Node2D" parent="PlayerShip"]
-position = Vector2(320, 180)
-
-[node name="Portrait" type="Sprite2D" parent="PlayerShip/Pivot"]
+[node name="Portrait" type="Sprite2D" parent="CanvasLayer/PlayerShip"]
 clip_children = 2
+position = Vector2(320, 180)
 scale = Vector2(1.5, 1.5)
 texture = ExtResource("7_l7dj0")
 
-[node name="CloseButton" type="TextureButton" parent="PlayerShip/Pivot/Portrait"]
+[node name="CloseButton" type="TextureButton" parent="CanvasLayer/PlayerShip/Portrait"]
 offset_left = 304.0
 offset_top = -176.0
 offset_right = 316.0
@@ -112,20 +175,23 @@ offset_bottom = -164.0
 texture_normal = ExtResource("8_yqwh3")
 texture_pressed = ExtResource("9_d284w")
 texture_hover = ExtResource("9_d284w")
+metadata/_edit_use_anchors_ = true
 
-[node name="Sprites" type="Node2D" parent="PlayerShip/Pivot/Portrait"]
-position = Vector2(-213.333, -120)
+[node name="Pivot" type="Node2D" parent="CanvasLayer/PlayerShip/Portrait"]
 scale = Vector2(0.666667, 0.666667)
 
-[node name="SpaceShip" type="Sprite2D" parent="PlayerShip/Pivot/Portrait/Sprites"]
+[node name="Sprites" type="Node2D" parent="CanvasLayer/PlayerShip/Portrait/Pivot"]
+position = Vector2(-320, -180)
+
+[node name="SpaceShip" type="Sprite2D" parent="CanvasLayer/PlayerShip/Portrait/Pivot/Sprites"]
 texture = ExtResource("2_n8iyk")
 centered = false
 
-[node name="Rooms" type="Sprite2D" parent="PlayerShip/Pivot/Portrait/Sprites"]
+[node name="Rooms" type="Sprite2D" parent="CanvasLayer/PlayerShip/Portrait/Pivot/Sprites"]
 texture = ExtResource("8_q8m5i")
 centered = false
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="PlayerShip/Pivot/Portrait/Sprites"]
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="CanvasLayer/PlayerShip/Portrait/Pivot/Sprites"]
 position = Vector2(0, 336)
 sprite_frames = SubResource("SpriteFrames_n2p07")
 autoplay = "default"
@@ -133,11 +199,11 @@ frame = 2
 frame_progress = 0.212665
 centered = false
 
-[node name="Particles" type="Node2D" parent="PlayerShip/Pivot/Portrait/Sprites/AnimatedSprite2D"]
+[node name="Particles" type="Node2D" parent="CanvasLayer/PlayerShip/Portrait/Pivot/Sprites/AnimatedSprite2D"]
 
-[node name="GPUParticles2D" type="GPUParticles2D" parent="PlayerShip/Pivot/Portrait/Sprites/AnimatedSprite2D/Particles"]
-position = Vector2(113, 38)
-amount = 20
+[node name="GPUParticles2D" type="GPUParticles2D" parent="CanvasLayer/PlayerShip/Portrait/Pivot/Sprites/AnimatedSprite2D/Particles"]
+position = Vector2(114, 60)
+amount = 15
 texture = ExtResource("7_u3u7p")
 lifetime = 3.5
 preprocess = 3.5
@@ -145,9 +211,9 @@ speed_scale = 1.75
 randomness = 0.2
 process_material = SubResource("ParticleProcessMaterial_l7dj0")
 
-[node name="GPUParticles2D2" type="GPUParticles2D" parent="PlayerShip/Pivot/Portrait/Sprites/AnimatedSprite2D/Particles"]
-position = Vector2(191, 38)
-amount = 20
+[node name="GPUParticles2D2" type="GPUParticles2D" parent="CanvasLayer/PlayerShip/Portrait/Pivot/Sprites/AnimatedSprite2D/Particles"]
+position = Vector2(192, 60)
+amount = 15
 texture = ExtResource("7_u3u7p")
 lifetime = 3.5
 preprocess = 3.5
@@ -155,9 +221,9 @@ speed_scale = 1.75
 randomness = 0.2
 process_material = SubResource("ParticleProcessMaterial_l7dj0")
 
-[node name="GPUParticles2D3" type="GPUParticles2D" parent="PlayerShip/Pivot/Portrait/Sprites/AnimatedSprite2D/Particles"]
-position = Vector2(450, 38)
-amount = 20
+[node name="GPUParticles2D3" type="GPUParticles2D" parent="CanvasLayer/PlayerShip/Portrait/Pivot/Sprites/AnimatedSprite2D/Particles"]
+position = Vector2(451, 60)
+amount = 15
 texture = ExtResource("7_u3u7p")
 lifetime = 3.5
 preprocess = 3.5
@@ -165,9 +231,9 @@ speed_scale = 1.75
 randomness = 0.2
 process_material = SubResource("ParticleProcessMaterial_l7dj0")
 
-[node name="GPUParticles2D4" type="GPUParticles2D" parent="PlayerShip/Pivot/Portrait/Sprites/AnimatedSprite2D/Particles"]
-position = Vector2(528, 38)
-amount = 20
+[node name="GPUParticles2D4" type="GPUParticles2D" parent="CanvasLayer/PlayerShip/Portrait/Pivot/Sprites/AnimatedSprite2D/Particles"]
+position = Vector2(529, 60)
+amount = 15
 texture = ExtResource("7_u3u7p")
 lifetime = 3.5
 preprocess = 3.5
@@ -175,9 +241,9 @@ speed_scale = 1.75
 randomness = 0.2
 process_material = SubResource("ParticleProcessMaterial_l7dj0")
 
-[node name="GPUParticles2D5" type="GPUParticles2D" parent="PlayerShip/Pivot/Portrait/Sprites/AnimatedSprite2D/Particles"]
-position = Vector2(489, 49)
-amount = 20
+[node name="GPUParticles2D5" type="GPUParticles2D" parent="CanvasLayer/PlayerShip/Portrait/Pivot/Sprites/AnimatedSprite2D/Particles"]
+position = Vector2(490, 71)
+amount = 15
 texture = ExtResource("7_u3u7p")
 lifetime = 3.5
 preprocess = 3.5
@@ -185,9 +251,9 @@ speed_scale = 1.75
 randomness = 0.2
 process_material = SubResource("ParticleProcessMaterial_l7dj0")
 
-[node name="GPUParticles2D6" type="GPUParticles2D" parent="PlayerShip/Pivot/Portrait/Sprites/AnimatedSprite2D/Particles"]
-position = Vector2(153, 49)
-amount = 20
+[node name="GPUParticles2D6" type="GPUParticles2D" parent="CanvasLayer/PlayerShip/Portrait/Pivot/Sprites/AnimatedSprite2D/Particles"]
+position = Vector2(154, 71)
+amount = 15
 texture = ExtResource("7_u3u7p")
 lifetime = 3.5
 preprocess = 3.5
@@ -195,297 +261,287 @@ speed_scale = 1.75
 randomness = 0.2
 process_material = SubResource("ParticleProcessMaterial_l7dj0")
 
-[node name="Caskets" type="Node2D" parent="PlayerShip/Pivot/Portrait"]
-position = Vector2(-213.333, -120)
-scale = Vector2(0.666667, 0.666667)
+[node name="Caskets" type="Node2D" parent="CanvasLayer/PlayerShip/Portrait/Pivot"]
+position = Vector2(-320, -180)
 
-[node name="Column1" type="Node2D" parent="PlayerShip/Pivot/Portrait/Caskets"]
+[node name="Column1" type="Node2D" parent="CanvasLayer/PlayerShip/Portrait/Pivot/Caskets"]
 position = Vector2(129, 188)
 
-[node name="Column2" type="Node2D" parent="PlayerShip/Pivot/Portrait/Caskets"]
+[node name="Column2" type="Node2D" parent="CanvasLayer/PlayerShip/Portrait/Pivot/Caskets"]
 position = Vector2(192, 188)
 
-[node name="CrewSlots" type="Node2D" parent="PlayerShip/Pivot/Portrait"]
-position = Vector2(-213.333, -120)
-scale = Vector2(0.666667, 0.666667)
+[node name="CrewSlots" type="Node2D" parent="CanvasLayer/PlayerShip/Portrait/Pivot"]
+position = Vector2(-320, -180)
 
-[node name="CrewSlot" parent="PlayerShip/Pivot/Portrait/CrewSlots" instance=ExtResource("3_snlng")]
+[node name="CrewSlot" parent="CanvasLayer/PlayerShip/Portrait/Pivot/CrewSlots" instance=ExtResource("3_snlng")]
 position = Vector2(303, 44)
 Facing = 0
 
-[node name="CrewSlot2" parent="PlayerShip/Pivot/Portrait/CrewSlots" instance=ExtResource("3_snlng")]
+[node name="CrewSlot2" parent="CanvasLayer/PlayerShip/Portrait/Pivot/CrewSlots" instance=ExtResource("3_snlng")]
 position = Vector2(321, 44)
 Facing = 0
 
-[node name="CrewSlot3" parent="PlayerShip/Pivot/Portrait/CrewSlots" instance=ExtResource("3_snlng")]
+[node name="CrewSlot3" parent="CanvasLayer/PlayerShip/Portrait/Pivot/CrewSlots" instance=ExtResource("3_snlng")]
 position = Vector2(230, 72)
 Facing = 2
 
-[node name="CrewSlot4" parent="PlayerShip/Pivot/Portrait/CrewSlots" instance=ExtResource("3_snlng")]
+[node name="CrewSlot4" parent="CanvasLayer/PlayerShip/Portrait/Pivot/CrewSlots" instance=ExtResource("3_snlng")]
 position = Vector2(230, 90)
 Facing = 2
 
-[node name="CrewSlot5" parent="PlayerShip/Pivot/Portrait/CrewSlots" instance=ExtResource("3_snlng")]
+[node name="CrewSlot5" parent="CanvasLayer/PlayerShip/Portrait/Pivot/CrewSlots" instance=ExtResource("3_snlng")]
 position = Vector2(394, 71)
 Facing = 3
 
-[node name="CrewSlot6" parent="PlayerShip/Pivot/Portrait/CrewSlots" instance=ExtResource("3_snlng")]
+[node name="CrewSlot6" parent="CanvasLayer/PlayerShip/Portrait/Pivot/CrewSlots" instance=ExtResource("3_snlng")]
 position = Vector2(394, 89)
 Facing = 3
 
-[node name="CrewSlot7" parent="PlayerShip/Pivot/Portrait/CrewSlots" instance=ExtResource("3_snlng")]
+[node name="CrewSlot7" parent="CanvasLayer/PlayerShip/Portrait/Pivot/CrewSlots" instance=ExtResource("3_snlng")]
 position = Vector2(287, 103)
 Facing = 3
 
-[node name="CrewSlot8" parent="PlayerShip/Pivot/Portrait/CrewSlots" instance=ExtResource("3_snlng")]
+[node name="CrewSlot8" parent="CanvasLayer/PlayerShip/Portrait/Pivot/CrewSlots" instance=ExtResource("3_snlng")]
 position = Vector2(336, 103)
 Facing = 2
 
-[node name="CrewSlot9" parent="PlayerShip/Pivot/Portrait/CrewSlots" instance=ExtResource("3_snlng")]
+[node name="CrewSlot9" parent="CanvasLayer/PlayerShip/Portrait/Pivot/CrewSlots" instance=ExtResource("3_snlng")]
 position = Vector2(198, 127)
 Facing = 2
 
-[node name="CrewSlot10" parent="PlayerShip/Pivot/Portrait/CrewSlots" instance=ExtResource("3_snlng")]
+[node name="CrewSlot10" parent="CanvasLayer/PlayerShip/Portrait/Pivot/CrewSlots" instance=ExtResource("3_snlng")]
 position = Vector2(198, 145)
 Facing = 2
 
-[node name="CrewSlot11" parent="PlayerShip/Pivot/Portrait/CrewSlots" instance=ExtResource("3_snlng")]
+[node name="CrewSlot11" parent="CanvasLayer/PlayerShip/Portrait/Pivot/CrewSlots" instance=ExtResource("3_snlng")]
 position = Vector2(302, 126)
 Facing = 0
 
-[node name="CrewSlot12" parent="PlayerShip/Pivot/Portrait/CrewSlots" instance=ExtResource("3_snlng")]
+[node name="CrewSlot12" parent="CanvasLayer/PlayerShip/Portrait/Pivot/CrewSlots" instance=ExtResource("3_snlng")]
 position = Vector2(320, 126)
 Facing = 0
 
-[node name="CrewSlot13" parent="PlayerShip/Pivot/Portrait/CrewSlots" instance=ExtResource("3_snlng")]
+[node name="CrewSlot13" parent="CanvasLayer/PlayerShip/Portrait/Pivot/CrewSlots" instance=ExtResource("3_snlng")]
 position = Vector2(425, 127)
 Facing = 3
 
-[node name="CrewSlot14" parent="PlayerShip/Pivot/Portrait/CrewSlots" instance=ExtResource("3_snlng")]
+[node name="CrewSlot14" parent="CanvasLayer/PlayerShip/Portrait/Pivot/CrewSlots" instance=ExtResource("3_snlng")]
 position = Vector2(425, 145)
 Facing = 3
 
-[node name="CrewSlot15" parent="PlayerShip/Pivot/Portrait/CrewSlots" instance=ExtResource("3_snlng")]
+[node name="CrewSlot15" parent="CanvasLayer/PlayerShip/Portrait/Pivot/CrewSlots" instance=ExtResource("3_snlng")]
 position = Vector2(284, 157)
 Facing = 2
 
-[node name="CrewSlot16" parent="PlayerShip/Pivot/Portrait/CrewSlots" instance=ExtResource("3_snlng")]
+[node name="CrewSlot16" parent="CanvasLayer/PlayerShip/Portrait/Pivot/CrewSlots" instance=ExtResource("3_snlng")]
 position = Vector2(284, 175)
 Facing = 2
 
-[node name="CrewSlot17" parent="PlayerShip/Pivot/Portrait/CrewSlots" instance=ExtResource("3_snlng")]
+[node name="CrewSlot17" parent="CanvasLayer/PlayerShip/Portrait/Pivot/CrewSlots" instance=ExtResource("3_snlng")]
 position = Vector2(284, 193)
 Facing = 2
 
-[node name="CrewSlot18" parent="PlayerShip/Pivot/Portrait/CrewSlots" instance=ExtResource("3_snlng")]
+[node name="CrewSlot18" parent="CanvasLayer/PlayerShip/Portrait/Pivot/CrewSlots" instance=ExtResource("3_snlng")]
 position = Vector2(284, 211)
 Facing = 2
 
-[node name="CrewSlot19" parent="PlayerShip/Pivot/Portrait/CrewSlots" instance=ExtResource("3_snlng")]
+[node name="CrewSlot19" parent="CanvasLayer/PlayerShip/Portrait/Pivot/CrewSlots" instance=ExtResource("3_snlng")]
 position = Vector2(284, 229)
 Facing = 2
 
-[node name="CrewSlot20" parent="PlayerShip/Pivot/Portrait/CrewSlots" instance=ExtResource("3_snlng")]
+[node name="CrewSlot20" parent="CanvasLayer/PlayerShip/Portrait/Pivot/CrewSlots" instance=ExtResource("3_snlng")]
 position = Vector2(284, 247)
 Facing = 2
 
-[node name="CrewSlot21" parent="PlayerShip/Pivot/Portrait/CrewSlots" instance=ExtResource("3_snlng")]
+[node name="CrewSlot21" parent="CanvasLayer/PlayerShip/Portrait/Pivot/CrewSlots" instance=ExtResource("3_snlng")]
 position = Vector2(339, 157)
 Facing = 3
 
-[node name="CrewSlot22" parent="PlayerShip/Pivot/Portrait/CrewSlots" instance=ExtResource("3_snlng")]
+[node name="CrewSlot22" parent="CanvasLayer/PlayerShip/Portrait/Pivot/CrewSlots" instance=ExtResource("3_snlng")]
 position = Vector2(339, 175)
 Facing = 3
 
-[node name="CrewSlot23" parent="PlayerShip/Pivot/Portrait/CrewSlots" instance=ExtResource("3_snlng")]
+[node name="CrewSlot23" parent="CanvasLayer/PlayerShip/Portrait/Pivot/CrewSlots" instance=ExtResource("3_snlng")]
 position = Vector2(339, 193)
 Facing = 3
 
-[node name="CrewSlot24" parent="PlayerShip/Pivot/Portrait/CrewSlots" instance=ExtResource("3_snlng")]
+[node name="CrewSlot24" parent="CanvasLayer/PlayerShip/Portrait/Pivot/CrewSlots" instance=ExtResource("3_snlng")]
 position = Vector2(339, 211)
 Facing = 3
 
-[node name="CrewSlot25" parent="PlayerShip/Pivot/Portrait/CrewSlots" instance=ExtResource("3_snlng")]
+[node name="CrewSlot25" parent="CanvasLayer/PlayerShip/Portrait/Pivot/CrewSlots" instance=ExtResource("3_snlng")]
 position = Vector2(339, 229)
 Facing = 3
 
-[node name="CrewSlot26" parent="PlayerShip/Pivot/Portrait/CrewSlots" instance=ExtResource("3_snlng")]
+[node name="CrewSlot26" parent="CanvasLayer/PlayerShip/Portrait/Pivot/CrewSlots" instance=ExtResource("3_snlng")]
 position = Vector2(339, 247)
 Facing = 3
 
-[node name="CrewSlot27" parent="PlayerShip/Pivot/Portrait/CrewSlots" instance=ExtResource("3_snlng")]
+[node name="CrewSlot27" parent="CanvasLayer/PlayerShip/Portrait/Pivot/CrewSlots" instance=ExtResource("3_snlng")]
 position = Vector2(454, 185)
 Facing = 0
 
-[node name="CrewSlot28" parent="PlayerShip/Pivot/Portrait/CrewSlots" instance=ExtResource("3_snlng")]
+[node name="CrewSlot28" parent="CanvasLayer/PlayerShip/Portrait/Pivot/CrewSlots" instance=ExtResource("3_snlng")]
 position = Vector2(472, 185)
 Facing = 0
 
-[node name="CrewSlot29" parent="PlayerShip/Pivot/Portrait/CrewSlots" instance=ExtResource("3_snlng")]
+[node name="CrewSlot29" parent="CanvasLayer/PlayerShip/Portrait/Pivot/CrewSlots" instance=ExtResource("3_snlng")]
 position = Vector2(303, 284)
 
-[node name="CrewSlot30" parent="PlayerShip/Pivot/Portrait/CrewSlots" instance=ExtResource("3_snlng")]
+[node name="CrewSlot30" parent="CanvasLayer/PlayerShip/Portrait/Pivot/CrewSlots" instance=ExtResource("3_snlng")]
 position = Vector2(321, 284)
 
-[node name="CrewSlot31" parent="PlayerShip/Pivot/Portrait/CrewSlots" instance=ExtResource("3_snlng")]
+[node name="CrewSlot31" parent="CanvasLayer/PlayerShip/Portrait/Pivot/CrewSlots" instance=ExtResource("3_snlng")]
 position = Vector2(152, 186)
 Facing = 0
 
-[node name="CrewSlot32" parent="PlayerShip/Pivot/Portrait/CrewSlots" instance=ExtResource("3_snlng")]
+[node name="CrewSlot32" parent="CanvasLayer/PlayerShip/Portrait/Pivot/CrewSlots" instance=ExtResource("3_snlng")]
 position = Vector2(170, 186)
 Facing = 0
 
-[node name="CargoSlots" type="Node2D" parent="PlayerShip/Pivot/Portrait"]
-position = Vector2(-213.333, -120)
-scale = Vector2(0.666667, 0.666667)
+[node name="CargoSlots" type="Node2D" parent="CanvasLayer/PlayerShip/Portrait/Pivot"]
+position = Vector2(-320, -180)
 
-[node name="ReadiedSlots" type="Node2D" parent="PlayerShip/Pivot/Portrait/CargoSlots"]
+[node name="ReadiedSlots" type="Node2D" parent="CanvasLayer/PlayerShip/Portrait/Pivot/CargoSlots"]
 position = Vector2(442, 211)
 
-[node name="DeepStorageSlots" type="Node2D" parent="PlayerShip/Pivot/Portrait/CargoSlots"]
+[node name="DeepStorageSlots" type="Node2D" parent="CanvasLayer/PlayerShip/Portrait/Pivot/CargoSlots"]
 position = Vector2(423, 229)
 
-[node name="ComponentSlots" type="Node2D" parent="PlayerShip/Pivot/Portrait/CargoSlots"]
+[node name="ComponentSlots" type="Node2D" parent="CanvasLayer/PlayerShip/Portrait/Pivot/CargoSlots"]
 
-[node name="CargoSlot" parent="PlayerShip/Pivot/Portrait/CargoSlots/ComponentSlots" instance=ExtResource("8_21n7f")]
+[node name="CargoSlot" parent="CanvasLayer/PlayerShip/Portrait/Pivot/CargoSlots/ComponentSlots" instance=ExtResource("8_21n7f")]
 position = Vector2(230, 107)
 SlotType = 2
 
-[node name="CargoSlot2" parent="PlayerShip/Pivot/Portrait/CargoSlots/ComponentSlots" instance=ExtResource("8_21n7f")]
+[node name="CargoSlot2" parent="CanvasLayer/PlayerShip/Portrait/Pivot/CargoSlots/ComponentSlots" instance=ExtResource("8_21n7f")]
 position = Vector2(394, 107)
 SlotType = 2
 
-[node name="CargoSlot3" parent="PlayerShip/Pivot/Portrait/CargoSlots/ComponentSlots" instance=ExtResource("8_21n7f")]
+[node name="CargoSlot3" parent="CanvasLayer/PlayerShip/Portrait/Pivot/CargoSlots/ComponentSlots" instance=ExtResource("8_21n7f")]
 position = Vector2(198, 162)
 SlotType = 2
 
-[node name="CargoSlot4" parent="PlayerShip/Pivot/Portrait/CargoSlots/ComponentSlots" instance=ExtResource("8_21n7f")]
+[node name="CargoSlot4" parent="CanvasLayer/PlayerShip/Portrait/Pivot/CargoSlots/ComponentSlots" instance=ExtResource("8_21n7f")]
 position = Vector2(425, 162)
 SlotType = 2
 
-[node name="CargoSlot5" parent="PlayerShip/Pivot/Portrait/CargoSlots/ComponentSlots" instance=ExtResource("8_21n7f")]
+[node name="CargoSlot5" parent="CanvasLayer/PlayerShip/Portrait/Pivot/CargoSlots/ComponentSlots" instance=ExtResource("8_21n7f")]
 position = Vector2(287, 86)
 SlotType = 2
 
-[node name="CargoSlot6" parent="PlayerShip/Pivot/Portrait/CargoSlots/ComponentSlots" instance=ExtResource("8_21n7f")]
+[node name="CargoSlot6" parent="CanvasLayer/PlayerShip/Portrait/Pivot/CargoSlots/ComponentSlots" instance=ExtResource("8_21n7f")]
 position = Vector2(336, 86)
 SlotType = 2
 
-[node name="CargoSlot7" parent="PlayerShip/Pivot/Portrait/CargoSlots/ComponentSlots" instance=ExtResource("8_21n7f")]
+[node name="CargoSlot7" parent="CanvasLayer/PlayerShip/Portrait/Pivot/CargoSlots/ComponentSlots" instance=ExtResource("8_21n7f")]
 position = Vector2(285, 284)
 SlotType = 2
 
-[node name="CargoSlot8" parent="PlayerShip/Pivot/Portrait/CargoSlots/ComponentSlots" instance=ExtResource("8_21n7f")]
+[node name="CargoSlot8" parent="CanvasLayer/PlayerShip/Portrait/Pivot/CargoSlots/ComponentSlots" instance=ExtResource("8_21n7f")]
 position = Vector2(339, 284)
 SlotType = 2
 
-[node name="ComponentSlots" type="Node2D" parent="PlayerShip/Pivot/Portrait"]
-position = Vector2(-213.333, -120)
-scale = Vector2(0.666667, 0.666667)
+[node name="ComponentSlots" type="Node2D" parent="CanvasLayer/PlayerShip/Portrait/Pivot"]
+position = Vector2(-320, -180)
 
-[node name="ComponentSlot" parent="PlayerShip/Pivot/Portrait/ComponentSlots" node_paths=PackedStringArray("CrewSlots") instance=ExtResource("7_rndpj")]
+[node name="ComponentSlot" parent="CanvasLayer/PlayerShip/Portrait/Pivot/ComponentSlots" node_paths=PackedStringArray("CrewSlots") instance=ExtResource("7_rndpj")]
 position = Vector2(306, 1)
 SlotType = 2
 Facing = 0
 CrewSlots = [NodePath("../../CrewSlots/CrewSlot"), NodePath("../../CrewSlots/CrewSlot2")]
 
-[node name="ComponentSlot2" parent="PlayerShip/Pivot/Portrait/ComponentSlots" node_paths=PackedStringArray("CrewSlots", "CargoSlots") instance=ExtResource("7_rndpj")]
+[node name="ComponentSlot2" parent="CanvasLayer/PlayerShip/Portrait/Pivot/ComponentSlots" node_paths=PackedStringArray("CrewSlots", "CargoSlots") instance=ExtResource("7_rndpj")]
 position = Vector2(198, 75)
 SlotType = 1
 Facing = 3
 CrewSlots = [NodePath("../../CrewSlots/CrewSlot3"), NodePath("../../CrewSlots/CrewSlot4")]
 CargoSlots = [NodePath("../../CargoSlots/ComponentSlots/CargoSlot")]
 
-[node name="ComponentSlot3" parent="PlayerShip/Pivot/Portrait/ComponentSlots" node_paths=PackedStringArray("CrewSlots", "CargoSlots") instance=ExtResource("7_rndpj")]
+[node name="ComponentSlot3" parent="CanvasLayer/PlayerShip/Portrait/Pivot/ComponentSlots" node_paths=PackedStringArray("CrewSlots", "CargoSlots") instance=ExtResource("7_rndpj")]
 position = Vector2(413, 74)
 SlotType = 1
 Facing = 2
 CrewSlots = [NodePath("../../CrewSlots/CrewSlot5"), NodePath("../../CrewSlots/CrewSlot6")]
 CargoSlots = [NodePath("../../CargoSlots/ComponentSlots/CargoSlot2")]
 
-[node name="ComponentSlot4" parent="PlayerShip/Pivot/Portrait/ComponentSlots" node_paths=PackedStringArray("CrewSlots", "CargoSlots") instance=ExtResource("7_rndpj")]
+[node name="ComponentSlot4" parent="CanvasLayer/PlayerShip/Portrait/Pivot/ComponentSlots" node_paths=PackedStringArray("CrewSlots", "CargoSlots") instance=ExtResource("7_rndpj")]
 position = Vector2(167, 130)
 SlotType = 1
 Facing = 3
 CrewSlots = [NodePath("../../CrewSlots/CrewSlot9"), NodePath("../../CrewSlots/CrewSlot10")]
 CargoSlots = [NodePath("../../CargoSlots/ComponentSlots/CargoSlot3")]
 
-[node name="ComponentSlot5" parent="PlayerShip/Pivot/Portrait/ComponentSlots" node_paths=PackedStringArray("CrewSlots", "CargoSlots") instance=ExtResource("7_rndpj")]
+[node name="ComponentSlot5" parent="CanvasLayer/PlayerShip/Portrait/Pivot/ComponentSlots" node_paths=PackedStringArray("CrewSlots", "CargoSlots") instance=ExtResource("7_rndpj")]
 position = Vector2(444, 130)
 SlotType = 1
 Facing = 2
 CrewSlots = [NodePath("../../CrewSlots/CrewSlot13"), NodePath("../../CrewSlots/CrewSlot14")]
 CargoSlots = [NodePath("../../CargoSlots/ComponentSlots/CargoSlot4")]
 
-[node name="ComponentSlot6" parent="PlayerShip/Pivot/Portrait/ComponentSlots" node_paths=PackedStringArray("CrewSlots") instance=ExtResource("7_rndpj")]
+[node name="ComponentSlot6" parent="CanvasLayer/PlayerShip/Portrait/Pivot/ComponentSlots" node_paths=PackedStringArray("CrewSlots") instance=ExtResource("7_rndpj")]
 position = Vector2(305, 96)
 SlotType = 3
 CrewSlots = [NodePath("../../CrewSlots/CrewSlot7"), NodePath("../../CrewSlots/CrewSlot8"), NodePath("../../CrewSlots/CrewSlot11"), NodePath("../../CrewSlots/CrewSlot12")]
 
-[node name="ComponentSlot7" parent="PlayerShip/Pivot/Portrait/ComponentSlots" node_paths=PackedStringArray("CrewSlots") instance=ExtResource("7_rndpj")]
+[node name="ComponentSlot7" parent="CanvasLayer/PlayerShip/Portrait/Pivot/ComponentSlots" node_paths=PackedStringArray("CrewSlots") instance=ExtResource("7_rndpj")]
 position = Vector2(253, 159)
 Facing = 3
 CrewSlots = [NodePath("../../CrewSlots/CrewSlot15"), NodePath("../../CrewSlots/CrewSlot16")]
 
-[node name="ComponentSlot8" parent="PlayerShip/Pivot/Portrait/ComponentSlots" node_paths=PackedStringArray("CrewSlots") instance=ExtResource("7_rndpj")]
+[node name="ComponentSlot8" parent="CanvasLayer/PlayerShip/Portrait/Pivot/ComponentSlots" node_paths=PackedStringArray("CrewSlots") instance=ExtResource("7_rndpj")]
 position = Vector2(357, 160)
 Facing = 2
 CrewSlots = [NodePath("../../CrewSlots/CrewSlot21"), NodePath("../../CrewSlots/CrewSlot22")]
 
-[node name="ComponentSlot9" parent="PlayerShip/Pivot/Portrait/ComponentSlots" node_paths=PackedStringArray("CrewSlots") instance=ExtResource("7_rndpj")]
+[node name="ComponentSlot9" parent="CanvasLayer/PlayerShip/Portrait/Pivot/ComponentSlots" node_paths=PackedStringArray("CrewSlots") instance=ExtResource("7_rndpj")]
 position = Vector2(253, 196)
 Facing = 3
 CrewSlots = [NodePath("../../CrewSlots/CrewSlot17"), NodePath("../../CrewSlots/CrewSlot18")]
 
-[node name="ComponentSlot10" parent="PlayerShip/Pivot/Portrait/ComponentSlots" node_paths=PackedStringArray("CrewSlots") instance=ExtResource("7_rndpj")]
+[node name="ComponentSlot10" parent="CanvasLayer/PlayerShip/Portrait/Pivot/ComponentSlots" node_paths=PackedStringArray("CrewSlots") instance=ExtResource("7_rndpj")]
 position = Vector2(357, 196)
 Facing = 2
 CrewSlots = [NodePath("../../CrewSlots/CrewSlot23"), NodePath("../../CrewSlots/CrewSlot24")]
 
-[node name="ComponentSlot11" parent="PlayerShip/Pivot/Portrait/ComponentSlots" node_paths=PackedStringArray("CrewSlots") instance=ExtResource("7_rndpj")]
+[node name="ComponentSlot11" parent="CanvasLayer/PlayerShip/Portrait/Pivot/ComponentSlots" node_paths=PackedStringArray("CrewSlots") instance=ExtResource("7_rndpj")]
 position = Vector2(253, 232)
 Facing = 3
 CrewSlots = [NodePath("../../CrewSlots/CrewSlot19"), NodePath("../../CrewSlots/CrewSlot20")]
 
-[node name="ComponentSlot12" parent="PlayerShip/Pivot/Portrait/ComponentSlots" node_paths=PackedStringArray("CrewSlots") instance=ExtResource("7_rndpj")]
+[node name="ComponentSlot12" parent="CanvasLayer/PlayerShip/Portrait/Pivot/ComponentSlots" node_paths=PackedStringArray("CrewSlots") instance=ExtResource("7_rndpj")]
 position = Vector2(357, 231)
 Facing = 2
 CrewSlots = [NodePath("../../CrewSlots/CrewSlot25"), NodePath("../../CrewSlots/CrewSlot26")]
 
-[node name="ComponentSlot13" parent="PlayerShip/Pivot/Portrait/ComponentSlots" node_paths=PackedStringArray("CrewSlots") instance=ExtResource("7_rndpj")]
+[node name="ComponentSlot13" parent="CanvasLayer/PlayerShip/Portrait/Pivot/ComponentSlots" node_paths=PackedStringArray("CrewSlots") instance=ExtResource("7_rndpj")]
 position = Vector2(134, 155)
 SlotType = 5
 CrewSlots = [NodePath("../../CrewSlots/CrewSlot31"), NodePath("../../CrewSlots/CrewSlot32")]
 
-[node name="ComponentSlot14" parent="PlayerShip/Pivot/Portrait/ComponentSlots" node_paths=PackedStringArray("CrewSlots") instance=ExtResource("7_rndpj")]
+[node name="ComponentSlot14" parent="CanvasLayer/PlayerShip/Portrait/Pivot/ComponentSlots" node_paths=PackedStringArray("CrewSlots") instance=ExtResource("7_rndpj")]
 position = Vector2(478, 155)
 SlotType = 6
 CrewSlots = [NodePath("../../CrewSlots/CrewSlot27"), NodePath("../../CrewSlots/CrewSlot28")]
 
-[node name="ComponentSlot15" parent="PlayerShip/Pivot/Portrait/ComponentSlots" node_paths=PackedStringArray("CrewSlots") instance=ExtResource("7_rndpj")]
+[node name="ComponentSlot15" parent="CanvasLayer/PlayerShip/Portrait/Pivot/ComponentSlots" node_paths=PackedStringArray("CrewSlots") instance=ExtResource("7_rndpj")]
 position = Vector2(306, 308)
 SlotType = 4
 Facing = 0
 CrewSlots = [NodePath("../../CrewSlots/CrewSlot29"), NodePath("../../CrewSlots/CrewSlot30")]
 
-[node name="Crew" type="Node2D" parent="PlayerShip/Pivot/Portrait"]
-position = Vector2(-213.333, -120)
-scale = Vector2(0.666667, 0.666667)
+[node name="Crew" type="Node2D" parent="CanvasLayer/PlayerShip/Portrait/Pivot"]
+position = Vector2(-320, -180)
 
-[node name="Cargo" type="Node2D" parent="PlayerShip/Pivot/Portrait"]
-position = Vector2(-213.333, -120)
-scale = Vector2(0.666667, 0.666667)
+[node name="Cargo" type="Node2D" parent="CanvasLayer/PlayerShip/Portrait/Pivot"]
+position = Vector2(-320, -180)
 
-[node name="Components" type="Node2D" parent="PlayerShip/Pivot/Portrait"]
-position = Vector2(-213.333, -120)
-scale = Vector2(0.666667, 0.666667)
+[node name="Components" type="Node2D" parent="CanvasLayer/PlayerShip/Portrait/Pivot"]
+position = Vector2(-320, -180)
 
-[node name="Projectiles" type="Node2D" parent="."]
-
-[node name="MidRangePlayerAttacks" type="Node2D" parent="Projectiles"]
-position = Vector2(602, -400)
-
-[node name="CanvasLayer" type="CanvasLayer" parent="."]
+[node name="Projectiles" type="Node2D" parent="CanvasLayer/PlayerShip/Portrait"]
+position = Vector2(-418.667, -234.667)
+scale = Vector2(1.33333, 1.33333)
 
 [node name="GUI" type="Node2D" parent="CanvasLayer"]
 
@@ -701,19 +757,19 @@ offset_bottom = 200.0
 
 [node name="SideBarComponent" parent="CanvasLayer/GUI/Gameplay/SideBarComponents/HBoxContainer" node_paths=PackedStringArray("ComponentSlot") instance=ExtResource("21_21n7f")]
 layout_mode = 2
-ComponentSlot = NodePath("../../../../../../PlayerShip/Pivot/Portrait/ComponentSlots/ComponentSlot2")
+ComponentSlot = NodePath("../../../../../PlayerShip/Portrait/Pivot/ComponentSlots/ComponentSlot2")
 
 [node name="SideBarComponent2" parent="CanvasLayer/GUI/Gameplay/SideBarComponents/HBoxContainer" node_paths=PackedStringArray("ComponentSlot") instance=ExtResource("21_21n7f")]
 layout_mode = 2
-ComponentSlot = NodePath("../../../../../../PlayerShip/Pivot/Portrait/ComponentSlots/ComponentSlot3")
+ComponentSlot = NodePath("../../../../../PlayerShip/Portrait/Pivot/ComponentSlots/ComponentSlot3")
 
 [node name="SideBarComponent3" parent="CanvasLayer/GUI/Gameplay/SideBarComponents/HBoxContainer" node_paths=PackedStringArray("ComponentSlot") instance=ExtResource("21_21n7f")]
 layout_mode = 2
-ComponentSlot = NodePath("../../../../../../PlayerShip/Pivot/Portrait/ComponentSlots/ComponentSlot4")
+ComponentSlot = NodePath("../../../../../PlayerShip/Portrait/Pivot/ComponentSlots/ComponentSlot4")
 
 [node name="SideBarComponent4" parent="CanvasLayer/GUI/Gameplay/SideBarComponents/HBoxContainer" node_paths=PackedStringArray("ComponentSlot") instance=ExtResource("21_21n7f")]
 layout_mode = 2
-ComponentSlot = NodePath("../../../../../../PlayerShip/Pivot/Portrait/ComponentSlots/ComponentSlot5")
+ComponentSlot = NodePath("../../../../../PlayerShip/Portrait/Pivot/ComponentSlots/ComponentSlot5")
 
 [node name="EnemyShipUI" type="Node2D" parent="CanvasLayer/GUI/Gameplay"]
 
@@ -746,7 +802,7 @@ text = "HP: 50/50"
 
 [node name="Temp" type="Node2D" parent="."]
 
-[connection signal="pressed" from="PlayerShip/Pivot/Portrait/CloseButton" to="PlayerShip" method="_on_close_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/PlayerShip/Portrait/CloseButton" to="CanvasLayer/PlayerShip" method="_on_close_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/GUI/Gameplay/Buttons/EndTurnButton" to="." method="_on_end_turn_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/GUI/Gameplay/Stats/RangeIndicator/ColorRect/TextureButtonLong" to="CanvasLayer/GUI/Gameplay/Stats/RangeIndicator" method="_on_texture_button_long_pressed"]
 [connection signal="pressed" from="CanvasLayer/GUI/Gameplay/Stats/RangeIndicator/ColorRect/TextureButtonMid" to="CanvasLayer/GUI/Gameplay/Stats/RangeIndicator" method="_on_texture_button_mid_pressed"]

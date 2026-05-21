@@ -197,15 +197,16 @@ public partial class Crew : Node2D, IDraggable, IOrientation, IHealth
 			CurrentSlot = null;
 		}
 
-		// Reparent to the scene root so position is not relative to the casket
+		// Reparent to CanvasLayer so position is not relative to the casket
 		Node root = GetTree().Root;
-		if (GetParent() != root)
+		Node dragParent = root.GetNodeOrNull("PlaySpace/CanvasLayer") ?? root;
+		if (GetParent() != dragParent)
 		{
 			_originalParent = GetParent();
 			_originalLocalPosition = Position;
 			Vector2 globalPos = GlobalPosition;
 			GetParent().RemoveChild(this);
-			root.AddChild(this);
+			dragParent.AddChild(this);
 			GlobalPosition = globalPos;
 		}
 
@@ -243,10 +244,10 @@ public partial class Crew : Node2D, IDraggable, IOrientation, IHealth
 			if (targetSlot is CrewSlot && _originalParent is Casket sourceCasket)
 				sourceCasket.SetReadyLabel("--");
 
-			// Crew always lives under PlayerShip/Pivot/Portrait//Crew; other draggables are parented to their slot
+			// Crew always lives under CanvasLayer/PlayerShip/Portrait/Pivot//Crew; other draggables are parented to their slot
 			if (targetSlot is CrewSlot)
 			{
-				Node crewContainer = GetTree().Root.GetNodeOrNull("PlaySpace/PlayerShip/Pivot/Portrait/Crew");
+				Node crewContainer = GetTree().Root.GetNodeOrNull("PlaySpace/CanvasLayer/PlayerShip/Portrait/Pivot/Crew");
 				if (crewContainer != null && GetParent() != crewContainer)
 				{
 					GetParent().RemoveChild(this);

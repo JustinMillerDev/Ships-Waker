@@ -261,13 +261,14 @@ public partial class ShipComponent : Node2D, IDraggable, IHealth
 		}
 
 		Node root = GetTree().Root;
-		if (GetParent() != root)
+		Node dragParent = root.GetNodeOrNull("PlaySpace/CanvasLayer") ?? root;
+		if (GetParent() != dragParent)
 		{
 			_originalParent = GetParent();
 			_originalLocalPosition = Position;
 			Vector2 globalPos = GlobalPosition;
 			GetParent().RemoveChild(this);
-			root.AddChild(this);
+			dragParent.AddChild(this);
 			GlobalPosition = globalPos;
 		}
 

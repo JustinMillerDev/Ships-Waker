@@ -208,15 +208,16 @@ public partial class Cargo : Node2D, IDraggable, IHealth
 			_originalSlot = null;
 		}
 
-		// Reparent to the scene root so the position is not relative to a slot node.
+		// Reparent to CanvasLayer so the position is not relative to a slot node.
 		Node root = GetTree().Root;
-		if (GetParent() != root)
+		Node dragParent = root.GetNodeOrNull("PlaySpace/CanvasLayer") ?? root;
+		if (GetParent() != dragParent)
 		{
 			_originalParent = GetParent();
 			_originalLocalPosition = Position;
 			Vector2 globalPos = GlobalPosition;
 			GetParent().RemoveChild(this);
-			root.AddChild(this);
+			dragParent.AddChild(this);
 			GlobalPosition = globalPos;
 		}
 
@@ -310,7 +311,7 @@ public partial class Cargo : Node2D, IDraggable, IHealth
 	// Helpers -------------------------------------------------------------------
 
 	private Node GetCargoContainer() =>
-		GetTree().Root.GetNodeOrNull("PlaySpace/PlayerShip/Pivot/Portrait//Cargo");
+		GetTree().Root.GetNodeOrNull("PlaySpace/CanvasLayer/PlayerShip/Portrait/Pivot//Cargo");
 
 	private void ShowFocusStats(CargoData data)
 	{

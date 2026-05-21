@@ -43,8 +43,8 @@ public partial class ComponentManager : Node
 			return;
 		}
 
-		// --- Player ship: slots live at PlayerShip/Pivot/Portrait/ComponentSlots ---
-		Node playerSlots = playspace.GetNodeOrNull("PlayerShip/Pivot/Portrait/ComponentSlots");
+		// --- Player ship: slots live at CanvasLayer/PlayerShip/Portrait/Pivot/ComponentSlots ---
+		Node playerSlots = playspace.GetNodeOrNull("CanvasLayer/PlayerShip/Portrait/Pivot/ComponentSlots");
 		if (playerSlots != null)
 		{
 			foreach (Node child in playerSlots.GetChildren())
@@ -57,7 +57,7 @@ public partial class ComponentManager : Node
 		}
 		else
 		{
-			GD.PushWarning("ComponentManager: Could not find PlayerShip/Pivot/Portrait/ComponentSlots node.");
+			GD.PushWarning("ComponentManager: Could not find CanvasLayer/PlayerShip/Portrait/Pivot/ComponentSlots node.");
 		}
 
 		// --- Enemy ship: slots now live directly on the ship node ---
@@ -104,16 +104,16 @@ public partial class ComponentManager : Node
 		Node playspace = GetTree().Root.GetNodeOrNull("PlaySpace");
 		if (playspace == null) return;
 
-		Node componentContainer = playspace.GetNodeOrNull("PlayerShip/Pivot/Portrait/Components");
+		Node componentContainer = playspace.GetNodeOrNull("CanvasLayer/PlayerShip/Portrait/Pivot/Components");
 		if (componentContainer == null)
 		{
-			GD.PushWarning("ComponentManager: Could not find PlayerShip/Pivot/Portrait/Components node.");
+			GD.PushWarning("ComponentManager: Could not find CanvasLayer/PlayerShip/Portrait/Pivot/Components node.");
 			return;
 		}
 
 		// Build a lookup of world-space slots by type.
 		var worldSlotsByType = new Dictionary<ShipComponentType, ShipComponentSlot>();
-		Node psSlotContainer = playspace.GetNodeOrNull("PlayerShip/Pivot/Portrait/ComponentSlots");
+		Node psSlotContainer = playspace.GetNodeOrNull("CanvasLayer/PlayerShip/Portrait/Pivot/ComponentSlots");
 		if (psSlotContainer != null)
 		{
 			foreach (Node child in psSlotContainer.GetChildren())
@@ -180,7 +180,7 @@ public partial class ComponentManager : Node
 		Node playspace = GetTree().Root.GetNodeOrNull("PlaySpace");
 		if (playspace == null) return;
 
-		Node componentContainer = playspace.GetNodeOrNull("PlayerShip/Pivot/Portrait/Components");
+		Node componentContainer = playspace.GetNodeOrNull("CanvasLayer/PlayerShip/Portrait/Pivot/Components");
 		if (componentContainer == null) return;
 
 		if (DataManager.Components == null ||
@@ -238,10 +238,10 @@ public partial class ComponentManager : Node
 		Node playspace = GetTree().Root.GetNodeOrNull("PlaySpace");
 		if (playspace == null) return;
 
-		Node componentContainer = playspace.GetNodeOrNull("PlayerShip/Pivot/Portrait/Components");
+		Node componentContainer = playspace.GetNodeOrNull("CanvasLayer/PlayerShip/Portrait/Pivot/Components");
 		if (componentContainer == null)
 		{
-			GD.PushWarning("ComponentManager: Could not find PlayerShip/Pivot/Portrait/Components node.");
+			GD.PushWarning("ComponentManager: Could not find CanvasLayer/PlayerShip/Portrait/Pivot/Components node.");
 			return;
 		}
 
@@ -290,7 +290,7 @@ public partial class ComponentManager : Node
 		Node playspace = GetTree().Root.GetNodeOrNull("PlaySpace");
 		if (playspace == null) return;
 
-		Node componentContainer = playspace.GetNodeOrNull("PlayerShip/Pivot/Portrait/Components");
+		Node componentContainer = playspace.GetNodeOrNull("CanvasLayer/PlayerShip/Portrait/Pivot/Components");
 		if (componentContainer == null) return;
 
 		if (DataManager.Components == null ||

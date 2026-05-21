@@ -18,8 +18,11 @@ public partial class Projectile : Node2D
 	/// <summary>The component that fired this projectile.</summary>
 	public ShipComponent Source { get; set; }
 
+	/// <summary>True when this projectile originates from the PlayerShipSmall overview (mirror or direct).</summary>
+	public bool IsSmallProjectile { get; set; } = false;
+
 	/// <summary>The ship this projectile is travelling toward.</summary>
-	public Ship TargetShip { get; set; }
+	public ShipSmall TargetShip { get; set; }
 
 	/// <summary>The specific component to hit on the target ship, or null to hit the ship itself.</summary>
 	public ShipComponent TargetComponent { get; set; }
@@ -118,10 +121,7 @@ public partial class Projectile : Node2D
 		if (TargetComponent is IHealth componentHealth)
 			componentHealth.TakeDamage(Damage);
 		else if (TargetShip != null)
-		{
-			TargetShip.TakeDamage(Damage);
-			GD.Print($"{Source?.Name ?? "Projectile"} dealt {Damage} damage to {TargetShip.Name}. HP: {TargetShip.CurrentHealth}/{TargetShip.MaxHealth}  Shields: {TargetShip.CurrentShields}/{TargetShip.MaxShields}");
-		}
+			GD.Print($"{Source?.Name ?? "Projectile"} hit {TargetShip.Name} (no health on ShipSmall).");
 
 		// Hide the sprite so only the trail remains visible.
 		GetNodeOrNull<Node2D>("Pivot")?.Hide();

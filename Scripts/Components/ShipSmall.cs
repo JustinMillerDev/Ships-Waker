@@ -74,7 +74,7 @@ public partial class ShipSmall : Node2D
 	{
 		if (_faction != ShipFaction.Player) return;
 
-		if (GetTree().Root.GetNodeOrNull<Node2D>("PlaySpace/PlayerShip") is Node2D playerShip)
-			playerShip.Visible = true;
+		if (GetTree().Root.GetNodeOrNull<Node2D>("PlaySpace/CanvasLayer/PlayerShip") is Node2D playerShip)
+			playerShip.Visible = !playerShip.Visible;
 	}
 }

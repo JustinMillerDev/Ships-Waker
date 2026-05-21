@@ -66,15 +66,15 @@ public static class CannonFireHelper
 {
 	public static void Fire(ShipComponent c)
 	{
-		Ship enemy = c.GetTree().Root.GetNodeOrNull<Ship>("PlaySpace/EnemyShip");
+		ShipSmall enemy = c.GetTree().Root.GetNodeOrNull<ShipSmall>("PlaySpace/EnemyShipSmall");
 		if (enemy == null)
 		{
-			GD.PushWarning($"{c.Name}: CannonFire — no EnemyShip found in scene tree.");
+			GD.PushWarning($"{c.Name}: CannonFire — no EnemyShipSmall found in scene tree.");
 			return;
 		}
-        GD.Print($"{c.Data.Name}: Cannon fired at EnemyShip.");
+		GD.Print($"{c.Data.Name}: Cannon fired at EnemyShipSmall.");
 		int damage = c.Data?.Strength ?? 0;
-        GD.Print("Damage calculated: " + damage);
+		GD.Print("Damage calculated: " + damage);
 		Node2D targetPoint = enemy.GetNodeOrNull<Node2D>("Pivot/Anchors/TargetPoint");
 		if (targetPoint != null)
 			ProjectileManager.Instance.Fire(c, enemy, targetPoint.GlobalPosition, damage);
