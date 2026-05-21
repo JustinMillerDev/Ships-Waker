@@ -1,8 +1,9 @@
-[gd_scene load_steps=34 format=3 uid="uid://dwn6w7t2pvk3b"]
+[gd_scene load_steps=35 format=3 uid="uid://dwn6w7t2pvk3b"]
 
 [ext_resource type="Script" uid="uid://dhktcp2cgrjok" path="res://Scripts/Singletons/PlaySpace.cs" id="1_bvtvd"]
 [ext_resource type="Texture2D" uid="uid://rp3li63b5om5" path="res://Assets/Backgrounds/Background_NoPlanetBig.png" id="2_d284w"]
 [ext_resource type="Texture2D" uid="uid://ckfsl2gy0drw2" path="res://Assets/Backgrounds/SpaceShipGame_UI_Ship.png" id="2_n8iyk"]
+[ext_resource type="Script" uid="uid://0fgot8bpvcaw" path="res://Scripts/Singletons/BackgroundScroller.cs" id="2_q8066"]
 [ext_resource type="PackedScene" uid="uid://blea1lufbpes6" path="res://Scenes/ShipSmall.tscn" id="3_d284w"]
 [ext_resource type="Script" uid="uid://bq37p4ae8ynts" path="res://Scripts/Components/Ship.cs" id="3_f1of7"]
 [ext_resource type="PackedScene" uid="uid://d3lpj432rh8ox" path="res://Scenes/CrewSlot.tscn" id="3_snlng"]
@@ -78,64 +79,86 @@ script = ExtResource("1_bvtvd")
 [node name="Camera2D" type="Camera2D" parent="."]
 offset = Vector2(320, 180)
 zoom = Vector2(0.5, 0.5)
+script = ExtResource("2_q8066")
 
-[node name="Background" type="Sprite2D" parent="Camera2D"]
+[node name="Background1" type="Sprite2D" parent="Camera2D"]
+position = Vector2(-2560, -2880)
 scale = Vector2(2, 2)
 texture = ExtResource("2_d284w")
 centered = false
 offset = Vector2(-480, -270)
 
 [node name="Background2" type="Sprite2D" parent="Camera2D"]
-position = Vector2(0, -1440)
+position = Vector2(0, -2880)
 scale = Vector2(2, 2)
 texture = ExtResource("2_d284w")
 centered = false
 offset = Vector2(-480, -270)
 
 [node name="Background3" type="Sprite2D" parent="Camera2D"]
-position = Vector2(2560, -1440)
+position = Vector2(2560, -2880)
 scale = Vector2(2, 2)
 texture = ExtResource("2_d284w")
 centered = false
 offset = Vector2(-480, -270)
 
 [node name="Background4" type="Sprite2D" parent="Camera2D"]
-position = Vector2(2560, 0)
+position = Vector2(-2560, -1440)
 scale = Vector2(2, 2)
 texture = ExtResource("2_d284w")
 centered = false
 offset = Vector2(-480, -270)
 
 [node name="Background5" type="Sprite2D" parent="Camera2D"]
-position = Vector2(2560, 1440)
+position = Vector2(0, -1440)
 scale = Vector2(2, 2)
 texture = ExtResource("2_d284w")
 centered = false
 offset = Vector2(-480, -270)
 
 [node name="Background6" type="Sprite2D" parent="Camera2D"]
-position = Vector2(0, 1440)
+position = Vector2(2560, -1440)
 scale = Vector2(2, 2)
 texture = ExtResource("2_d284w")
 centered = false
 offset = Vector2(-480, -270)
 
 [node name="Background7" type="Sprite2D" parent="Camera2D"]
-position = Vector2(-2560, 1440)
-scale = Vector2(2, 2)
-texture = ExtResource("2_d284w")
-centered = false
-offset = Vector2(-480, -270)
-
-[node name="Background8" type="Sprite2D" parent="Camera2D"]
 position = Vector2(-2560, 0)
 scale = Vector2(2, 2)
 texture = ExtResource("2_d284w")
 centered = false
 offset = Vector2(-480, -270)
 
+[node name="Background8" type="Sprite2D" parent="Camera2D"]
+scale = Vector2(2, 2)
+texture = ExtResource("2_d284w")
+centered = false
+offset = Vector2(-480, -270)
+
 [node name="Background9" type="Sprite2D" parent="Camera2D"]
-position = Vector2(-2560, -1440)
+position = Vector2(2560, 0)
+scale = Vector2(2, 2)
+texture = ExtResource("2_d284w")
+centered = false
+offset = Vector2(-480, -270)
+
+[node name="Background10" type="Sprite2D" parent="Camera2D"]
+position = Vector2(-2560, 1440)
+scale = Vector2(2, 2)
+texture = ExtResource("2_d284w")
+centered = false
+offset = Vector2(-480, -270)
+
+[node name="Background11" type="Sprite2D" parent="Camera2D"]
+position = Vector2(0, 1440)
+scale = Vector2(2, 2)
+texture = ExtResource("2_d284w")
+centered = false
+offset = Vector2(-480, -270)
+
+[node name="Background12" type="Sprite2D" parent="Camera2D"]
+position = Vector2(2560, 1440)
 scale = Vector2(2, 2)
 texture = ExtResource("2_d284w")
 centered = false
