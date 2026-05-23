@@ -19,6 +19,7 @@ public partial class ShipSmall : Node2D
 		{
 			if (_faction == value) return;
 			_faction = value;
+			ApplyFactionToPdcs();
 		}
 	}
 
@@ -26,7 +27,20 @@ public partial class ShipSmall : Node2D
 
 	public override void _Ready()
 	{
+		ApplyFactionToPdcs();
 		SpawnExhaustTrails();
+	}
+
+	private void ApplyFactionToPdcs()
+	{
+		Node2D pdcRoot = GetNodeOrNull<Node2D>("Pivot/PDCs");
+		if (pdcRoot == null) return;
+
+		foreach (Node child in pdcRoot.GetChildren())
+		{
+			if (child is Pdc pdc)
+				pdc.Faction = _faction;
+		}
 	}
 
 	// Exhaust trails -----------------------------------------------------------

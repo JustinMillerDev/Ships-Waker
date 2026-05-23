@@ -11,7 +11,6 @@ public partial class PlaySpace : Node
 	public event Action<Vector2> ZoomChanged;
 
 	// Deploy budgets (reset to 1 at the start of every turn).
-	public int CrewDeploysRemaining  { get; private set; } = 1;
 	public int CargoDeploysRemaining { get; private set; } = 1;
 
 	/// <summary>True while the player is in a combat encounter.</summary>
@@ -294,8 +293,6 @@ public partial class PlaySpace : Node
 	/// </summary>
 	public bool TryUseCrewDeploy()
 	{
-		if (CrewDeploysRemaining <= 0) return false;
-		CrewDeploysRemaining--;
 		UpdateDeployLabels();
 		return true;
 	}
@@ -322,7 +319,6 @@ public partial class PlaySpace : Node
 
 	private void StartTurn()
 	{
-		CrewDeploysRemaining  = 1;
 		CargoDeploysRemaining = 1;
 		UpdateDeployLabels();
 
@@ -335,9 +331,6 @@ public partial class PlaySpace : Node
 
 	private void UpdateDeployLabels()
 	{
-		if (GetNodeOrNull("CanvasLayer/GUI/Gameplay/Stats/CrewDeploys") is Label crewLabel)
-			crewLabel.Text = $"Crew Deploys:{CrewDeploysRemaining}";
-
 		if (GetNodeOrNull("CanvasLayer/GUI/Gameplay/Stats/CargoDeploys") is Label cargoLabel)
 			cargoLabel.Text = $"Cargo Deploys:{CargoDeploysRemaining}";
 	}

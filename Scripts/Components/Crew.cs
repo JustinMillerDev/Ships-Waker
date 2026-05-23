@@ -87,11 +87,6 @@ public partial class Crew : Node2D, IDraggable, IOrientation, IHealth
 			PlayWiggle();
 			return;
 		}
-		if (!IsDeployed && !HasCrewDeploysRemaining())
-		{
-			PlayWiggle();
-			return;
-		}
 		OnDragStart();
 	}
 
@@ -116,12 +111,6 @@ public partial class Crew : Node2D, IDraggable, IOrientation, IHealth
 			tooltipItem.Visible = false;
 
 		HideFocusStats();
-	}
-
-	private bool HasCrewDeploysRemaining()
-	{
-		PlaySpace ps = GetTree().Root.GetNodeOrNull("PlaySpace") as PlaySpace;
-		return ps == null || ps.CrewDeploysRemaining > 0;
 	}
 
 	private Tween _wiggleTween;
@@ -156,11 +145,6 @@ public partial class Crew : Node2D, IDraggable, IOrientation, IHealth
 				if (mouseButton.Pressed && IsHovered)
 				{
 					if (!IsReady)
-					{
-						PlayWiggle();
-						return;
-					}
-					if (!IsDeployed && !HasCrewDeploysRemaining())
 					{
 						PlayWiggle();
 						return;

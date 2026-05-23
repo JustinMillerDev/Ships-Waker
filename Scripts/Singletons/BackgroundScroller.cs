@@ -15,7 +15,7 @@ public partial class BackgroundScroller : Camera2D
 	// 4 rows tall → total grid height used for wrapping.
 	private const float TotalHeight = TileHeight * 4f; // 5760
 	// Wrap a sprite back to the top once it reaches or passes this y.
-	private const float WrapThreshold = TileHeight * 3f; // 4320
+	private const float WrapThreshold = 2306f; // 4320
 
 	private Sprite2D[] _sprites;
 

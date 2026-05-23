@@ -1,0 +1,19 @@
+[gd_scene load_steps=4 format=3 uid="uid://bkflfbrmfqw1f"]
+
+[ext_resource type="Script" uid="uid://dp5xr8y0ubads" path="res://Scripts/Components/Pdc.cs" id="1_ikthm"]
+[ext_resource type="Texture2D" uid="uid://6skwq021f4q6" path="res://Assets/Characters/PDC_Base.png" id="1_ul3hs"]
+[ext_resource type="Texture2D" uid="uid://bsrxrw5nsey04" path="res://Assets/Characters/PDC_Cannon.png" id="2_ikthm"]
+
+[node name="PDC" type="Node2D"]
+script = ExtResource("1_ikthm")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("1_ul3hs")
+
+[node name="Pivot" type="Node2D" parent="."]
+
+[node name="Sprite2D" type="Sprite2D" parent="Pivot"]
+texture = ExtResource("2_ikthm")
+
+[node name="EmitPoint" type="Node2D" parent="Pivot"]
+position = Vector2(0, -21)

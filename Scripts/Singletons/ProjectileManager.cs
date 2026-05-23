@@ -1,4 +1,5 @@
 using Godot;
+using System.Collections.Generic;
 
 /// <summary>
 /// Singleton that spawns and animates projectiles.
@@ -6,6 +7,39 @@ using Godot;
 /// </summary>
 public partial class ProjectileManager : Node
 {
+	public enum ProjectileSourceKind
+	{
+		Cannon,
+		Missile,
+		RailGun,
+	}
+
+	public readonly struct InFlightProjectileInfo
+	{
+		public InFlightProjectileInfo(Projectile projectile, ProjectileSourceKind sourceKind, Vector2 position, Vector2 velocity, Vector2 destination)
+		{
+			Projectile = projectile;
+			SourceKind = sourceKind;
+			Position = position;
+			Velocity = velocity;
+			Destination = destination;
+		}
+
+		public Projectile Projectile { get; }
+		public ProjectileSourceKind SourceKind { get; }
+		public Vector2 Position { get; }
+		public Vector2 Velocity { get; }
+		public Vector2 Destination { get; }
+	}
+
+	private sealed class InFlightProjectileState
+	{
+		public ProjectileSourceKind SourceKind;
+		public Vector2 Destination;
+		public Vector2 LastPosition;
+		public Vector2 Velocity;
+	}
+
 	public static ProjectileManager Instance { get; private set; }
 
 	/// <summary>Travel time for the second leg (attack run toward the enemy), in seconds.</summary>
@@ -36,10 +70,12 @@ public partial class ProjectileManager : Node
 	private Node _projectileContainer;
 	private PackedScene _projectileScene;
 	private Node2D _targetPoint;
+	private readonly Dictionary<Projectile, InFlightProjectileState> _inFlightProjectiles = new();
 
 	public override void _Ready()
 	{
 		Instance = this;
+		SetProcess(true);
 		_projectileScene = GD.Load<PackedScene>("res://Scenes/Projectile.tscn");
 
 		// Projectiles live under the PlaySpace root so they share the game world.
@@ -47,6 +83,33 @@ public partial class ProjectileManager : Node
 
 		_targetPoint = GetTree().Root.GetNodeOrNull<Node2D>(
 			"PlaySpace/EnemyShipSmall/Pivot/Sprites/Sprite2D2");
+	}
+
+	public override void _Process(double delta)
+	{
+		if (_inFlightProjectiles.Count == 0) return;
+
+		float dt = (float)delta;
+		var stale = new List<Projectile>();
+
+		foreach (var entry in _inFlightProjectiles)
+		{
+			Projectile projectile = entry.Key;
+			if (!GodotObject.IsInstanceValid(projectile) || projectile.IsQueuedForDeletion())
+			{
+				stale.Add(projectile);
+				continue;
+			}
+
+			InFlightProjectileState state = entry.Value;
+			Vector2 now = projectile.GlobalPosition;
+			if (dt > 0f)
+				state.Velocity = (now - state.LastPosition) / dt;
+			state.LastPosition = now;
+		}
+
+		for (int i = 0; i < stale.Count; i++)
+			_inFlightProjectiles.Remove(stale[i]);
 	}
 
 	/// <summary>
@@ -85,7 +148,9 @@ public partial class ProjectileManager : Node
 		}
 
 		Projectile projectile = SpawnProjectile(source, targetShip, targetComponent, damage, Vector2.Zero);
-		Launch(projectile, projectile.ImpactPosition);
+		Vector2 destination = projectile.ImpactPosition;
+		RegisterInFlight(projectile, source, destination);
+		Launch(projectile, destination);
 	}
 
 	/// <summary>
@@ -102,7 +167,63 @@ public partial class ProjectileManager : Node
 		}
 
 		Projectile projectile = SpawnProjectile(source, targetShip, null, damage, Vector2.Zero);
+		RegisterInFlight(projectile, source, targetPosition);
 		Launch(projectile, targetPosition);
+	}
+
+	/// <summary>
+	/// Spawns a direct-fire projectile from any world-space origin to any world-space destination.
+	/// Used by PDC interception and other non-component projectile sources.
+	/// </summary>
+	public Projectile FireDirect(Vector2 origin, Vector2 destination, float speed, ProjectileSourceKind sourceKind = ProjectileSourceKind.Cannon)
+	{
+		if (_projectileScene == null) return null;
+		speed = Mathf.Max(1f, speed);
+
+		Projectile projectile = _projectileScene.Instantiate<Projectile>();
+		_projectileContainer.AddChild(projectile);
+		projectile.GlobalPosition = origin;
+
+		RegisterInFlight(projectile, sourceKind, destination);
+
+		float travelTime = Mathf.Max(0.01f, origin.DistanceTo(destination) / speed);
+		Tween tween = projectile.CreateTween();
+		tween.TweenProperty(projectile, "global_position", destination, travelTime)
+			 .SetTrans(Tween.TransitionType.Linear)
+			 .SetEase(Tween.EaseType.In);
+		tween.TweenCallback(Callable.From(projectile.OnImpact));
+
+		return projectile;
+	}
+
+	/// <summary>Snapshot of all currently in-flight projectiles and their source classifications.</summary>
+	public List<InFlightProjectileInfo> GetInFlightProjectiles()
+	{
+		var snapshot = new List<InFlightProjectileInfo>(_inFlightProjectiles.Count);
+		var stale = new List<Projectile>();
+
+		foreach (var entry in _inFlightProjectiles)
+		{
+			Projectile projectile = entry.Key;
+			if (!GodotObject.IsInstanceValid(projectile) || projectile.IsQueuedForDeletion())
+			{
+				stale.Add(projectile);
+				continue;
+			}
+
+			InFlightProjectileState state = entry.Value;
+			snapshot.Add(new InFlightProjectileInfo(
+				projectile,
+				state.SourceKind,
+				projectile.GlobalPosition,
+				state.Velocity,
+				state.Destination));
+		}
+
+		for (int i = 0; i < stale.Count; i++)
+			_inFlightProjectiles.Remove(stale[i]);
+
+		return snapshot;
 	}
 
 	private void FireMissileVolley(ShipComponent source, ShipSmall targetShip, ShipComponent targetComponent, Vector2? explicitTarget, int damage)
@@ -117,6 +238,7 @@ public partial class ProjectileManager : Node
 			{
 				Projectile projectile = SpawnProjectile(source, targetShip, targetComponent, damage, new Vector2(xOffset, 0), stage2XOffset, midYOffset);
 				Vector2 dest = explicitTarget ?? projectile.ImpactPosition;
+				RegisterInFlight(projectile, source, dest);
 				Launch(projectile, dest, stage2XOffset, midYOffset);
 			};
 		}
@@ -173,7 +295,37 @@ public partial class ProjectileManager : Node
 
 		var enemySmall = GetTree().Root.GetNodeOrNull<Node2D>("PlaySpace/EnemyShipSmall");
 		Vector2 mirrorTarget = enemySmall != null ? enemySmall.GlobalPosition : targetShip.GlobalPosition;
+		RegisterInFlight(mirror, source, mirrorTarget);
 		Launch(mirror, mirrorTarget, stage2XOffset, midYOffset);
+	}
+
+	private void RegisterInFlight(Projectile projectile, ShipComponent source, Vector2 destination)
+	{
+		RegisterInFlight(projectile, GetSourceKind(source), destination);
+	}
+
+	private void RegisterInFlight(Projectile projectile, ProjectileSourceKind sourceKind, Vector2 destination)
+	{
+		if (projectile == null) return;
+
+		_inFlightProjectiles[projectile] = new InFlightProjectileState
+		{
+			SourceKind = sourceKind,
+			Destination = destination,
+			LastPosition = projectile.GlobalPosition,
+			Velocity = Vector2.Zero,
+		};
+	}
+
+	private static ProjectileSourceKind GetSourceKind(ShipComponent source)
+	{
+		TrailType? trailType = source?.Data?.TrailType;
+		return trailType switch
+		{
+			TrailType.Missile => ProjectileSourceKind.Missile,
+			TrailType.RailGun => ProjectileSourceKind.RailGun,
+			_ => ProjectileSourceKind.Cannon,
+		};
 	}
 
 	/// <summary>

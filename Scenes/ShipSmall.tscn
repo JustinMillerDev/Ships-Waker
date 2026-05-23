@@ -1,9 +1,10 @@
-[gd_scene load_steps=12 format=3 uid="uid://blea1lufbpes6"]
+[gd_scene load_steps=13 format=3 uid="uid://blea1lufbpes6"]
 
 [ext_resource type="Script" uid="uid://cuhli8nbe2u37" path="res://Scripts/Components/ShipSmall.cs" id="1_6q2s2"]
 [ext_resource type="Texture2D" uid="uid://ckfsl2gy0drw2" path="res://Assets/Backgrounds/SpaceShipGame_UI_Ship.png" id="2_p3qaw"]
 [ext_resource type="Texture2D" uid="uid://dt5u4w30ha68x" path="res://Assets/Backgrounds/RocketExhaust.png" id="3_msmip"]
 [ext_resource type="Texture2D" uid="uid://dtwtywqxu48t0" path="res://Assets/Backgrounds/ExhaustParticle.png" id="4_mgyix"]
+[ext_resource type="PackedScene" uid="uid://bkflfbrmfqw1f" path="res://Scenes/pdc.tscn" id="5_p3qaw"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_q8066"]
 atlas = ExtResource("3_msmip")
@@ -184,6 +185,11 @@ randomness = 0.1
 trail_enabled = true
 trail_sections = 7
 process_material = SubResource("ParticleProcessMaterial_u3u7p")
+
+[node name="PDCs" type="Node2D" parent="Pivot"]
+
+[node name="PDC" parent="Pivot/PDCs" instance=ExtResource("5_p3qaw")]
+scale = Vector2(0.1, 0.1)
 
 [connection signal="mouse_entered" from="Pivot/Focus" to="." method="_on_focus_mouse_entered"]
 [connection signal="mouse_exited" from="Pivot/Focus" to="." method="_on_focus_mouse_exited"]
