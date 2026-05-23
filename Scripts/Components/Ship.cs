@@ -15,6 +15,8 @@ public enum ShipFaction
 /// </summary>
 public partial class Ship : Node2D, IHealth
 {
+	private static CompressedTexture2D _enemyPortraitTexture;
+
 	// IHealth ------------------------------------------------------------------
 
 	public int MaxHealth { get; private set; } = 50;
@@ -59,6 +61,13 @@ public partial class Ship : Node2D, IHealth
 
 	public override void _Ready()
 	{
+		if (_faction == ShipFaction.Enemy)
+		{
+			_enemyPortraitTexture ??= GD.Load<CompressedTexture2D>("res://Assets/GUI/EnemyShipBox.png");
+			if (GetNodeOrNull<Sprite2D>("Portrait") is Sprite2D portrait && _enemyPortraitTexture != null)
+				portrait.Texture = _enemyPortraitTexture;
+		}
+
 		if (_faction == ShipFaction.Enemy)
 			SpawnExhaustTrails();
 	}

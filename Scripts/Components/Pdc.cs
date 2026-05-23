@@ -14,14 +14,17 @@ public partial class Pdc : Node2D
 
 	[Export] public float FireIntervalSeconds { get; set; } = 0.2f;
 	[Export] public float InterceptorSpeed { get; set; } = 1400f;
-	[Export] public float InterceptRange { get; set; } = 1200f;
+	[Export] public float InterceptRange { get; set; } = 1400f;
+	[Export] public float ThreatDestinationRange { get; set; } = 220f;
 	[Export] public float InterceptHitRadius { get; set; } = 28f;
 
 	private Node2D _emitPoint;
+	private ShipSmall _ownerShipSmall;
 	private double _cooldown;
 
 	public override void _Ready()
 	{
+		_ownerShipSmall = FindOwnerShipSmall();
 		_emitPoint = GetNodeOrNull<Node2D>("Pivot/EmitPoint");
 		if (_emitPoint == null)
 			GD.PushWarning($"{Name}: missing Pivot/EmitPoint; interception disabled.");
@@ -29,7 +32,7 @@ public partial class Pdc : Node2D
 
 	public override void _Process(double delta)
 	{
-		if (!IsVisibleInTree() || _faction == ShipFaction.Player || _emitPoint == null || ProjectileManager.Instance == null) return;
+		if (!IsVisibleInTree() || _ownerShipSmall == null || _faction == ShipFaction.Player || _emitPoint == null || ProjectileManager.Instance == null) return;
 
 		_cooldown -= delta;
 		if (_cooldown > 0d) return;
@@ -65,6 +68,7 @@ public partial class Pdc : Node2D
 			ProjectileManager.InFlightProjectileInfo info = inFlight[i];
 			if (info.SourceKind != ProjectileManager.ProjectileSourceKind.Missile) continue;
 			if (!GodotObject.IsInstanceValid(info.Projectile) || info.Projectile.IsQueuedForDeletion()) continue;
+			if (info.Destination.DistanceTo(_ownerShipSmall.GlobalPosition) > ThreatDestinationRange) continue;
 
 			Vector2 toShooter = shooterPos - info.Position;
 			if (toShooter.Length() > InterceptRange) continue;
@@ -122,5 +126,18 @@ public partial class Pdc : Node2D
 		if (!t1Valid && !t2Valid) return false;
 		time = t1Valid && t2Valid ? Mathf.Min(t1, t2) : (t1Valid ? t1 : t2);
 		return true;
+	}
+
+	private ShipSmall FindOwnerShipSmall()
+	{
+		Node node = this;
+		while (node != null)
+		{
+			if (node is ShipSmall shipSmall)
+				return shipSmall;
+			node = node.GetParent();
+		}
+
+		return null;
 	}
 }

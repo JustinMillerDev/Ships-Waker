@@ -8,7 +8,7 @@ using Godot;
 public partial class BackgroundScroller : Camera2D
 {
 	/// <summary>Scroll speed in pixels per second (Camera2D local space).</summary>
-	[Export] public float ScrollSpeed { get; set; } = 320f;
+	[Export] public float ScrollSpeed { get; set; } = 40f;
 
 	// The y-distance between adjacent rows of tiles.
 	private const float TileHeight = 1440f;

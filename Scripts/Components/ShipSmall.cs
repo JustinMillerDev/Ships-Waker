@@ -81,14 +81,31 @@ public partial class ShipSmall : Node2D
 	// UI callbacks -------------------------------------------------------------
 
 	/// <summary>
-	/// When the focus button is pressed on a player-faction ShipSmall,
-	/// makes the full PlayerShip node visible.
+	/// When the focus button is pressed, show the corresponding full-size ship
+	/// in CanvasLayer and hide the other one.
 	/// </summary>
 	public void _on_focus_pressed()
 	{
-		if (_faction != ShipFaction.Player) return;
+		Node2D playerShip = GetTree().Root.GetNodeOrNull<Node2D>("PlaySpace/CanvasLayer/PlayerShip");
+		Node2D enemyShip = GetTree().Root.GetNodeOrNull<Node2D>("PlaySpace/CanvasLayer/EnemyShip");
 
-		if (GetTree().Root.GetNodeOrNull<Node2D>("PlaySpace/CanvasLayer/PlayerShip") is Node2D playerShip)
-			playerShip.Visible = !playerShip.Visible;
+		if (playerShip == null && enemyShip == null) return;
+
+		bool showPlayer = _faction == ShipFaction.Player;
+		Node2D selectedShip = showPlayer ? playerShip : enemyShip;
+		Node2D otherShip = showPlayer ? enemyShip : playerShip;
+
+		// Clicking the currently visible ship hides it.
+		if (selectedShip != null && selectedShip.Visible)
+		{
+			selectedShip.Visible = false;
+			return;
+		}
+
+		if (selectedShip != null)
+			selectedShip.Visible = true;
+
+		if (otherShip != null)
+			otherShip.Visible = false;
 	}
 }
