@@ -108,4 +108,55 @@ public partial class ShipSmall : Node2D
 		if (otherShip != null)
 			otherShip.Visible = false;
 	}
+
+	public void _on_focus_mouse_entered()
+	{
+		ShowFocusStats();
+	}
+
+	public void _on_focus_mouse_exited()
+	{
+		HideFocusStats();
+	}
+
+	private void ShowFocusStats()
+	{
+		Node root = GetTree().Root;
+		if (root.GetNodeOrNull("PlaySpace/CanvasLayer/GUI/Gameplay/Stats/CurrentFocusStats") is not CanvasItem panel)
+			return;
+
+		panel.Visible = true;
+
+		if (panel.GetNodeOrNull("Tooltip/Label") is not Label label)
+			return;
+
+		Ship ship = GetLinkedShip();
+		if (ship == null)
+		{
+			label.Text = "Ship\nHP: 0/0\nEvasions: 0\nPDCs: 0";
+			return;
+		}
+
+		label.Text =
+			$"{ship.Name}\n" +
+			$"HP: {ship.CurrentHealth}/{ship.MaxHealth}\n" +
+			$"Evasions: {ship.CurrentEvasions}\n" +
+			$"PDCs: {ship.CurrentPDC}/{ship.MaxPDC}";
+	}
+
+	private void HideFocusStats()
+	{
+		Node root = GetTree().Root;
+		if (root.GetNodeOrNull("PlaySpace/CanvasLayer/GUI/Gameplay/Stats/CurrentFocusStats") is CanvasItem panel)
+			panel.Visible = false;
+	}
+
+	private Ship GetLinkedShip()
+	{
+		string path = _faction == ShipFaction.Player
+			? "PlaySpace/CanvasLayer/PlayerShip"
+			: "PlaySpace/CanvasLayer/EnemyShip";
+
+		return GetTree().Root.GetNodeOrNull<Ship>(path);
+	}
 }

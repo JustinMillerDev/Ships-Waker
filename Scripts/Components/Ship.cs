@@ -27,6 +27,45 @@ public partial class Ship : Node2D, IHealth
 	public int MaxShields { get; private set; } = 20;
 	public int CurrentShields { get; set; } = 20;
 
+	// Evasions -----------------------------------------------------------------
+
+	public int MaxEvasions { get; private set; } = 0;
+	public int CurrentEvasions { get; set; } = 0;
+
+	// PDC ----------------------------------------------------------------------
+
+	public int MaxPDC { get; private set; } = 6;
+	public int CurrentPDC { get; set; } = 6;
+
+	// Aliases matching existing lower-camel naming in some gameplay scripts.
+	public int maxEvasions => MaxEvasions;
+	public int currentEvasions
+	{
+		get => CurrentEvasions;
+		set => CurrentEvasions = value;
+	}
+
+	public int maxPDC => MaxPDC;
+	public int currentPDC
+	{
+		get => CurrentPDC;
+		set => CurrentPDC = value;
+	}
+
+	public void ResetCurrentPDC()
+	{
+		CurrentPDC = MaxPDC;
+	}
+
+	public bool TryConsumeCurrentPDC()
+	{
+		if (CurrentPDC <= 0)
+			return false;
+
+		CurrentPDC--;
+		return true;
+	}
+
 	/// <summary>
 	/// Absorbs damage from shields first, then spills into health.
 	/// Emits <see cref="CustomSignals.ShipHealthChanged"/> after applying damage.
@@ -61,6 +100,9 @@ public partial class Ship : Node2D, IHealth
 
 	public override void _Ready()
 	{
+		UpdateMaxPDCFromScene();
+		ResetCurrentPDC();
+
 		if (_faction == ShipFaction.Enemy)
 		{
 			_enemyPortraitTexture ??= GD.Load<CompressedTexture2D>("res://Assets/GUI/EnemyShipBox.png");
@@ -70,6 +112,22 @@ public partial class Ship : Node2D, IHealth
 
 		if (_faction == ShipFaction.Enemy)
 			SpawnExhaustTrails();
+	}
+
+	private void UpdateMaxPDCFromScene()
+	{
+		if (GetNodeOrNull<Node2D>("Portrait/Pivot/PDCs") is not Node2D pdcRoot)
+			return;
+
+		int pdcCount = 0;
+		foreach (Node child in pdcRoot.GetChildren())
+		{
+			if (child is Pdc)
+				pdcCount++;
+		}
+
+		if (pdcCount > 0)
+			MaxPDC = pdcCount;
 	}
 
 	// Exhaust trails -----------------------------------------------------------

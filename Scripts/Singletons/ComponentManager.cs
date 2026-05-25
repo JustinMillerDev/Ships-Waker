@@ -28,6 +28,7 @@ public partial class ComponentManager : Node
 		SpawnInitialExternalComponents();
 		SpawnInitialMissileLaunchers();
 		SpawnInitialInternalComponents();
+		BindSidebarComponents();
 	}
 
 	// ---------------------------------------------------------------------------
@@ -61,7 +62,7 @@ public partial class ComponentManager : Node
 		}
 
 		// --- Enemy ship: slots now live directly on the ship node ---
-		Node enemyGui = playspace.GetNodeOrNull("EnemyShip/Pivot/ShipGUI/ComponentSlots");
+		Node enemyGui = playspace.GetNodeOrNull("CanvasLayer/EnemyShip/Portrait/Pivot/ComponentSlots");
 		if (enemyGui != null)
 		{
 			foreach (Node child in enemyGui.GetChildren())
@@ -74,8 +75,15 @@ public partial class ComponentManager : Node
 		}
 		else
 		{
-			GD.PushWarning("ComponentManager: Could not find EnemyShip/Pivot/ShipGUI/ComponentSlots node.");
+			GD.PushWarning("ComponentManager: Could not find CanvasLayer/EnemyShip/Portrait/Pivot/ComponentSlots node.");
 		}
+	}
+
+	private static bool IsPlayerSlot(ShipComponentSlot slot)
+	{
+		if (slot == null) return false;
+		if (slot.Owner == SlotOwner.Player) return true;
+		return slot.GetPath().ToString().Contains("/CanvasLayer/PlayerShip/");
 	}
 
 	// Updates labels on world-space ComponentSlots for every ship in the PlaySpace.
@@ -138,6 +146,7 @@ public partial class ComponentManager : Node
 			ShipComponentSlot guiSlot = null;
 			foreach (ShipComponentSlot slot in _slots)
 			{
+				if (!IsPlayerSlot(slot)) continue;
 				if (slot.SlotType == type && !slot.IsOccupied) { guiSlot = slot; break; }
 			}
 			if (guiSlot == null) continue;
@@ -194,6 +203,7 @@ public partial class ComponentManager : Node
 		ShipComponentSlot slot = null;
 		foreach (ShipComponentSlot s in _slots)
 		{
+			if (!IsPlayerSlot(s)) continue;
 			if (s.SlotType == ShipComponentType.External && !s.IsOccupied) { slot = s; break; }
 		}
 		if (slot == null) return;
@@ -249,6 +259,7 @@ public partial class ComponentManager : Node
 		foreach (ShipComponentSlot slot in _slots)
 		{
 			if (spawned >= InitialExternalComponents) break;
+			if (!IsPlayerSlot(slot)) continue;
 			if (slot.SlotType != ShipComponentType.External || slot.IsOccupied) continue;
 
 			GD.Print("Spawning ship component: Cannon");
@@ -304,6 +315,7 @@ public partial class ComponentManager : Node
 		foreach (ShipComponentSlot slot in _slots)
 		{
 			if (spawned >= 2) break;
+			if (!IsPlayerSlot(slot)) continue;
 			if (slot.SlotType != ShipComponentType.External || slot.IsOccupied) continue;
 
 			GD.Print("Spawning ship component: Missile Launcher");
@@ -332,6 +344,34 @@ public partial class ComponentManager : Node
 				tooltip.Text = missileData.Name;
 
 			spawned++;
+		}
+	}
+
+	private void BindSidebarComponents()
+	{
+		Node playspace = GetTree().Root.GetNodeOrNull("PlaySpace");
+		if (playspace == null) return;
+
+		Node barContainer = playspace.GetNodeOrNull("CanvasLayer/GUI/Gameplay/SideBarComponents/HBoxContainer");
+		if (barContainer == null) return;
+
+		var weaponSlots = new List<ShipComponentSlot>();
+		foreach (ShipComponentSlot slot in _slots)
+		{
+			if (!IsPlayerSlot(slot)) continue;
+			if (slot.SlotType != ShipComponentType.External) continue;
+			if (!slot.IsOccupied) continue;
+			weaponSlots.Add(slot);
+		}
+
+		int index = 0;
+		foreach (Node child in barContainer.GetChildren())
+		{
+			if (child is not SideBarComponent sideBarComponent) continue;
+
+			sideBarComponent.ComponentSlot = index < weaponSlots.Count ? weaponSlots[index] : null;
+			sideBarComponent.UpdateLabel();
+			index++;
 		}
 	}
 

@@ -20,11 +20,14 @@ public partial class Pdc : Node2D
 
 	private Node2D _emitPoint;
 	private ShipSmall _ownerShipSmall;
+	private Ship _ownerShip;
+	private readonly HashSet<ulong> _targetedMissileIds = new();
 	private double _cooldown;
 
 	public override void _Ready()
 	{
 		_ownerShipSmall = FindOwnerShipSmall();
+		_ownerShip = FindOwnerShip();
 		_emitPoint = GetNodeOrNull<Node2D>("Pivot/EmitPoint");
 		if (_emitPoint == null)
 			GD.PushWarning($"{Name}: missing Pivot/EmitPoint; interception disabled.");
@@ -32,12 +35,14 @@ public partial class Pdc : Node2D
 
 	public override void _Process(double delta)
 	{
-		if (!IsVisibleInTree() || _ownerShipSmall == null || _faction == ShipFaction.Player || _emitPoint == null || ProjectileManager.Instance == null) return;
+		if (!IsVisibleInTree() || _ownerShipSmall == null || _ownerShip == null || _faction == ShipFaction.Player || _emitPoint == null || ProjectileManager.Instance == null) return;
+		if (_ownerShip.CurrentPDC <= 0) return;
 
 		_cooldown -= delta;
 		if (_cooldown > 0d) return;
 
 		if (!TryAcquireIntercept(out Projectile missile, out Vector2 interceptPoint)) return;
+		if (!_ownerShip.TryConsumeCurrentPDC()) return;
 
 		Projectile interceptor = ProjectileManager.Instance.FireDirect(
 			_emitPoint.GlobalPosition,
@@ -49,6 +54,7 @@ public partial class Pdc : Node2D
 
 		float travelTime = Mathf.Max(0.01f, _emitPoint.GlobalPosition.DistanceTo(interceptPoint) / Mathf.Max(1f, InterceptorSpeed));
 		GetTree().CreateTimer(travelTime).Timeout += () => ResolveIntercept(missile, interceptor, interceptPoint);
+		_targetedMissileIds.Add(missile.GetInstanceId());
 		_cooldown = FireIntervalSeconds;
 	}
 
@@ -68,6 +74,7 @@ public partial class Pdc : Node2D
 			ProjectileManager.InFlightProjectileInfo info = inFlight[i];
 			if (info.SourceKind != ProjectileManager.ProjectileSourceKind.Missile) continue;
 			if (!GodotObject.IsInstanceValid(info.Projectile) || info.Projectile.IsQueuedForDeletion()) continue;
+			if (_targetedMissileIds.Contains(info.Projectile.GetInstanceId())) continue;
 			if (info.Destination.DistanceTo(_ownerShipSmall.GlobalPosition) > ThreatDestinationRange) continue;
 
 			Vector2 toShooter = shooterPos - info.Position;
@@ -139,5 +146,14 @@ public partial class Pdc : Node2D
 		}
 
 		return null;
+	}
+
+	private Ship FindOwnerShip()
+	{
+		string path = _faction == ShipFaction.Player
+			? "PlaySpace/CanvasLayer/PlayerShip"
+			: "PlaySpace/CanvasLayer/EnemyShip";
+
+		return GetTree().Root.GetNodeOrNull<Ship>(path);
 	}
 }

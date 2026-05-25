@@ -23,6 +23,19 @@ public partial class PlaySpace : Node
 
 	private Camera2D _camera;
 	private Node2D _playerShip;
+	private Ship _playerShipData;
+	private Ship _enemyShipData;
+	private Node2D _playerShipSmall;
+	private Node2D _enemyShipSmall;
+	private Node2D _playerTargetIndicator;
+	private Node2D _enemyTargetIndicator;
+	private Label _playerTargetIndicatorName;
+	private Label _playerTargetIndicatorHealth;
+	private Label _enemyTargetIndicatorName;
+	private Label _enemyTargetIndicatorHealth;
+	private Vector2 _playerTargetIndicatorOffset;
+	private Vector2 _enemyTargetIndicatorOffset;
+	private bool _targetIndicatorOffsetsCaptured;
 	private Vector2 _playerShipPos;
 	private Vector2 _enemyShipPos;
 	private bool _viewingEnemy = false;
@@ -35,9 +48,6 @@ public partial class PlaySpace : Node
 
 	private static readonly float[] ZoomLevels = { 0.75f, 0.5f };
 	private int _zoomIndex = 0;
-
-	// Saved default position of CanvasLayer/EnemyShipUI/TargetIndicator (from scene).
-	private static readonly Vector2 _targetIndicatorDefaultPosition = new Vector2(482f, 104f);
 
 	// Combat range ----------------------------------------------------------
 	public CombatRange CurrentRange { get; private set; } = CombatRange.Mid;
@@ -61,6 +71,23 @@ public partial class PlaySpace : Node
 
 		if (_camera != null) _camera.GlobalPosition = _playerShipPos;
 
+		_playerShipSmall = GetNodeOrNull<Node2D>("PlayerShipSmall");
+		_enemyShipSmall = GetNodeOrNull<Node2D>("EnemyShipSmall");
+		_playerShipData = GetNodeOrNull<Ship>("CanvasLayer/PlayerShip");
+		_enemyShipData = GetNodeOrNull<Ship>("CanvasLayer/EnemyShip");
+		_playerTargetIndicator = GetNodeOrNull<Node2D>("CanvasLayer/GUI/Gameplay/PlayerShipUI/TargetIndicator");
+		_enemyTargetIndicator = GetNodeOrNull<Node2D>("CanvasLayer/GUI/Gameplay/EnemyShipUI/TargetIndicator");
+		_playerTargetIndicatorName = GetNodeOrNull<Label>("CanvasLayer/GUI/Gameplay/PlayerShipUI/TargetIndicator/Name");
+		_playerTargetIndicatorHealth = GetNodeOrNull<Label>("CanvasLayer/GUI/Gameplay/PlayerShipUI/TargetIndicator/Health");
+		_enemyTargetIndicatorName = GetNodeOrNull<Label>("CanvasLayer/GUI/Gameplay/EnemyShipUI/TargetIndicator/Name");
+		_enemyTargetIndicatorHealth = GetNodeOrNull<Label>("CanvasLayer/GUI/Gameplay/EnemyShipUI/TargetIndicator/Health");
+		CaptureTargetIndicatorOffsets();
+		UpdateTargetIndicatorsFromShips();
+		UpdateTargetIndicatorStats();
+
+		if (CustomSignals.Instance != null)
+			CustomSignals.Instance.ShipHealthChanged += OnShipHealthChanged;
+
 		// Initialise the attack radian for the first turn.
 		ProjectileManager.Instance?.RandomizeAttackRadian(_enemyAnchor);
 
@@ -73,8 +100,16 @@ public partial class PlaySpace : Node
 		StartTurn();
 	}
 
+	public override void _ExitTree()
+	{
+		if (CustomSignals.Instance != null)
+			CustomSignals.Instance.ShipHealthChanged -= OnShipHealthChanged;
+	}
+
 	public override void _Process(double delta)
 	{
+		UpdateTargetIndicatorsFromShips();
+
 		if (_camera == null) return;
 
 		Vector2 dir = Vector2.Zero;
@@ -183,7 +218,7 @@ public partial class PlaySpace : Node
 		{
 			CombatRange.Close => (832f,    -193f),
 			CombatRange.Mid   => (1366f,   -683f),
-			CombatRange.Long  => (2083f,  -1453f),
+			CombatRange.Long  => (1983f,  -1353f),
 			_                 => (1366f,   -683f),
 		};
 
@@ -272,13 +307,69 @@ public partial class PlaySpace : Node
 		float z = ZoomLevels[_zoomIndex];
 		_camera.Zoom = new Vector2(z, z);
 		ZoomChanged?.Invoke(_camera.Zoom);
+		UpdateTargetIndicatorsFromShips();
+	}
 
-		// When zoom is 0.75 move TargetIndicator to its adjusted position; otherwise restore default.
-		var targetIndicator = GetNodeOrNull<Node2D>("CanvasLayer/GUI/Gameplay/EnemyShipUI/TargetIndicator");
-		if (targetIndicator != null)
-			targetIndicator.Position = Mathf.IsEqualApprox(z, 0.75f)
-				? new Vector2(560f, 77f)
-				: _targetIndicatorDefaultPosition;
+	private void CaptureTargetIndicatorOffsets()
+	{
+		if (_targetIndicatorOffsetsCaptured) return;
+		if (_playerShipSmall == null || _enemyShipSmall == null || _playerTargetIndicator == null || _enemyTargetIndicator == null) return;
+
+		_playerTargetIndicatorOffset = _playerTargetIndicator.Position - WorldToScreen(GetShipAnchor(_playerShipSmall));
+		_enemyTargetIndicatorOffset = _enemyTargetIndicator.Position - WorldToScreen(GetShipAnchor(_enemyShipSmall));
+		_targetIndicatorOffsetsCaptured = true;
+	}
+
+	private void UpdateTargetIndicatorsFromShips()
+	{
+		if (!_targetIndicatorOffsetsCaptured)
+			CaptureTargetIndicatorOffsets();
+
+		if (_playerShipSmall != null && _playerTargetIndicator != null)
+			_playerTargetIndicator.Position = WorldToScreen(GetShipAnchor(_playerShipSmall)) + _playerTargetIndicatorOffset;
+
+		if (_enemyShipSmall != null && _enemyTargetIndicator != null)
+			_enemyTargetIndicator.Position = WorldToScreen(GetShipAnchor(_enemyShipSmall)) + _enemyTargetIndicatorOffset;
+	}
+
+	private void OnShipHealthChanged(Ship ship)
+	{
+		if (ship == _playerShipData || ship == _enemyShipData)
+			UpdateTargetIndicatorStats();
+	}
+
+	private void UpdateTargetIndicatorStats()
+	{
+		UpdateSingleTargetIndicatorStats(_playerShipData, _playerTargetIndicatorName, _playerTargetIndicatorHealth, "Player Ship");
+		UpdateSingleTargetIndicatorStats(_enemyShipData, _enemyTargetIndicatorName, _enemyTargetIndicatorHealth, "Enemy Ship");
+	}
+
+	private static void UpdateSingleTargetIndicatorStats(Ship ship, Label nameLabel, Label healthLabel, string fallbackName)
+	{
+		if (nameLabel != null)
+			nameLabel.Text = ship?.Name ?? fallbackName;
+
+		if (healthLabel != null)
+			healthLabel.Text = ship != null
+				? $"HP: {ship.CurrentHealth}/{ship.MaxHealth}"
+				: "HP: 0/0";
+	}
+
+	private static Vector2 GetShipAnchor(Node2D ship)
+	{
+		if (ship.GetNodeOrNull<Node2D>("Pivot/Sprites/Sprite2D2/TargetIndicatorAnchor") is Node2D anchor)
+			return anchor.GlobalPosition;
+
+		if (ship.GetNodeOrNull<Node2D>("Pivot/Sprites/Sprite2D2") is Node2D sprite)
+			return sprite.GlobalPosition;
+
+		return ship.GlobalPosition;
+	}
+
+	private Vector2 WorldToScreen(Vector2 worldPosition)
+	{
+		// Convert world-space into canvas/screen-space using the active viewport transform.
+		return GetViewport().GetCanvasTransform() * worldPosition;
 	}
 
 	/// <summary>Connected to the End Turn button's pressed signal.</summary>
@@ -320,6 +411,7 @@ public partial class PlaySpace : Node
 	private void StartTurn()
 	{
 		CargoDeploysRemaining = 1;
+		ResetShipPDCs();
 		UpdateDeployLabels();
 
 		int enemyRangeIndex = GD.RandRange(0, 2);
@@ -327,6 +419,12 @@ public partial class PlaySpace : Node
 			CustomSignals.Instance.EmitSignal(CustomSignals.SignalName.EnemyRangeSelected, enemyRangeIndex);
 
 		TurnStarted?.Invoke(CurrentTurn);
+	}
+
+	private void ResetShipPDCs()
+	{
+		GetNodeOrNull<Ship>("CanvasLayer/PlayerShip")?.ResetCurrentPDC();
+		GetNodeOrNull<Ship>("CanvasLayer/EnemyShip")?.ResetCurrentPDC();
 	}
 
 	private void UpdateDeployLabels()
