@@ -148,10 +148,8 @@ public partial class PlaySpace : Node
 		// Debug range controls
 		if (@event.IsActionPressed("ui_debug_0"))
 		{
-			GD.Print("Resetting cooldowns for all components.");
 			foreach (var slot in ComponentManager.Instance.Slots)
 			{
-				GD.Print("Checking slot: " + slot.Name);
 				if (slot.OccupiedBy is ShipComponent sc && sc.Data?.Cooldown.HasValue == true)
 				{
 					sc.CurrentCooldown = 0;

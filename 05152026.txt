@@ -319,3 +319,95 @@ Droids do not currently contribute to component crew skill
 How to represent evasion/dodged from piloting?
 	P for now
 	icon of a joystick or a ship later
+**** RANGE BASED COMBAT DESIGN ****
+call the game railgun rally
+	or Rockets and Railguns
+
+	Long Range
+		missiles at 100 % accuracy
+		rail gun cannot fire 100% miss chance
+	Medium Range
+		rail gun at 100% accuracy, can be evaded by attacks
+		missiles at 75% accuracy
+	Close Range
+		rail gun cannot fire, too close to aim the ship at the enemy
+		missiles cannot fire, too close to aim at the enemy
+		PDCs can fire on enemy ship
+	Boarding/Ramming?
+	HOW DO YOU CHANGE RANGES?
+		Each turn, each ship selects a range that is adjacent or equal to thier current range
+		that range gets 1 engine power
+		powering up the engines increases the engine power
+			more voting power, more control over the range you enter the turn in
+		you can see the enemy ships upcoming range choice with scanners
+		its a graphic (Long, Mid, Close) stacked on top of each other
+			current one is highlighted
+			hovering gives explanation text
+			engine power is show next to your choice and the enemies choice
+			maybe an animation plays that shows which range is selected
+		TIE BREAKER
+			the range is randomly selected between the 2 ranges when the ships are tied for engine power
+	core gameplay is missiles, railguns, and pdcs
+		need to figure out how to add in other stuff I like like lasers, magic, teleporting, boarding, shields, etc
+	HOW DO PDCS WORK?
+		there are 4 PDC cannons on the ship
+		they intercept missiles by shooting gatling rounds at them
+		PDC's are on the exterior of the ship but not in a component slot
+			they are a default system
+			they CAN be crewed and take up ammo
+		Each PDC can shoot down 1 missile, increasing to 3 missiles with crew stationed
+		PDCs deal significant damage at close ranges
+		PDCs replace the shields component (goes from 4 crewslots to 2, has 2 ammo slots)
+		Shields become an optional internal component that use arcane skill to increase ship health
+	HOW DO MISSILES WORK?
+		do medium damage per missile, get shot down by pdcs
+		cant fire in close range
+		optimal at long range
+		increasing crewskill = decreasing cooldown (True for missiles and railgun)
+		internal component to buff them that makes them harder to stop with PDCs
+		internal component to make missiles use less ammo
+	HOW DO RAILGUNS WORK?
+		optimal at medium range
+		100% chance to be evaded at long range
+		cant turn ship fast enough to aim at close range
+			INTERNAL COMPONENT (or external???) Micro Thrusters: can fire railgun in close range. It cannot be evaded.
+		deal a LOT of damage
+	OK I FIRE MY MISSILES AT LONG RANGE by pressing the fire button, what happens?
+		missiles immediately launch
+		they immediately travel to the other ship
+		they DO NOT 'travel' over the span of a turn, thats messy i think
+		PDCs fire in defense eliminating all or most of the missiles
+			travel time is LONGER at LONG range than MEDIUM range
+			at CLOSE range you cant even shoot missiles
+			Need to figure out how to animate the PDCs
+				they are gatling cannons that shoot projectiles
+				does the player ever see the missiles get intercepted??
+				ill start with NO, it happens off screen
+				you can watch the enemy laucnh missiles
+				you  can watch your pdcs fire
+				thne you see remaining missiles impact
+				PDCs do AIM and fire IN THE GENERAL DIRECTION of the missiles
+				each PDC is a circular turret that rotates
+					may actually change the resolution just to accomodate these turrets, need to test it out
+
+	need to change the ship up a bit
+		need to fit in missiles, pdcs, and railgun
+		i kind really want the railgun to be ship long
+			it gets a station
+			its visible jutting out from the ship center or just off center
+			it takes special ammo so you gotta manage that
+			I need to consider if you get to swap out the railgun
+				probably
+				just drag and drop to the station on the ship, it gets a slot there and the attachpoint for the gun itself is behind the ship or something liek that
+				what else would you put in the railgun slot??
+					magical array!
+						your oilmancer/wizard uses fuel to fire a fireball spell into the amplifier, which powers it up and shoots it off
+						big diff is it uses fuel instead of slugs, arcane instead of weapons
+		How do external slots work now?
+			Do PDCS take up an external slot, and same for missiles?
+				PDCs are a static component, they are always there
+			Missiles DO take up an external slot
+			Railguns could take up 2 external slots??
+				railsguns (and other BIG components) jut out over the side of the ship, connected by beams
+				you can see the whole thing
+			other weapons are available, taking up 1 slot or two external slots depending

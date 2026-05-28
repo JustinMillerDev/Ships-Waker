@@ -1,10 +1,11 @@
-[gd_scene load_steps=20 format=3 uid="uid://dwn6w7t2pvk3b"]
+[gd_scene load_steps=21 format=3 uid="uid://dwn6w7t2pvk3b"]
 
 [ext_resource type="Script" uid="uid://dhktcp2cgrjok" path="res://Scripts/Singletons/PlaySpace.cs" id="1_bvtvd"]
 [ext_resource type="Texture2D" uid="uid://rp3li63b5om5" path="res://Assets/Backgrounds/Background_NoPlanetBig.png" id="2_d284w"]
 [ext_resource type="Script" uid="uid://0fgot8bpvcaw" path="res://Scripts/Singletons/BackgroundScroller.cs" id="2_q8066"]
 [ext_resource type="PackedScene" uid="uid://blea1lufbpes6" path="res://Scenes/ShipSmall.tscn" id="3_d284w"]
-[ext_resource type="PackedScene" uid="uid://b2fyfntvxrt71" path="res://Scenes/Ship.tscn" id="5_42xwf"]
+[ext_resource type="PackedScene" uid="uid://h62f1uxvwfqs" path="res://Scenes/Ship.tscn" id="5_42xwf"]
+[ext_resource type="PackedScene" uid="uid://vr2lvj1bdd51" path="res://Scenes/ShipBigger.tscn" id="5_e5krj"]
 [ext_resource type="Texture2D" uid="uid://bbg2be8wd0wpe" path="res://Assets/GUI/EndTurn.png" id="5_ydn88"]
 [ext_resource type="Texture2D" uid="uid://dm4idhds6mgut" path="res://Assets/GUI/EndTurnDown.png" id="6_st7tj"]
 [ext_resource type="Texture2D" uid="uid://btuvxri6u8d8m" path="res://Assets/GUI/EndTurnOver.png" id="7_jxuwt"]
@@ -127,6 +128,10 @@ position = Vector2(602, -400)
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
 [node name="PlayerShip" parent="CanvasLayer" instance=ExtResource("5_42xwf")]
+visible = false
+position = Vector2(160, 80)
+
+[node name="PlayerShipBig" parent="CanvasLayer" instance=ExtResource("5_e5krj")]
 visible = false
 position = Vector2(160, 80)
 

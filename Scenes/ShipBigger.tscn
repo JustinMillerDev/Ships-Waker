@@ -1,32 +1,32 @@
-[gd_scene load_steps=19 format=3 uid="uid://h62f1uxvwfqs"]
+[gd_scene load_steps=19 format=3 uid="uid://vr2lvj1bdd51"]
 
-[ext_resource type="Script" uid="uid://bq37p4ae8ynts" path="res://Scripts/Components/Ship.cs" id="1_rtcl8"]
-[ext_resource type="Texture2D" uid="uid://dhrwokcmx5aua" path="res://Assets/GUI/PlayerBox.png" id="2_ux6x1"]
-[ext_resource type="Texture2D" uid="uid://bbf0kcoammgan" path="res://Assets/GUI/PlayerCloseButton.png" id="3_s2b5u"]
-[ext_resource type="Texture2D" uid="uid://bkmldgmvv070e" path="res://Assets/GUI/PlayerCloseButtonHovered.png" id="4_0ll0h"]
-[ext_resource type="Texture2D" uid="uid://ckfsl2gy0drw2" path="res://Assets/Backgrounds/SpaceShipGame_UI_Ship.png" id="5_8l3py"]
-[ext_resource type="Texture2D" uid="uid://dbxsn3kolr1ft" path="res://Assets/Backgrounds/SpaceShipGame_UI_Rooms.png" id="6_rrnwc"]
-[ext_resource type="Texture2D" uid="uid://dt5u4w30ha68x" path="res://Assets/Backgrounds/RocketExhaust.png" id="7_747qi"]
-[ext_resource type="Texture2D" uid="uid://dtwtywqxu48t0" path="res://Assets/Backgrounds/ExhaustParticle.png" id="8_syb3d"]
-[ext_resource type="PackedScene" uid="uid://d3lpj432rh8ox" path="res://Scenes/CrewSlot.tscn" id="9_7a2wy"]
-[ext_resource type="PackedScene" uid="uid://dkbeyq12s7j3w" path="res://Scenes/CargoSlot.tscn" id="10_78vly"]
-[ext_resource type="PackedScene" uid="uid://c6twj2p5ntq0u" path="res://Scenes/ComponentSlot.tscn" id="11_bjrll"]
-[ext_resource type="PackedScene" uid="uid://bkflfbrmfqw1f" path="res://Scenes/pdc.tscn" id="12_83nf6"]
+[ext_resource type="Script" uid="uid://bq37p4ae8ynts" path="res://Scripts/Components/Ship.cs" id="1_omkt0"]
+[ext_resource type="Texture2D" uid="uid://dhrwokcmx5aua" path="res://Assets/GUI/PlayerBox.png" id="2_easeh"]
+[ext_resource type="Texture2D" uid="uid://bbf0kcoammgan" path="res://Assets/GUI/PlayerCloseButton.png" id="3_i0u8k"]
+[ext_resource type="Texture2D" uid="uid://bkmldgmvv070e" path="res://Assets/GUI/PlayerCloseButtonHovered.png" id="4_5i5qf"]
+[ext_resource type="Texture2D" uid="uid://bcggwudor374v" path="res://Assets/Backgrounds/SpaceShipGame_UI_Bigger_Ship.png" id="5_omkt0"]
+[ext_resource type="Texture2D" uid="uid://dbxsn3kolr1ft" path="res://Assets/Backgrounds/SpaceShipGame_UI_Rooms.png" id="6_p6eex"]
+[ext_resource type="Texture2D" uid="uid://dt5u4w30ha68x" path="res://Assets/Backgrounds/RocketExhaust.png" id="7_awlur"]
+[ext_resource type="Texture2D" uid="uid://dtwtywqxu48t0" path="res://Assets/Backgrounds/ExhaustParticle.png" id="8_eqd7y"]
+[ext_resource type="PackedScene" uid="uid://d3lpj432rh8ox" path="res://Scenes/CrewSlot.tscn" id="9_aj2a0"]
+[ext_resource type="PackedScene" uid="uid://dkbeyq12s7j3w" path="res://Scenes/CargoSlot.tscn" id="10_2e73h"]
+[ext_resource type="PackedScene" uid="uid://c6twj2p5ntq0u" path="res://Scenes/ComponentSlot.tscn" id="11_05h14"]
+[ext_resource type="PackedScene" uid="uid://bkflfbrmfqw1f" path="res://Scenes/pdc.tscn" id="12_od1x6"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_q8066"]
-atlas = ExtResource("7_747qi")
+atlas = ExtResource("7_awlur")
 region = Rect2(0, 0, 640, 24)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_25hii"]
-atlas = ExtResource("7_747qi")
+atlas = ExtResource("7_awlur")
 region = Rect2(640, 0, 640, 24)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_51p14"]
-atlas = ExtResource("7_747qi")
+atlas = ExtResource("7_awlur")
 region = Rect2(1280, 0, 640, 24)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_e11gr"]
-atlas = ExtResource("7_747qi")
+atlas = ExtResource("7_awlur")
 region = Rect2(1920, 0, 640, 24)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_n2p07"]
@@ -59,22 +59,22 @@ scale_over_velocity_max = 1.0
 
 [node name="PlayerShip" type="Node2D"]
 scale = Vector2(0.5, 0.5)
-script = ExtResource("1_rtcl8")
+script = ExtResource("1_omkt0")
 
 [node name="Portrait" type="Sprite2D" parent="."]
 clip_children = 2
 position = Vector2(320, 180)
 scale = Vector2(1.5, 1.5)
-texture = ExtResource("2_ux6x1")
+texture = ExtResource("2_easeh")
 
 [node name="CloseButton" type="TextureButton" parent="Portrait"]
 offset_left = 304.0
 offset_top = -176.0
 offset_right = 316.0
 offset_bottom = -164.0
-texture_normal = ExtResource("3_s2b5u")
-texture_pressed = ExtResource("4_0ll0h")
-texture_hover = ExtResource("4_0ll0h")
+texture_normal = ExtResource("3_i0u8k")
+texture_pressed = ExtResource("4_5i5qf")
+texture_hover = ExtResource("4_5i5qf")
 metadata/_edit_use_anchors_ = true
 
 [node name="Pivot" type="Node2D" parent="Portrait"]
@@ -84,14 +84,17 @@ scale = Vector2(0.666667, 0.666667)
 position = Vector2(-320, -180)
 
 [node name="SpaceShip" type="Sprite2D" parent="Portrait/Pivot/Sprites"]
-texture = ExtResource("5_8l3py")
+position = Vector2(0.000152588, -89.9999)
+texture = ExtResource("5_omkt0")
 centered = false
 
 [node name="Rooms" type="Sprite2D" parent="Portrait/Pivot/Sprites"]
-texture = ExtResource("6_rrnwc")
+visible = false
+texture = ExtResource("6_p6eex")
 centered = false
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Portrait/Pivot/Sprites"]
+visible = false
 position = Vector2(0, 336)
 sprite_frames = SubResource("SpriteFrames_n2p07")
 autoplay = "default"
@@ -104,7 +107,7 @@ centered = false
 [node name="GPUParticles2D" type="GPUParticles2D" parent="Portrait/Pivot/Sprites/AnimatedSprite2D/Particles"]
 position = Vector2(114, 60)
 amount = 15
-texture = ExtResource("8_syb3d")
+texture = ExtResource("8_eqd7y")
 lifetime = 3.5
 preprocess = 3.5
 speed_scale = 1.75
@@ -114,7 +117,7 @@ process_material = SubResource("ParticleProcessMaterial_l7dj0")
 [node name="GPUParticles2D2" type="GPUParticles2D" parent="Portrait/Pivot/Sprites/AnimatedSprite2D/Particles"]
 position = Vector2(192, 60)
 amount = 15
-texture = ExtResource("8_syb3d")
+texture = ExtResource("8_eqd7y")
 lifetime = 3.5
 preprocess = 3.5
 speed_scale = 1.75
@@ -124,7 +127,7 @@ process_material = SubResource("ParticleProcessMaterial_l7dj0")
 [node name="GPUParticles2D3" type="GPUParticles2D" parent="Portrait/Pivot/Sprites/AnimatedSprite2D/Particles"]
 position = Vector2(451, 60)
 amount = 15
-texture = ExtResource("8_syb3d")
+texture = ExtResource("8_eqd7y")
 lifetime = 3.5
 preprocess = 3.5
 speed_scale = 1.75
@@ -134,7 +137,7 @@ process_material = SubResource("ParticleProcessMaterial_l7dj0")
 [node name="GPUParticles2D4" type="GPUParticles2D" parent="Portrait/Pivot/Sprites/AnimatedSprite2D/Particles"]
 position = Vector2(529, 60)
 amount = 15
-texture = ExtResource("8_syb3d")
+texture = ExtResource("8_eqd7y")
 lifetime = 3.5
 preprocess = 3.5
 speed_scale = 1.75
@@ -144,7 +147,7 @@ process_material = SubResource("ParticleProcessMaterial_l7dj0")
 [node name="GPUParticles2D5" type="GPUParticles2D" parent="Portrait/Pivot/Sprites/AnimatedSprite2D/Particles"]
 position = Vector2(490, 71)
 amount = 15
-texture = ExtResource("8_syb3d")
+texture = ExtResource("8_eqd7y")
 lifetime = 3.5
 preprocess = 3.5
 speed_scale = 1.75
@@ -154,7 +157,7 @@ process_material = SubResource("ParticleProcessMaterial_l7dj0")
 [node name="GPUParticles2D6" type="GPUParticles2D" parent="Portrait/Pivot/Sprites/AnimatedSprite2D/Particles"]
 position = Vector2(154, 71)
 amount = 15
-texture = ExtResource("8_syb3d")
+texture = ExtResource("8_eqd7y")
 lifetime = 3.5
 preprocess = 3.5
 speed_scale = 1.75
@@ -171,135 +174,137 @@ position = Vector2(129, 188)
 position = Vector2(192, 188)
 
 [node name="CrewSlots" type="Node2D" parent="Portrait/Pivot"]
+visible = false
 position = Vector2(-320, -180)
 
-[node name="CrewSlot" parent="Portrait/Pivot/CrewSlots" instance=ExtResource("9_7a2wy")]
+[node name="CrewSlot" parent="Portrait/Pivot/CrewSlots" instance=ExtResource("9_aj2a0")]
 position = Vector2(303, 44)
 Facing = 0
 
-[node name="CrewSlot2" parent="Portrait/Pivot/CrewSlots" instance=ExtResource("9_7a2wy")]
+[node name="CrewSlot2" parent="Portrait/Pivot/CrewSlots" instance=ExtResource("9_aj2a0")]
 position = Vector2(321, 44)
 Facing = 0
 
-[node name="CrewSlot3" parent="Portrait/Pivot/CrewSlots" instance=ExtResource("9_7a2wy")]
+[node name="CrewSlot3" parent="Portrait/Pivot/CrewSlots" instance=ExtResource("9_aj2a0")]
 position = Vector2(230, 72)
 Facing = 2
 
-[node name="CrewSlot4" parent="Portrait/Pivot/CrewSlots" instance=ExtResource("9_7a2wy")]
+[node name="CrewSlot4" parent="Portrait/Pivot/CrewSlots" instance=ExtResource("9_aj2a0")]
 position = Vector2(230, 90)
 Facing = 2
 
-[node name="CrewSlot5" parent="Portrait/Pivot/CrewSlots" instance=ExtResource("9_7a2wy")]
+[node name="CrewSlot5" parent="Portrait/Pivot/CrewSlots" instance=ExtResource("9_aj2a0")]
 position = Vector2(394, 71)
 Facing = 3
 
-[node name="CrewSlot6" parent="Portrait/Pivot/CrewSlots" instance=ExtResource("9_7a2wy")]
+[node name="CrewSlot6" parent="Portrait/Pivot/CrewSlots" instance=ExtResource("9_aj2a0")]
 position = Vector2(394, 89)
 Facing = 3
 
-[node name="CrewSlot7" parent="Portrait/Pivot/CrewSlots" instance=ExtResource("9_7a2wy")]
+[node name="CrewSlot7" parent="Portrait/Pivot/CrewSlots" instance=ExtResource("9_aj2a0")]
 position = Vector2(287, 103)
 Facing = 3
 
-[node name="CrewSlot8" parent="Portrait/Pivot/CrewSlots" instance=ExtResource("9_7a2wy")]
+[node name="CrewSlot8" parent="Portrait/Pivot/CrewSlots" instance=ExtResource("9_aj2a0")]
 position = Vector2(336, 103)
 Facing = 2
 
-[node name="CrewSlot9" parent="Portrait/Pivot/CrewSlots" instance=ExtResource("9_7a2wy")]
+[node name="CrewSlot9" parent="Portrait/Pivot/CrewSlots" instance=ExtResource("9_aj2a0")]
 position = Vector2(198, 127)
 Facing = 2
 
-[node name="CrewSlot10" parent="Portrait/Pivot/CrewSlots" instance=ExtResource("9_7a2wy")]
+[node name="CrewSlot10" parent="Portrait/Pivot/CrewSlots" instance=ExtResource("9_aj2a0")]
 position = Vector2(198, 145)
 Facing = 2
 
-[node name="CrewSlot11" parent="Portrait/Pivot/CrewSlots" instance=ExtResource("9_7a2wy")]
+[node name="CrewSlot11" parent="Portrait/Pivot/CrewSlots" instance=ExtResource("9_aj2a0")]
 position = Vector2(302, 126)
 Facing = 0
 
-[node name="CrewSlot12" parent="Portrait/Pivot/CrewSlots" instance=ExtResource("9_7a2wy")]
+[node name="CrewSlot12" parent="Portrait/Pivot/CrewSlots" instance=ExtResource("9_aj2a0")]
 position = Vector2(320, 126)
 Facing = 0
 
-[node name="CrewSlot13" parent="Portrait/Pivot/CrewSlots" instance=ExtResource("9_7a2wy")]
+[node name="CrewSlot13" parent="Portrait/Pivot/CrewSlots" instance=ExtResource("9_aj2a0")]
 position = Vector2(425, 127)
 Facing = 3
 
-[node name="CrewSlot14" parent="Portrait/Pivot/CrewSlots" instance=ExtResource("9_7a2wy")]
+[node name="CrewSlot14" parent="Portrait/Pivot/CrewSlots" instance=ExtResource("9_aj2a0")]
 position = Vector2(425, 145)
 Facing = 3
 
-[node name="CrewSlot15" parent="Portrait/Pivot/CrewSlots" instance=ExtResource("9_7a2wy")]
+[node name="CrewSlot15" parent="Portrait/Pivot/CrewSlots" instance=ExtResource("9_aj2a0")]
 position = Vector2(284, 157)
 Facing = 2
 
-[node name="CrewSlot16" parent="Portrait/Pivot/CrewSlots" instance=ExtResource("9_7a2wy")]
+[node name="CrewSlot16" parent="Portrait/Pivot/CrewSlots" instance=ExtResource("9_aj2a0")]
 position = Vector2(284, 175)
 Facing = 2
 
-[node name="CrewSlot17" parent="Portrait/Pivot/CrewSlots" instance=ExtResource("9_7a2wy")]
+[node name="CrewSlot17" parent="Portrait/Pivot/CrewSlots" instance=ExtResource("9_aj2a0")]
 position = Vector2(284, 193)
 Facing = 2
 
-[node name="CrewSlot18" parent="Portrait/Pivot/CrewSlots" instance=ExtResource("9_7a2wy")]
+[node name="CrewSlot18" parent="Portrait/Pivot/CrewSlots" instance=ExtResource("9_aj2a0")]
 position = Vector2(284, 211)
 Facing = 2
 
-[node name="CrewSlot19" parent="Portrait/Pivot/CrewSlots" instance=ExtResource("9_7a2wy")]
+[node name="CrewSlot19" parent="Portrait/Pivot/CrewSlots" instance=ExtResource("9_aj2a0")]
 position = Vector2(284, 229)
 Facing = 2
 
-[node name="CrewSlot20" parent="Portrait/Pivot/CrewSlots" instance=ExtResource("9_7a2wy")]
+[node name="CrewSlot20" parent="Portrait/Pivot/CrewSlots" instance=ExtResource("9_aj2a0")]
 position = Vector2(284, 247)
 Facing = 2
 
-[node name="CrewSlot21" parent="Portrait/Pivot/CrewSlots" instance=ExtResource("9_7a2wy")]
+[node name="CrewSlot21" parent="Portrait/Pivot/CrewSlots" instance=ExtResource("9_aj2a0")]
 position = Vector2(339, 157)
 Facing = 3
 
-[node name="CrewSlot22" parent="Portrait/Pivot/CrewSlots" instance=ExtResource("9_7a2wy")]
+[node name="CrewSlot22" parent="Portrait/Pivot/CrewSlots" instance=ExtResource("9_aj2a0")]
 position = Vector2(339, 175)
 Facing = 3
 
-[node name="CrewSlot23" parent="Portrait/Pivot/CrewSlots" instance=ExtResource("9_7a2wy")]
+[node name="CrewSlot23" parent="Portrait/Pivot/CrewSlots" instance=ExtResource("9_aj2a0")]
 position = Vector2(339, 193)
 Facing = 3
 
-[node name="CrewSlot24" parent="Portrait/Pivot/CrewSlots" instance=ExtResource("9_7a2wy")]
+[node name="CrewSlot24" parent="Portrait/Pivot/CrewSlots" instance=ExtResource("9_aj2a0")]
 position = Vector2(339, 211)
 Facing = 3
 
-[node name="CrewSlot25" parent="Portrait/Pivot/CrewSlots" instance=ExtResource("9_7a2wy")]
+[node name="CrewSlot25" parent="Portrait/Pivot/CrewSlots" instance=ExtResource("9_aj2a0")]
 position = Vector2(339, 229)
 Facing = 3
 
-[node name="CrewSlot26" parent="Portrait/Pivot/CrewSlots" instance=ExtResource("9_7a2wy")]
+[node name="CrewSlot26" parent="Portrait/Pivot/CrewSlots" instance=ExtResource("9_aj2a0")]
 position = Vector2(339, 247)
 Facing = 3
 
-[node name="CrewSlot27" parent="Portrait/Pivot/CrewSlots" instance=ExtResource("9_7a2wy")]
+[node name="CrewSlot27" parent="Portrait/Pivot/CrewSlots" instance=ExtResource("9_aj2a0")]
 position = Vector2(454, 185)
 Facing = 0
 
-[node name="CrewSlot28" parent="Portrait/Pivot/CrewSlots" instance=ExtResource("9_7a2wy")]
+[node name="CrewSlot28" parent="Portrait/Pivot/CrewSlots" instance=ExtResource("9_aj2a0")]
 position = Vector2(472, 185)
 Facing = 0
 
-[node name="CrewSlot29" parent="Portrait/Pivot/CrewSlots" instance=ExtResource("9_7a2wy")]
+[node name="CrewSlot29" parent="Portrait/Pivot/CrewSlots" instance=ExtResource("9_aj2a0")]
 position = Vector2(303, 284)
 
-[node name="CrewSlot30" parent="Portrait/Pivot/CrewSlots" instance=ExtResource("9_7a2wy")]
+[node name="CrewSlot30" parent="Portrait/Pivot/CrewSlots" instance=ExtResource("9_aj2a0")]
 position = Vector2(321, 284)
 
-[node name="CrewSlot31" parent="Portrait/Pivot/CrewSlots" instance=ExtResource("9_7a2wy")]
+[node name="CrewSlot31" parent="Portrait/Pivot/CrewSlots" instance=ExtResource("9_aj2a0")]
 position = Vector2(152, 186)
 Facing = 0
 
-[node name="CrewSlot32" parent="Portrait/Pivot/CrewSlots" instance=ExtResource("9_7a2wy")]
+[node name="CrewSlot32" parent="Portrait/Pivot/CrewSlots" instance=ExtResource("9_aj2a0")]
 position = Vector2(170, 186)
 Facing = 0
 
 [node name="CargoSlots" type="Node2D" parent="Portrait/Pivot"]
+visible = false
 position = Vector2(-320, -180)
 
 [node name="ReadiedSlots" type="Node2D" parent="Portrait/Pivot/CargoSlots"]
@@ -310,121 +315,122 @@ position = Vector2(423, 229)
 
 [node name="ComponentSlots" type="Node2D" parent="Portrait/Pivot/CargoSlots"]
 
-[node name="CargoSlot" parent="Portrait/Pivot/CargoSlots/ComponentSlots" instance=ExtResource("10_78vly")]
+[node name="CargoSlot" parent="Portrait/Pivot/CargoSlots/ComponentSlots" instance=ExtResource("10_2e73h")]
 position = Vector2(230, 107)
 SlotType = 2
 
-[node name="CargoSlot2" parent="Portrait/Pivot/CargoSlots/ComponentSlots" instance=ExtResource("10_78vly")]
+[node name="CargoSlot2" parent="Portrait/Pivot/CargoSlots/ComponentSlots" instance=ExtResource("10_2e73h")]
 position = Vector2(394, 107)
 SlotType = 2
 
-[node name="CargoSlot3" parent="Portrait/Pivot/CargoSlots/ComponentSlots" instance=ExtResource("10_78vly")]
+[node name="CargoSlot3" parent="Portrait/Pivot/CargoSlots/ComponentSlots" instance=ExtResource("10_2e73h")]
 position = Vector2(198, 162)
 SlotType = 2
 
-[node name="CargoSlot4" parent="Portrait/Pivot/CargoSlots/ComponentSlots" instance=ExtResource("10_78vly")]
+[node name="CargoSlot4" parent="Portrait/Pivot/CargoSlots/ComponentSlots" instance=ExtResource("10_2e73h")]
 position = Vector2(425, 162)
 SlotType = 2
 
-[node name="CargoSlot5" parent="Portrait/Pivot/CargoSlots/ComponentSlots" instance=ExtResource("10_78vly")]
+[node name="CargoSlot5" parent="Portrait/Pivot/CargoSlots/ComponentSlots" instance=ExtResource("10_2e73h")]
 position = Vector2(287, 86)
 SlotType = 2
 
-[node name="CargoSlot6" parent="Portrait/Pivot/CargoSlots/ComponentSlots" instance=ExtResource("10_78vly")]
+[node name="CargoSlot6" parent="Portrait/Pivot/CargoSlots/ComponentSlots" instance=ExtResource("10_2e73h")]
 position = Vector2(336, 86)
 SlotType = 2
 
-[node name="CargoSlot7" parent="Portrait/Pivot/CargoSlots/ComponentSlots" instance=ExtResource("10_78vly")]
+[node name="CargoSlot7" parent="Portrait/Pivot/CargoSlots/ComponentSlots" instance=ExtResource("10_2e73h")]
 position = Vector2(285, 284)
 SlotType = 2
 
-[node name="CargoSlot8" parent="Portrait/Pivot/CargoSlots/ComponentSlots" instance=ExtResource("10_78vly")]
+[node name="CargoSlot8" parent="Portrait/Pivot/CargoSlots/ComponentSlots" instance=ExtResource("10_2e73h")]
 position = Vector2(339, 284)
 SlotType = 2
 
 [node name="ComponentSlots" type="Node2D" parent="Portrait/Pivot"]
+visible = false
 position = Vector2(-320, -180)
 
-[node name="ComponentSlot" parent="Portrait/Pivot/ComponentSlots" node_paths=PackedStringArray("CrewSlots") instance=ExtResource("11_bjrll")]
+[node name="ComponentSlot" parent="Portrait/Pivot/ComponentSlots" node_paths=PackedStringArray("CrewSlots") instance=ExtResource("11_05h14")]
 position = Vector2(306, 1)
 SlotType = 2
 Facing = 0
 CrewSlots = [NodePath("../../CrewSlots/CrewSlot"), NodePath("../../CrewSlots/CrewSlot2")]
 
-[node name="ComponentSlot2" parent="Portrait/Pivot/ComponentSlots" node_paths=PackedStringArray("CrewSlots", "CargoSlots") instance=ExtResource("11_bjrll")]
+[node name="ComponentSlot2" parent="Portrait/Pivot/ComponentSlots" node_paths=PackedStringArray("CrewSlots", "CargoSlots") instance=ExtResource("11_05h14")]
 position = Vector2(198, 75)
 SlotType = 1
 Facing = 3
 CrewSlots = [NodePath("../../CrewSlots/CrewSlot3"), NodePath("../../CrewSlots/CrewSlot4")]
 CargoSlots = [NodePath("../../CargoSlots/ComponentSlots/CargoSlot")]
 
-[node name="ComponentSlot3" parent="Portrait/Pivot/ComponentSlots" node_paths=PackedStringArray("CrewSlots", "CargoSlots") instance=ExtResource("11_bjrll")]
+[node name="ComponentSlot3" parent="Portrait/Pivot/ComponentSlots" node_paths=PackedStringArray("CrewSlots", "CargoSlots") instance=ExtResource("11_05h14")]
 position = Vector2(413, 74)
 SlotType = 1
 Facing = 2
 CrewSlots = [NodePath("../../CrewSlots/CrewSlot5"), NodePath("../../CrewSlots/CrewSlot6")]
 CargoSlots = [NodePath("../../CargoSlots/ComponentSlots/CargoSlot2")]
 
-[node name="ComponentSlot4" parent="Portrait/Pivot/ComponentSlots" node_paths=PackedStringArray("CrewSlots", "CargoSlots") instance=ExtResource("11_bjrll")]
+[node name="ComponentSlot4" parent="Portrait/Pivot/ComponentSlots" node_paths=PackedStringArray("CrewSlots", "CargoSlots") instance=ExtResource("11_05h14")]
 position = Vector2(167, 130)
 SlotType = 1
 Facing = 3
 CrewSlots = [NodePath("../../CrewSlots/CrewSlot9"), NodePath("../../CrewSlots/CrewSlot10")]
 CargoSlots = [NodePath("../../CargoSlots/ComponentSlots/CargoSlot3")]
 
-[node name="ComponentSlot5" parent="Portrait/Pivot/ComponentSlots" node_paths=PackedStringArray("CrewSlots", "CargoSlots") instance=ExtResource("11_bjrll")]
+[node name="ComponentSlot5" parent="Portrait/Pivot/ComponentSlots" node_paths=PackedStringArray("CrewSlots", "CargoSlots") instance=ExtResource("11_05h14")]
 position = Vector2(444, 130)
 SlotType = 1
 Facing = 2
 CrewSlots = [NodePath("../../CrewSlots/CrewSlot13"), NodePath("../../CrewSlots/CrewSlot14")]
 CargoSlots = [NodePath("../../CargoSlots/ComponentSlots/CargoSlot4")]
 
-[node name="ComponentSlot6" parent="Portrait/Pivot/ComponentSlots" node_paths=PackedStringArray("CrewSlots") instance=ExtResource("11_bjrll")]
+[node name="ComponentSlot6" parent="Portrait/Pivot/ComponentSlots" node_paths=PackedStringArray("CrewSlots") instance=ExtResource("11_05h14")]
 position = Vector2(305, 96)
 SlotType = 3
 CrewSlots = [NodePath("../../CrewSlots/CrewSlot7"), NodePath("../../CrewSlots/CrewSlot8"), NodePath("../../CrewSlots/CrewSlot11"), NodePath("../../CrewSlots/CrewSlot12")]
 
-[node name="ComponentSlot7" parent="Portrait/Pivot/ComponentSlots" node_paths=PackedStringArray("CrewSlots") instance=ExtResource("11_bjrll")]
+[node name="ComponentSlot7" parent="Portrait/Pivot/ComponentSlots" node_paths=PackedStringArray("CrewSlots") instance=ExtResource("11_05h14")]
 position = Vector2(253, 159)
 Facing = 3
 CrewSlots = [NodePath("../../CrewSlots/CrewSlot15"), NodePath("../../CrewSlots/CrewSlot16")]
 
-[node name="ComponentSlot8" parent="Portrait/Pivot/ComponentSlots" node_paths=PackedStringArray("CrewSlots") instance=ExtResource("11_bjrll")]
+[node name="ComponentSlot8" parent="Portrait/Pivot/ComponentSlots" node_paths=PackedStringArray("CrewSlots") instance=ExtResource("11_05h14")]
 position = Vector2(357, 160)
 Facing = 2
 CrewSlots = [NodePath("../../CrewSlots/CrewSlot21"), NodePath("../../CrewSlots/CrewSlot22")]
 
-[node name="ComponentSlot9" parent="Portrait/Pivot/ComponentSlots" node_paths=PackedStringArray("CrewSlots") instance=ExtResource("11_bjrll")]
+[node name="ComponentSlot9" parent="Portrait/Pivot/ComponentSlots" node_paths=PackedStringArray("CrewSlots") instance=ExtResource("11_05h14")]
 position = Vector2(253, 196)
 Facing = 3
 CrewSlots = [NodePath("../../CrewSlots/CrewSlot17"), NodePath("../../CrewSlots/CrewSlot18")]
 
-[node name="ComponentSlot10" parent="Portrait/Pivot/ComponentSlots" node_paths=PackedStringArray("CrewSlots") instance=ExtResource("11_bjrll")]
+[node name="ComponentSlot10" parent="Portrait/Pivot/ComponentSlots" node_paths=PackedStringArray("CrewSlots") instance=ExtResource("11_05h14")]
 position = Vector2(357, 196)
 Facing = 2
 CrewSlots = [NodePath("../../CrewSlots/CrewSlot23"), NodePath("../../CrewSlots/CrewSlot24")]
 
-[node name="ComponentSlot11" parent="Portrait/Pivot/ComponentSlots" node_paths=PackedStringArray("CrewSlots") instance=ExtResource("11_bjrll")]
+[node name="ComponentSlot11" parent="Portrait/Pivot/ComponentSlots" node_paths=PackedStringArray("CrewSlots") instance=ExtResource("11_05h14")]
 position = Vector2(253, 232)
 Facing = 3
 CrewSlots = [NodePath("../../CrewSlots/CrewSlot19"), NodePath("../../CrewSlots/CrewSlot20")]
 
-[node name="ComponentSlot12" parent="Portrait/Pivot/ComponentSlots" node_paths=PackedStringArray("CrewSlots") instance=ExtResource("11_bjrll")]
+[node name="ComponentSlot12" parent="Portrait/Pivot/ComponentSlots" node_paths=PackedStringArray("CrewSlots") instance=ExtResource("11_05h14")]
 position = Vector2(357, 231)
 Facing = 2
 CrewSlots = [NodePath("../../CrewSlots/CrewSlot25"), NodePath("../../CrewSlots/CrewSlot26")]
 
-[node name="ComponentSlot13" parent="Portrait/Pivot/ComponentSlots" node_paths=PackedStringArray("CrewSlots") instance=ExtResource("11_bjrll")]
+[node name="ComponentSlot13" parent="Portrait/Pivot/ComponentSlots" node_paths=PackedStringArray("CrewSlots") instance=ExtResource("11_05h14")]
 position = Vector2(134, 155)
 SlotType = 5
 CrewSlots = [NodePath("../../CrewSlots/CrewSlot31"), NodePath("../../CrewSlots/CrewSlot32")]
 
-[node name="ComponentSlot14" parent="Portrait/Pivot/ComponentSlots" node_paths=PackedStringArray("CrewSlots") instance=ExtResource("11_bjrll")]
+[node name="ComponentSlot14" parent="Portrait/Pivot/ComponentSlots" node_paths=PackedStringArray("CrewSlots") instance=ExtResource("11_05h14")]
 position = Vector2(478, 155)
 SlotType = 6
 CrewSlots = [NodePath("../../CrewSlots/CrewSlot27"), NodePath("../../CrewSlots/CrewSlot28")]
 
-[node name="ComponentSlot15" parent="Portrait/Pivot/ComponentSlots" node_paths=PackedStringArray("CrewSlots") instance=ExtResource("11_bjrll")]
+[node name="ComponentSlot15" parent="Portrait/Pivot/ComponentSlots" node_paths=PackedStringArray("CrewSlots") instance=ExtResource("11_05h14")]
 position = Vector2(306, 308)
 SlotType = 4
 Facing = 0
@@ -441,19 +447,19 @@ position = Vector2(-320, -180)
 
 [node name="PDCs" type="Node2D" parent="Portrait/Pivot"]
 
-[node name="PDC" parent="Portrait/Pivot/PDCs" instance=ExtResource("12_83nf6")]
+[node name="PDC" parent="Portrait/Pivot/PDCs" instance=ExtResource("12_od1x6")]
 visible = false
 position = Vector2(-66, -130)
 
-[node name="PDC2" parent="Portrait/Pivot/PDCs" instance=ExtResource("12_83nf6")]
+[node name="PDC2" parent="Portrait/Pivot/PDCs" instance=ExtResource("12_od1x6")]
 visible = false
 position = Vector2(66, -130)
 
-[node name="PDC3" parent="Portrait/Pivot/PDCs" instance=ExtResource("12_83nf6")]
+[node name="PDC3" parent="Portrait/Pivot/PDCs" instance=ExtResource("12_od1x6")]
 visible = false
 position = Vector2(226, 138)
 
-[node name="PDC4" parent="Portrait/Pivot/PDCs" instance=ExtResource("12_83nf6")]
+[node name="PDC4" parent="Portrait/Pivot/PDCs" instance=ExtResource("12_od1x6")]
 visible = false
 position = Vector2(-226, 138)
 
