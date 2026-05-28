@@ -10,9 +10,6 @@ public partial class PlaySpace : Node
 	public event Action<int> TurnEnded;
 	public event Action<Vector2> ZoomChanged;
 
-	// Deploy budgets (reset to 1 at the start of every turn).
-	public int CargoDeploysRemaining { get; private set; } = 1;
-
 	/// <summary>True while the player is in a combat encounter.</summary>
 	public bool IsInCombat { get; private set; } = false;
 
@@ -382,21 +379,14 @@ public partial class PlaySpace : Node
 	/// </summary>
 	public bool TryUseCrewDeploy()
 	{
-		UpdateDeployLabels();
 		return true;
 	}
 
 	/// <summary>
-	/// Attempts to spend one cargo deploy. Returns false (and does not decrement)
-	/// if no cargo deploys remain.
+	/// Attempts to spend one cargo deploy. Always succeeds; the deployment limit
+	/// has been removed.
 	/// </summary>
-	public bool TryUseCargoDeloy()
-	{
-		if (CargoDeploysRemaining <= 0) return false;
-		CargoDeploysRemaining--;
-		UpdateDeployLabels();
-		return true;
-	}
+	public bool TryUseCargoDeloy() => true;
 
 	private void EndTurn()
 	{
@@ -408,7 +398,6 @@ public partial class PlaySpace : Node
 
 	private void StartTurn()
 	{
-		CargoDeploysRemaining = 1;
 		ResetShipPDCs();
 		UpdateDeployLabels();
 
@@ -425,9 +414,5 @@ public partial class PlaySpace : Node
 		GetNodeOrNull<Ship>("CanvasLayer/EnemyShip")?.ResetCurrentPDC();
 	}
 
-	private void UpdateDeployLabels()
-	{
-		if (GetNodeOrNull("CanvasLayer/GUI/Gameplay/Stats/CargoDeploys") is Label cargoLabel)
-			cargoLabel.Text = $"Cargo Deploys:{CargoDeploysRemaining}";
-	}
+	private void UpdateDeployLabels() { }
 }

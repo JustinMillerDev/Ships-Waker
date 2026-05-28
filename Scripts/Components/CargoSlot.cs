@@ -56,7 +56,7 @@ public partial class CargoSlot : Node2D, ISlottable
 
 	// ISlottable ----------------------------------------------------------------
 
-	public Vector2 SlotPosition => GlobalPosition;
+	public Vector2 SlotPosition => GlobalPosition + new Vector2(4, 4);
 
 	[Signal] public delegate void SlotChangedEventHandler();
 

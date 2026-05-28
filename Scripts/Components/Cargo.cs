@@ -131,12 +131,6 @@ public partial class Cargo : Node2D, IDraggable, IHealth
 		(CurrentSlot is CargoSlot cargoSlot && cargoSlot.IsReadied) ||
 		(CurrentSlot is CrewSlot && _cargoType == CargoType.Droid);
 
-	private bool HasCargoDeploysRemaining()
-	{
-		PlaySpace ps = GetTree().Root.GetNodeOrNull("PlaySpace") as PlaySpace;
-		return ps == null || ps.CargoDeploysRemaining > 0;
-	}
-
 	private Tween _wiggleTween;
 
 	private void PlayWiggle()
@@ -161,17 +155,8 @@ public partial class Cargo : Node2D, IDraggable, IHealth
 		{
 			if (mouseButton.Pressed && IsHovered && IsSlotDraggable)
 			{
-				bool isCrewSlotSwap = _cargoType == CargoType.Droid && CurrentSlot is CrewSlot;
-				if (!IsDeployed && !isCrewSlotSwap && !HasCargoDeploysRemaining())
-				{
-					PlayWiggle();
-					GetViewport().SetInputAsHandled();
-				}
-				else
-				{
-					OnDragStart();
-					GetViewport().SetInputAsHandled();
-				}
+				OnDragStart();
+				GetViewport().SetInputAsHandled();
 			}
 			else if (!mouseButton.Pressed && IsDragging)
 			{
@@ -260,7 +245,7 @@ public partial class Cargo : Node2D, IDraggable, IHealth
 				container.AddChild(this);
 			}
 			targetSlot.Accept(this);
-			GlobalPosition = targetSlot.SlotPosition + new Vector2(8, 8);
+			GlobalPosition = targetSlot.SlotPosition;
 			if (targetSlot is CargoSlot)
 			{
 				CustomSignals.Instance.EmitSignal(CustomSignals.SignalName.CargoSlotted, this);
