@@ -16,6 +16,20 @@ public partial class PlaySpace : Node
 	public void EnterCombat() => IsInCombat = true;
 	public void ExitCombat()  => IsInCombat = false;
 
+	// Ship configuration -------------------------------------------------------
+
+	/// <summary>Which ship class the player uses. Drives scene loading at startup.</summary>
+	[Export] public ShipType PlayerShipType { get; set; } = ShipType.Fighter;
+
+	/// <summary>Which ship class the enemy uses. Drives scene loading at startup.</summary>
+	[Export] public ShipType EnemyShipType  { get; set; } = ShipType.Fighter;
+
+	/// <summary>Resolved data record for the player's ship.</summary>
+	public ShipData PlayerShipDefinition { get; private set; }
+
+	/// <summary>Resolved data record for the enemy's ship.</summary>
+	public ShipData EnemyShipDefinition  { get; private set; }
+
 	// Camera panning -----------------------------------------------------------
 
 	private Camera2D _camera;
@@ -54,6 +68,8 @@ public partial class PlaySpace : Node
 
 	public override void _Ready()
 	{
+		LoadShipScenes();
+
 		_camera = GetNodeOrNull<Camera2D>("Camera2D");
 
 		Node2D playerShip = GetNodeOrNull<Node2D>("PlayerShip");
@@ -415,4 +431,79 @@ public partial class PlaySpace : Node
 	}
 
 	private void UpdateDeployLabels() { }
+
+	// Ship scene loading -------------------------------------------------------
+
+	/// <summary>
+	/// Resolves <see cref="ShipData"/> for both factions and replaces the static
+	/// scene instances with the scenes declared in that data.
+	/// </summary>
+	private void LoadShipScenes()
+	{
+		DataManager.Ships.ByDataName.TryGetValue(PlayerShipType.ToString(), out ShipData playerDef);
+		DataManager.Ships.ByDataName.TryGetValue(EnemyShipType.ToString(),  out ShipData enemyDef);
+		PlayerShipDefinition = playerDef;
+		EnemyShipDefinition  = enemyDef;
+
+		if (PlayerShipDefinition == null)
+			GD.PrintErr($"[PlaySpace] No ShipData found for PlayerShipType '{PlayerShipType}'");
+
+		if (EnemyShipDefinition == null)
+			GD.PrintErr($"[PlaySpace] No ShipData found for EnemyShipType '{EnemyShipType}'");
+
+		if (PlayerShipDefinition != null)
+		{
+			SwapShipScene("PlayerShipSmall",       PlayerShipDefinition.ShipSmallScene, ShipFaction.Player);
+			SwapShipScene("CanvasLayer/PlayerShip", PlayerShipDefinition.ShipScene,      ShipFaction.Player);
+		}
+
+		if (EnemyShipDefinition != null)
+		{
+			SwapShipScene("EnemyShipSmall",       EnemyShipDefinition.ShipSmallScene, ShipFaction.Enemy);
+			SwapShipScene("CanvasLayer/EnemyShip", EnemyShipDefinition.ShipScene,      ShipFaction.Enemy);
+		}
+	}
+
+	/// <summary>
+	/// Replaces the node at <paramref name="nodePath"/> with a fresh instance of
+	/// <paramref name="scenePath"/>, preserving name, position, visibility, and
+	/// child-order index. Sets <see cref="ShipFaction"/> if the new instance is a
+	/// <see cref="Ship"/> or <see cref="ShipSmall"/>.
+	/// </summary>
+	private void SwapShipScene(string nodePath, string scenePath, ShipFaction faction)
+	{
+		Node existing = GetNodeOrNull<Node>(nodePath);
+		if (existing == null)
+		{
+			GD.PrintErr($"[PlaySpace] SwapShipScene: node not found at '{nodePath}'");
+			return;
+		}
+
+		Node parent     = existing.GetParent();
+		int  index      = existing.GetIndex();
+		Vector2 pos     = existing is Node2D n ? n.Position : Vector2.Zero;
+		bool vis        = existing is not CanvasItem c || c.Visible;
+		string nodeName = existing.Name;
+
+		parent.RemoveChild(existing);
+		existing.QueueFree();
+
+		PackedScene packed = ResourceLoader.Load<PackedScene>(scenePath);
+		if (packed == null)
+		{
+			GD.PrintErr($"[PlaySpace] SwapShipScene: failed to load scene '{scenePath}'");
+			return;
+		}
+
+		Node instance = packed.Instantiate();
+		instance.Name = nodeName;
+
+		if (instance is Node2D node2d)     node2d.Position    = pos;
+		if (instance is CanvasItem canvas) canvas.Visible     = vis;
+		if (instance is Ship ship)         ship.Faction       = faction;
+		else if (instance is ShipSmall sm) sm.Faction         = faction;
+
+		parent.AddChild(instance);
+		parent.MoveChild(instance, index);
+	}
 }

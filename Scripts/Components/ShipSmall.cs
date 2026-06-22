@@ -29,6 +29,21 @@ public partial class ShipSmall : Node2D
 	{
 		ApplyFactionToPdcs();
 		SpawnExhaustTrails();
+		ApplyEnemySprite();
+	}
+
+	private void ApplyEnemySprite()
+	{
+		if (_faction != ShipFaction.Enemy) return;
+
+		var sprite = GetNodeOrNull<Sprite2D>("Pivot/Sprites/Sprite2D2");
+		if (sprite == null)
+		{
+			GD.PushWarning("ShipSmall: Could not find Pivot/Sprites/Sprite2D2 to apply enemy texture.");
+			return;
+		}
+
+		sprite.Texture = GD.Load<Texture2D>("res://Assets/Backgrounds/SpaceShipGame_UI_Ship.png");
 	}
 
 	private void ApplyFactionToPdcs()

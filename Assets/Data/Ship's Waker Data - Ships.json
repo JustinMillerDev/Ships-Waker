@@ -1,0 +1,16 @@
+[
+  {
+    "DataName": "Cruiser",
+    "Name": "Cruiser",
+    "CurrentlyWorks": true,
+    "ShipScene": "res://Scenes/ShipBigger.tscn",
+    "ShipSmallScene": "res://Scenes/CruiserShipSmall.tscn"
+  },
+  {
+    "DataName": "Fighter",
+    "Name": "Fighter",
+    "CurrentlyWorks": true,
+    "ShipScene": "res://Scenes/Ship.tscn",
+    "ShipSmallScene": "res://Scenes/ShipSmall.tscn"
+  }
+]

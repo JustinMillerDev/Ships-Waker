@@ -18,6 +18,7 @@ public partial class DataManager : Node
 	public static CrewDatabase      Crew       { get; private set; }
 	public static CargoDatabase     Cargo      { get; private set; }
 	public static ComponentDatabase Components { get; private set; }
+	public static ShipDatabase      Ships      { get; private set; }
 
 	private static readonly JsonSerializerOptions JsonOptions = new()
 	{
@@ -31,8 +32,9 @@ public partial class DataManager : Node
 		Crew       = new CrewDatabase(Load<CrewData>      ("res://Assets/Data/Ship's Waker Data - Crew.json"));
 		Cargo      = new CargoDatabase(Load<CargoData>     ("res://Assets/Data/Ship's Waker Data - Cargo.json"));
 		Components = new ComponentDatabase(Load<ComponentData>("res://Assets/Data/Ship's Waker Data - Components.json"));
+		Ships      = new ShipDatabase(Load<ShipData>       ("res://Assets/Data/Ship's Waker Data - Ships.json"));
 
-		GD.Print($"[DataManager] Loaded {Crew.All.Count} crew, {Cargo.All.Count} cargo, {Components.All.Count} components.");
+		GD.Print($"[DataManager] Loaded {Crew.All.Count} crew, {Cargo.All.Count} cargo, {Components.All.Count} components, {Ships.All.Count} ships.");
 	}
 
 	private static List<T> Load<T>(string resPath)

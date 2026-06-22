@@ -1,1 +1,44 @@
 05262026
+
+Current goal:
+	I CAN BATTLE A SPACESHIP
+		enemy takes damage and deals damage
+	I CAN NAVIGATE A BASIC MAP
+		I can plan a route, spending TIME
+		I have DESTINATIONS that I can travel to
+			The DESTINATIONS can be combats or the gate to the next system
+				Add safe havens like a merchant port
+				Add non combat encounters like archeologist, demon, ship station, remains, or convoy
+					determine what these different things mean
+
+Things to clean up:
+	projectile speed at close range is too low
+	ships need a visual redesign
+		I want a mid-rail for placing big weapon turrets that can rotate like a battleship has
+		I want to place smaller external components like basic cannons that mirror on both sides
+		I want to consider making a ship-length weapon like a railgun
+		I want to determine how to do PDCs
+			Do PDC cannoncs take a slot? 
+			How many cannons do you get? 
+			Do they all animate shooting individually?
+		How does the xray view of the interior work if there is a big cannon to show off in the ship center?
+		Consider adding a SCROLL to the ship view window
+			make the ship 2x as long, like a real battleship
+			Make the scroll move up and down as you drag a crew up and down the ship
+			potentially make crew and slots bigger, like 24 or 32
+		Consider adding vertical LAYERS to the ship
+			no xray
+				can see all the mid rail cannons
+			xray
+				can see all the crew stations and interior
+	What does manning the caskets or the hold do now that I am simplfying both mechanics
+		Nothing! both stations go away
+		Something!
+			1 tier on both
+			caskets
+				manning increases number of people waking up
+			hold
+				unlocks access to inventory, otherwise CANNOT MOVE INVENTORY AT ALL
+	An extra missile launcher is spawning on the railgun slot
+	Add range requirements to weapons
+	

@@ -59,3 +59,23 @@ public class ComponentDatabase
 		ByDataName = dict;
 	}
 }
+
+/// <summary>
+/// Read-only database of all ship entries loaded from JSON.
+/// Access via DataManager.Ships.
+/// </summary>
+public class ShipDatabase
+{
+	public IReadOnlyList<ShipData> All { get; }
+	public IReadOnlyDictionary<string, ShipData> ByDataName { get; }
+
+	public ShipDatabase(List<ShipData> entries)
+	{
+		All = entries.AsReadOnly();
+
+		var dict = new Dictionary<string, ShipData>(entries.Count);
+		foreach (ShipData entry in entries)
+			dict[entry.DataName] = entry;
+		ByDataName = dict;
+	}
+}

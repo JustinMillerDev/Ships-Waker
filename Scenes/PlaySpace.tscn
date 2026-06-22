@@ -1,9 +1,10 @@
-[gd_scene load_steps=21 format=3 uid="uid://dwn6w7t2pvk3b"]
+[gd_scene load_steps=22 format=3 uid="uid://dwn6w7t2pvk3b"]
 
 [ext_resource type="Script" uid="uid://dhktcp2cgrjok" path="res://Scripts/Singletons/PlaySpace.cs" id="1_bvtvd"]
 [ext_resource type="Texture2D" uid="uid://rp3li63b5om5" path="res://Assets/Backgrounds/Background_NoPlanetBig.png" id="2_d284w"]
 [ext_resource type="Script" uid="uid://0fgot8bpvcaw" path="res://Scripts/Singletons/BackgroundScroller.cs" id="2_q8066"]
 [ext_resource type="PackedScene" uid="uid://blea1lufbpes6" path="res://Scenes/ShipSmall.tscn" id="3_d284w"]
+[ext_resource type="PackedScene" uid="uid://csv2ul0ek3ct4" path="res://Scenes/CruiserShipSmall.tscn" id="4_2i8fn"]
 [ext_resource type="PackedScene" uid="uid://h62f1uxvwfqs" path="res://Scenes/Ship.tscn" id="5_42xwf"]
 [ext_resource type="PackedScene" uid="uid://vr2lvj1bdd51" path="res://Scenes/ShipBigger.tscn" id="5_e5krj"]
 [ext_resource type="Texture2D" uid="uid://bbg2be8wd0wpe" path="res://Assets/GUI/EndTurn.png" id="5_ydn88"]
@@ -113,7 +114,7 @@ texture = ExtResource("2_d284w")
 centered = false
 offset = Vector2(-480, -270)
 
-[node name="PlayerShipSmall" parent="." instance=ExtResource("3_d284w")]
+[node name="PlayerShipSmall" parent="." instance=ExtResource("4_2i8fn")]
 position = Vector2(-193, 75)
 
 [node name="EnemyShipSmall" parent="." instance=ExtResource("3_d284w")]
