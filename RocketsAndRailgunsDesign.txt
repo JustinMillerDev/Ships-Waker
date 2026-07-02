@@ -1,0 +1,45 @@
+Rockets and railguns
+	spaceship game attempt #3
+
+gdscript
+browser playable game
+multiplayer peer to peer networking
+	coop like slay the spire, everyone manages own ship and takes the same damage
+data from google sheets into godot resource files
+sounds
+saves
+640 x 360p
+no cargo
+4 interior slots
+5 exterior slots
+	exterior line the right side of the ship
+	each one gets a crew slot
+ship trait
+10 man crew
+	2 pilot
+	2 engines
+	2 each 4 interior
+	2 each 5 exterior
+ammo tracked as currency
+	missiles
+	railgun slugs
+	pdc rounds
+fuel tracked as currency
+	x% fuel
+currency is space francs
+	funny name
+upgrades
+	improve your crew
+	swap components out
+time based travel system
+	30 years later you explode
+	certain events and resources stabilize the gate core for x years
+Random events described in text with minimal art
+	decide the outcome by 1 to 3 options
+	can change the outcome based on components and crew
+solar system map
+	always has a gate to the next solar system
+	distance measured in time
+admiral leadership system
+	in multiplayer one player is elected leader who makes decisions for the team
+	can mutiny at any point
